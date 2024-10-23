@@ -24,6 +24,7 @@ eth_abi==5.1.0
 frozenlist==1.4.1
 hexbytes==0.3.1
 idna==3.10
+iniconfig==2.0.0
 jedi==0.19.1
 jsonschema==4.23.0
 jsonschema-specifications==2024.10.1
@@ -43,6 +44,9 @@ protobuf==5.28.2
 pycryptodome==3.21.0
 pydantic==2.9.2
 pydantic_core==2.23.4
+pytest==8.3.3
+pytest-asyncio==0.24.0
+pytest-mock==3.14.0
 python-lsp-black==2.0.0
 python-lsp-jsonrpc==1.1.2
 python-lsp-ruff==2.2.2
