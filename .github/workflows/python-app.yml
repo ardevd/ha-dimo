@@ -40,10 +40,6 @@ jobs:
 
     - name: Official SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v3.0.0
-      run: |
-        sonar-scanner \
-          -Dsonar.projectKey=ha-dimo \
-          -Dsonar.sources=. \
-          -Dsonar.host.url=${{ secrets.SONAR_HOST }} \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-            
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
