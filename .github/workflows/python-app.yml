@@ -37,3 +37,13 @@ jobs:
     - name: Test with pytest
       run: |
         PYTHONPATH=$(pwd) pytest -v
+
+    - name: Official SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@v3.0.0
+      run: |
+        sonar-scanner \
+          -Dsonar.projectKey=ha-dimo \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=${{ secrets.SONAR_HOST }} \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            
