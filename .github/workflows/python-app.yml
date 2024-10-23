@@ -36,8 +36,8 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        PYTHONPATH=$(pwd) pytest -v
-
+        PYTHONPATH=$(pwd) coverage run -m pytest -v
+        coverage xml  # Generate coverage report in XML format
     - name: Official SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v3.0.0
       env:
