@@ -7,5 +7,9 @@ domain = "https://www.google.com"
 private_key = "0xbbe903286eb1e0e2bc5cf39ac6734f170b04665bb8b281f188942e7c3f541981"
 
 auth = Auth(client_id, domain, private_key)
-asyncio.run(auth.get_token())
+client = DimoClient(auth)
 
+asyncio.run(client.init())
+
+makes = asyncio.run(client.get_vehicle_makes())
+print(makes)

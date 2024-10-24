@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock, Mock
-from ha_dimo.dimo_client import DimoClient
-from ha_dimo.auth import Auth
+from dimo.dimo_client import DimoClient
+from dimo.auth import Auth
 
 @pytest.mark.asyncio
 async def test_auth_get_token(mocker):

@@ -1,5 +1,5 @@
 import asyncio
-from dimo import DIMO
+import dimo as dimo_api
 from loguru import logger
 
 
@@ -9,7 +9,7 @@ class Auth:
         self.domain = domain
         self.private_key = private_key
         self.token = None
-        self.dimo = dimo if dimo else DIMO("Production")
+        self.dimo = dimo if dimo else dimo_api.DIMO("Production")
         
 
     async def _get_auth(self):

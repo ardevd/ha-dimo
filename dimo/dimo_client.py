@@ -1,5 +1,4 @@
 import asyncio
-from dimo import DIMO
 from loguru import logger
 from .auth import Auth
 
