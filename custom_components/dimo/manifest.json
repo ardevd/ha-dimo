@@ -1,0 +1,17 @@
+{
+  "domain": "dimo",
+  "name": "DIMO",
+  "codeowners": [
+    "@ardevd"
+  ],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://www.home-assistant.io/integrations/dimo",
+  "homekit": {},
+  "iot_class": "cloud_polling",
+  "requirements": [
+    "dimo-python-sdk==0.0.1"
+  ],
+  "ssdp": [],
+  "zeroconf": []
+}
