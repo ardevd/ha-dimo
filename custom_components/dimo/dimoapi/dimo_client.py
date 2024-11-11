@@ -13,9 +13,16 @@ class DimoClient:
     async def get_vehicle_makes(self):
         return await self.dimo.device_definitions.list_device_makes()
 
-    async def get_latest_signals(self, token_id):
+    async def get_available_signals(self, token_id):
         priv_token = await self.auth.get_privileged_token(token_id)
-        return await self.dimo.telemetry.get_signals_latest(priv_token, token_id)
+        query = f"""
+    query {{
+      availableSignals(
+        tokenId: "{token_id}"
+      )
+    }}
+    """
+        return await self.dimo.telemetry.query(query, priv_token)
         
     async def get_all_vehicles_for_license(self, license_id: str):
         query_all_vehicles = f"""
