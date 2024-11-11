@@ -18,7 +18,7 @@ class DimoClient:
         query = f"""
     query {{
       availableSignals(
-        tokenId: "{token_id}"
+        tokenId: {token_id}
       )
     }}
     """

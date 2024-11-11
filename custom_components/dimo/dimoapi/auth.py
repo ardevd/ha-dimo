@@ -13,7 +13,7 @@ class Auth:
 
     async def get_privileged_token(self, vehicle_token_id):
         print(vehicle_token_id)
-        return await self.dimo.token_exchange.exchange(self.token, privileges=[1], token_id=vehicle_token_id)
+        return await self.dimo.token_exchange.exchange(self.token, privileges=[1, 3], token_id=vehicle_token_id)
         
     async def _get_auth(self):
         logger.info("Retrieving access token")
