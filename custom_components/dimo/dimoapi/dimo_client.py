@@ -1,4 +1,3 @@
-import asyncio
 from loguru import logger
 from auth import Auth
 from unittest import signals
@@ -9,14 +8,14 @@ class DimoClient:
         self.auth = auth
         self.dimo = auth.get_dimo()
 
-    async def init(self):
-        await self.auth.get_token()
+    def init(self):
+        self.auth.get_token()
 
-    async def get_vehicle_makes(self):
-        return await self.dimo.device_definitions.list_device_makes()
+    def get_vehicle_makes(self):
+        return self.dimo.device_definitions.list_device_makes()
 
-    async def get_available_signals(self, token_id):
-        priv_token = await self.auth.get_privileged_token(token_id)
+    def get_available_signals(self, token_id):
+        priv_token = self.auth.get_privileged_token(token_id)
         query = f"""
     query {{
       availableSignals(
@@ -24,11 +23,11 @@ class DimoClient:
       )
     }}
     """
-        return await self.dimo.telemetry.query(query, priv_token["token"])
+        return self.dimo.telemetry.query(query, priv_token["token"])
 
-    async def get_latest_signals(self, token_id, signal_names: list[str]):
+    def get_latest_signals(self, token_id, signal_names: list[str]):
         logger.debug(f"Querying API for {len(signal_names)} signals")
-        priv_token = await self.auth.get_privileged_token(token_id)
+        priv_token = self.auth.get_privileged_token(token_id)
         signals_query = "\n".join(
             [
                 f"{signal_name} {{\n  timestamp\n  value\n}}"
@@ -42,9 +41,9 @@ class DimoClient:
             }}
         }}
         """
-        return await self.dimo.telemetry.query(query, priv_token["token"])
+        return self.dimo.telemetry.query(query, priv_token["token"])
 
-    async def get_all_vehicles_for_license(self, license_id: str):
+    def get_all_vehicles_for_license(self, license_id: str):
         query_all_vehicles = f"""
     query {{
       vehicles(filterBy: {{ privileged: "{license_id}" }}, first: 100) {{
@@ -63,4 +62,4 @@ class DimoClient:
       }}
     }}
     """
-        return await self.dimo.identity.query(query=query_all_vehicles)
+        return self.dimo.identity.query(query=query_all_vehicles)

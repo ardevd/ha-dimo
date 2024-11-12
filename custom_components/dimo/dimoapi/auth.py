@@ -11,15 +11,15 @@ class Auth:
         self.token = None
         self.dimo = dimo if dimo else dimo_api.DIMO("Production")
 
-    async def get_privileged_token(self, vehicle_token_id):
+    def get_privileged_token(self, vehicle_token_id):
         logger.debug("Obtaining privileged token")
-        return await self.dimo.token_exchange.exchange(
+        return self.dimo.token_exchange.exchange(
             self.token, privileges=[1, 3], token_id=vehicle_token_id
         )
 
-    async def _get_auth(self):
+    def _get_auth(self):
         logger.debug("Retrieving access token")
-        auth_header = await self.dimo.auth.get_token(
+        auth_header = self.dimo.auth.get_token(
             client_id=self.client_id,
             domain=self.domain,
             private_key=self.private_key,
@@ -27,9 +27,9 @@ class Auth:
         self.token = auth_header["access_token"]
         logger.debug(f"access token retrieved")
 
-    async def get_token(self):
+    def get_token(self):
         if self.token is None:
-            await self._get_auth()
+            self._get_auth()
         return self.token
 
     def get_dimo(self):
