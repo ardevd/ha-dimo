@@ -26,19 +26,22 @@ class DimoClient:
     """
         return await self.dimo.telemetry.query(query, priv_token["token"])
 
-    async def get_latest_signal(self, token_id, signal_name: str):
+    async def get_latest_signals(self, token_id, signal_names: list[str]):
         priv_token = await self.auth.get_privileged_token(token_id)
+        # Construct the query for multiple signals
+        signals_query = "\n".join(
+            [
+                f"{signal_name} {{\n  timestamp\n  value\n}}"
+                for signal_name in signal_names
+            ]
+        )
         query = f"""
         query {{
             signalsLatest(tokenId: {token_id}) {{
-                {signal_name}{{
-                    timestamp
-                    value
-                }}
+                {signals_query}
             }}
         }}
         """
-
         return await self.dimo.telemetry.query(query, priv_token["token"])
 
     async def get_all_vehicles_for_license(self, license_id: str):
