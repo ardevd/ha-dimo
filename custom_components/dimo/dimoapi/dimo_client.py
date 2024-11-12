@@ -2,11 +2,12 @@ import asyncio
 from loguru import logger
 from auth import Auth
 
+
 class DimoClient:
     def __init__(self, auth: Auth):
         self.auth = auth
         self.dimo = auth.get_dimo()
-        
+
     async def init(self):
         await self.auth.get_token()
 
@@ -23,7 +24,7 @@ class DimoClient:
     }}
     """
         return await self.dimo.telemetry.query(query, priv_token)
-        
+
     async def get_all_vehicles_for_license(self, license_id: str):
         query_all_vehicles = f"""
     query {{
@@ -44,4 +45,3 @@ class DimoClient:
     }}
     """
         return await self.dimo.identity.query(query=query_all_vehicles)
-
