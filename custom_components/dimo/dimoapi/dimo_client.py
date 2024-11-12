@@ -27,8 +27,8 @@ class DimoClient:
         return await self.dimo.telemetry.query(query, priv_token["token"])
 
     async def get_latest_signals(self, token_id, signal_names: list[str]):
+        logger.debug(f"Querying API for {len(signal_names)} signals")
         priv_token = await self.auth.get_privileged_token(token_id)
-        # Construct the query for multiple signals
         signals_query = "\n".join(
             [
                 f"{signal_name} {{\n  timestamp\n  value\n}}"

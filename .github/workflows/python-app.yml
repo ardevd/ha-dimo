@@ -36,7 +36,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: DIMO Api test
       run: |
-        cd custom_components/dimo/dimoapi && PYTHONPATH=$(pwd) coverage run -m pytest -v && coverage xml -o ../../../coverage.xml
+        PYTHONPATH=$(pwd) coverage run -m pytest -v && coverage xml -o coverage.xml
     - name: Official SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v3.0.0
       env:
