@@ -1,6 +1,7 @@
 import asyncio
 from loguru import logger
 from auth import Auth
+from unittest import signals
 
 
 class DimoClient:
@@ -23,6 +24,21 @@ class DimoClient:
       )
     }}
     """
+        return await self.dimo.telemetry.query(query, priv_token["token"])
+
+    async def get_latest_signal(self, token_id, signal_name: str):
+        priv_token = await self.auth.get_privileged_token(token_id)
+        query = f"""
+        query {{
+            signalsLatest(tokenId: {token_id}) {{
+                {signal_name}{{
+                    timestamp
+                    value
+                }}
+            }}
+        }}
+        """
+
         return await self.dimo.telemetry.query(query, priv_token["token"])
 
     async def get_all_vehicles_for_license(self, license_id: str):
