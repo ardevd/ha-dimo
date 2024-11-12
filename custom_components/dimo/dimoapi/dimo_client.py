@@ -23,7 +23,7 @@ class DimoClient:
       )
     }}
     """
-        return await self.dimo.telemetry.query(query, priv_token)
+        return await self.dimo.telemetry.query(query, priv_token["token"])
 
     async def get_all_vehicles_for_license(self, license_id: str):
         query_all_vehicles = f"""
