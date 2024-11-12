@@ -25,7 +25,7 @@ class Auth:
             private_key=self.private_key,
         )
         self.token = auth_header["access_token"]
-        logger.debug(f"access token retrieved")
+        logger.debug("access token retrieved")
 
     def get_token(self):
         if self.token is None:

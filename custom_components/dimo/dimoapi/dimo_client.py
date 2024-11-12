@@ -1,6 +1,5 @@
 from loguru import logger
 from auth import Auth
-from unittest import signals
 
 
 class DimoClient:
