@@ -42,7 +42,10 @@ class DimoClient:
         """
         return self.dimo.telemetry.query(query, priv_token["token"])
 
-    def get_all_vehicles_for_license(self, license_id: str):
+    def get_all_vehicles_for_license(self, license_id=None):
+        if license_id is None:
+            license_id = self.auth.client_id
+
         query_all_vehicles = f"""
     query {{
       vehicles(filterBy: {{ privileged: "{license_id}" }}, first: 100) {{
