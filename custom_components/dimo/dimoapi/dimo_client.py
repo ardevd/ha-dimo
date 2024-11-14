@@ -13,6 +13,17 @@ class DimoClient:
     def get_vehicle_makes(self):
         return self.dimo.device_definitions.list_device_makes()
 
+    def get_vehicle_vin(self, token_id):
+        priv_token = self.auth.get_privileged_token(token_id)
+        query = f"""
+    query {{
+        vinVCLatest(tokenId: "{token_id}") {{
+            vin
+        }}
+    }}
+        """
+        return self.dimo.telemetry.query(query, priv_token["token"])
+
     def get_available_signals(self, token_id):
         priv_token = self.auth.get_privileged_token(token_id)
         query = f"""
