@@ -8,64 +8,59 @@ from typing import Any
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_CLIENT_ID
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers.selector import SelectSelectorMode, selector
 
-from .const import DOMAIN
+from .const import AUTH_PROVIDERS, CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DOMAIN
+from .dimoapi.auth import Auth
+from .dimoapi.dimo_client import DimoClient
+from .helpers import get_key
 
 _LOGGER = logging.getLogger(__name__)
 
-# TODO adjust the data schema to the data that you need
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_HOST): str,
-        vol.Required(CONF_USERNAME): str,
-        vol.Required(CONF_PASSWORD): str,
+        vol.Required(CONF_CLIENT_ID): str,
+        vol.Required(CONF_AUTH_PROVIDER): selector(
+            {
+                "select": {
+                    "options": AUTH_PROVIDERS,
+                    "mode": SelectSelectorMode.DROPDOWN,
+                }
+            }
+        ),
+        vol.Required(
+            CONF_PRIVATE_KEY,
+        ): str,
     }
 )
 
 
-class PlaceholderHub:
-    """Placeholder class to make tests pass.
-
-    TODO Remove this placeholder class and replace with things from your PyPI package.
-    """
-
-    def __init__(self, host: str) -> None:
-        """Initialize."""
-        self.host = host
-
-    async def authenticate(self, username: str, password: str) -> bool:
-        """Test if we can authenticate with the host."""
-        return True
-
-
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
-    """Validate the user input allows us to connect.
+    """Validate the user input allows us to connect."""
 
-    Data has the keys from STEP_USER_DATA_SCHEMA with values provided by the user.
-    """
-    # TODO validate the data can be used to set up a connection.
-
-    # If your PyPI package is not built with async, pass your methods
-    # to the executor:
-    # await hass.async_add_executor_job(
-    #     your_validate_func, data[CONF_USERNAME], data[CONF_PASSWORD]
-    # )
-
-    hub = PlaceholderHub(data[CONF_HOST])
-
-    if not await hub.authenticate(data[CONF_USERNAME], data[CONF_PASSWORD]):
-        raise InvalidAuth
-
-    # If you cannot connect:
-    # throw CannotConnect
-    # If the authentication is wrong:
-    # InvalidAuth
-
-    # Return info that you want to store in the config entry.
-    return {"title": "Name of the device"}
+    try:
+        auth = Auth(
+            data[CONF_CLIENT_ID], data[CONF_AUTH_PROVIDER], data[CONF_PRIVATE_KEY]
+        )
+        client = DimoClient(auth)
+        # vehicles = client.get_all_vehicles_for_license()
+        await hass.async_add_executor_job(client.init)
+        _LOGGER.debug("Token retrieved")
+        # Get list of vehicles on account and return for next step
+        vehicles_data = await hass.async_add_executor_job(
+            client.get_all_vehicles_for_license, data[CONF_CLIENT_ID]
+        )
+        if vehicles_data:
+            if vehicles := get_key("data.vehicles.nodes", vehicles_data):
+                _LOGGER.debug("CF Vehicles: %s", vehicles)
+                return {"title": "DIMO"}
+        raise NoVehiclesException  # noqa: TRY301
+    except Exception as ex:
+        # TODO: Handle specific exceptions from DimoClient when added
+        raise CannotConnect("Error connecting to DIMO api") from ex
 
 
 class ConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -85,6 +80,8 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors["base"] = "cannot_connect"
             except InvalidAuth:
                 errors["base"] = "invalid_auth"
+            except NoVehiclesException:
+                errors["base"] = "no_vehicles"
             except Exception:
                 _LOGGER.exception("Unexpected exception")
                 errors["base"] = "unknown"
@@ -102,3 +99,7 @@ class CannotConnect(HomeAssistantError):
 
 class InvalidAuth(HomeAssistantError):
     """Error to indicate there is invalid auth."""
+
+
+class NoVehiclesException(BaseException):
+    """Error to indicate no vehicles on the account."""

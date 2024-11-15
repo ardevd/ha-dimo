@@ -6,14 +6,15 @@
         "error": {
             "cannot_connect": "Failed to connect",
             "invalid_auth": "Invalid authentication",
+            "no_vehicles": "No vehicles exist on this account",
             "unknown": "Unexpected error"
         },
         "step": {
             "user": {
                 "data": {
-                    "host": "Host",
-                    "password": "Password",
-                    "username": "Username"
+                    "client_id": "Client ID",
+                    "auth_provider": "Domain",
+                    "private_key": "API Key"
                 }
             }
         }

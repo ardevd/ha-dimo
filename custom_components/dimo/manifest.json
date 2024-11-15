@@ -7,11 +7,10 @@
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://www.home-assistant.io/integrations/dimo",
-  "homekit": {},
   "iot_class": "cloud_polling",
   "requirements": [
-    "dimo-python-sdk==0.0.1"
+    "dimo-python-sdk==0.0.4"
   ],
-  "ssdp": [],
-  "zeroconf": []
+  "single_config_entry": true,
+  "version": "0.0.1"
 }
