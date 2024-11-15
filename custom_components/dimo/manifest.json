@@ -9,7 +9,9 @@
   "documentation": "https://www.home-assistant.io/integrations/dimo",
   "iot_class": "cloud_polling",
   "requirements": [
-    "dimo-python-sdk==0.0.3"
+    "dimo-python-sdk==0.0.3",
+    "web3==6.20.3",
+    "loguru==0.7.2"
   ],
   "single_config_entry": true,
   "version": "0.0.1"
