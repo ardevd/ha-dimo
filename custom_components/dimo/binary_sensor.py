@@ -2,7 +2,7 @@
 
 import logging
 
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -19,7 +19,7 @@ async def async_setup_entry(
     entry: DIMOConfigEntry,
     add_entities: AddEntitiesCallback,
 ):
-    """Initialise sensor platform."""
+    """Initialise binary sensor platform."""
 
     coordinator = entry.runtime_data.coordinator
 
@@ -31,29 +31,22 @@ async def async_setup_entry(
                 DimoSensorEntity(coordinator, vehicle_token_id, key)
                 for key in vehicle_data.signal_data
                 if vehicle_data.signal_data[key]
-                and (
-                    (SIGNALS.get(key) and SIGNALS[key].platform == Platform.SENSOR)
-                    or not SIGNALS.get(key)
-                )
+                and SIGNALS.get(key)
+                and SIGNALS[key].platform == Platform.BINARY_SENSOR
             ]
         )
 
     add_entities(entities)
 
 
-class DimoSensorEntity(DimoBaseEntity, SensorEntity):
-    """Sensor entity."""
+class DimoSensorEntity(DimoBaseEntity, BinarySensorEntity):
+    """Binary Sensor entity."""
 
     @property
-    def native_value(self):
-        """Return the native value of this entity."""
+    def is_on(self) -> bool | None:
+        """Return true if the binary sensor is on."""
         return (
             self.coordinator.vehicle_data[self.vehicle_token_id]
             .signal_data[self.key]
             .get("value")
         )
-
-    @property
-    def native_unit_of_measurement(self) -> str | None:
-        """Return the unit of measurement of the sensor, if any."""
-        return SIGNALS[self.key].unit_of_measure if SIGNALS.get(self.key) else None

@@ -14,14 +14,12 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DOMAIN
+from .const import CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DOMAIN, PLATFORMS
 from .dimoapi.auth import Auth
 from .dimoapi.dimo_client import DimoClient
 from .helpers import get_key
 
 _LOGGER = logging.getLogger(__name__)
-
-PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 
 @dataclass
