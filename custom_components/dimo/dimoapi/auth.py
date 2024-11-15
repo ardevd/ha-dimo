@@ -1,5 +1,5 @@
-import asyncio
 import dimo as dimo_api
+import time
 from loguru import logger
 
 
@@ -9,12 +9,26 @@ class Auth:
         self.domain = domain
         self.private_key = private_key
         self.token = None
+        self.privileged_token = None
+        self.privileged_token_expiry = None
         self.dimo = dimo if dimo else dimo_api.DIMO("Production")
 
     def get_privileged_token(self, vehicle_token_id):
-        logger.debug("Obtaining privileged token")
-        return self.dimo.token_exchange.exchange(
-            self.token, privileges=[1, 3], token_id=vehicle_token_id
+        if not self.privileged_token or self._is_privileged_token_expired():
+            logger.debug("Obtaining privileged token")
+            self.privileged_token = self.dimo.token_exchange.exchange(
+                self.token, privileges=[1, 3], token_id=vehicle_token_id
+            )
+            self.privileged_token_expiry = time.time() + 600
+            logger.debug("New privileged token obtained")
+
+        return self.privileged_token
+
+    def _is_privileged_token_expired(self):
+        """Assert privileged token expiration"""
+        return (
+            not self.privileged_token_expiry
+            or time.time() >= self.privileged_token_expiry
         )
 
     def _get_auth(self):
