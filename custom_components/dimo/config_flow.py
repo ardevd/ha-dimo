@@ -13,7 +13,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.selector import SelectSelectorMode, selector
 
-from .const import AUTH_PROVIDERS, CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DOMAIN
+from .const import CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DOMAIN
 from .dimoapi.auth import Auth
 from .dimoapi.dimo_client import DimoClient
 from .helpers import get_key
@@ -23,14 +23,7 @@ _LOGGER = logging.getLogger(__name__)
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_CLIENT_ID): str,
-        vol.Required(CONF_AUTH_PROVIDER): selector(
-            {
-                "select": {
-                    "options": AUTH_PROVIDERS,
-                    "mode": SelectSelectorMode.DROPDOWN,
-                }
-            }
-        ),
+        vol.Required(CONF_AUTH_PROVIDER): str,
         vol.Required(
             CONF_PRIVATE_KEY,
         ): str,
