@@ -7,5 +7,5 @@ CONF_LICENSE_ID = "license_id"
 
 AUTH_PROVIDERS = [
     {"label": "Google", "value": "https://www.google.com"},
-    {"label": "Github", "value": "https://github.com"},
+    {"label": "Github", "value": "https://github.com/ardevd/ha-dimo"},
 ]
