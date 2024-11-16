@@ -40,4 +40,16 @@ SIGNALS = {
         SensorDeviceClass.SPEED,
         UnitOfSpeed.KILOMETERS_PER_HOUR,
     ),
+    "powertrainTransmissionTravelledDistance": SignalDef(
+        "Odometer",
+        Platform.SENSOR,
+        SensorDeviceClass.DISTANCE,
+        UnitOfLength.KILOMETERS,
+    ),
+    "exteriorAirTemperature": SignalDef(
+        "Exterior Temperature"
+        Platform.SENSOR,
+        SensorDeviceClass.TEMPERATURE,
+        UnitOfTemperature.CELSIUS,
+    )
 }
