@@ -94,10 +94,6 @@ pycryptodome==3.21.0
 pydantic==2.9.2
 pydantic_core==2.23.4
 PyJWT==2.9.0
-pyobjc-core==10.3.1
-pyobjc-framework-Cocoa==10.3.1
-pyobjc-framework-CoreBluetooth==10.3.1
-pyobjc-framework-libdispatch==10.3.1
 pyOpenSSL==24.2.1
 pyRFC3339==2.0.1
 PyRIC==0.1.6.3
