@@ -4,7 +4,13 @@ from dataclasses import dataclass
 
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass
-from homeassistant.const import Platform, UnitOfElectricPotential, UnitOfSpeed
+from homeassistant.const import (
+    Platform,
+    UnitOfElectricPotential,
+    UnitOfSpeed,
+    UnitOfLength,
+    UnitOfTemperature,
+)
 
 DOMAIN = "dimo"
 CONF_PRIVATE_KEY = "private_key"
@@ -39,5 +45,17 @@ SIGNALS = {
         Platform.SENSOR,
         SensorDeviceClass.SPEED,
         UnitOfSpeed.KILOMETERS_PER_HOUR,
+    ),
+    "powertrainTransmissionTravelledDistance": SignalDef(
+        "Odometer",
+        Platform.SENSOR,
+        SensorDeviceClass.DISTANCE,
+        UnitOfLength.KILOMETERS,
+    ),
+    "exteriorAirTemperature": SignalDef(
+        "Exterior Temperature",
+        Platform.SENSOR,
+        SensorDeviceClass.TEMPERATURE,
+        UnitOfTemperature.CELSIUS,
     ),
 }
