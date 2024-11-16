@@ -11,11 +11,9 @@ from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_CLIENT_ID
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers.selector import SelectSelectorMode, selector
 
 from .const import CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DOMAIN
-from .dimoapi.auth import Auth
-from .dimoapi.dimo_client import DimoClient
+from .dimoapi import Auth, DimoClient
 from .helpers import get_key
 
 _LOGGER = logging.getLogger(__name__)

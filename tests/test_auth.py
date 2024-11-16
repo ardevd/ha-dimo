@@ -1,7 +1,5 @@
-import pytest
 from unittest.mock import Mock
-from dimo_client import DimoClient
-from auth import Auth
+from custom_components.dimo.dimoapi import DimoClient, Auth
 
 
 def test_auth_get_token(mocker):

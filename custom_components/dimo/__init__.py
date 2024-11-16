@@ -8,15 +8,14 @@ import logging
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_CLIENT_ID, Platform
+from homeassistant.const import CONF_CLIENT_ID
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DOMAIN, PLATFORMS
-from .dimoapi.auth import Auth
-from .dimoapi.dimo_client import DimoClient
+from .dimoapi import Auth, DimoClient
 from .helpers import get_key
 
 _LOGGER = logging.getLogger(__name__)
