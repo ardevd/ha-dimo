@@ -92,3 +92,46 @@ def test_auth_get_privileged_token(mocker):
     dimo_mock.token_exchange.exchange.assert_called_once_with(
         auth.token, privileges=[1, 3], token_id=vehicle_token_id
     )
+
+
+def test_auth_invalid_client_id_error(mocker):
+    dimo_mock = Mock()
+    # Simulate HTTPError with 404
+    mocker.patch(
+        "requests.post",
+        side_effect=requests.exceptions.HTTPError(
+            "404 Client Error: Not Found for url: https://auth.dimo.zone/auth/web3/generate_challenge"
+        ),
+    )
+    dimo_mock.auth.get_token = Mock(side_effect=requests.exceptions.HTTPError("404"))
+
+    auth = Auth("invalid_client_id", "domain", "private_key", dimo=dimo_mock)
+
+    with pytest.raises(Auth.InvalidClientIdError):
+        auth.get_token()
+
+
+def test_auth_invalid_credentials_error(mocker):
+    dimo_mock = Mock()
+    # Simulate HTTPError with 400
+    dimo_mock.auth.get_token = Mock(side_effect=requests.exceptions.HTTPError("400"))
+
+    auth = Auth("client_id", "domain", "invalid_private_key", dimo=dimo_mock)
+
+    with pytest.raises(Auth.InvalidCredentialsError):
+        auth.get_token()
+
+
+def test_auth_invalid_api_key_format(mocker):
+    dimo_mock = Mock()
+    # Simulate ValueError
+    dimo_mock.auth.get_token = Mock(
+        side_effect=ValueError(
+            "The private key must be exactly 32 bytes long, instead of 65 bytes"
+        )
+    )
+
+    auth = Auth("client_id", "domain", "bad_key_format", dimo=dimo_mock)
+
+    with pytest.raises(Auth.InvalidApiKeyFormat):
+        auth.get_token()
