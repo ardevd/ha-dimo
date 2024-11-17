@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import (
+    PERCENTAGE,
     Platform,
     UnitOfElectricPotential,
     UnitOfSpeed,
@@ -57,5 +58,11 @@ SIGNALS = {
         Platform.SENSOR,
         SensorDeviceClass.TEMPERATURE,
         UnitOfTemperature.CELSIUS,
+    ),
+    "powertrainTractionBatteryStateOfChargeCurrent": SignalDef(
+        "EV Battery State of Charge",
+        Platform.SENSOR,
+        SensorDeviceClass.BATTERY,
+        PERCENTAGE,
     ),
 }
