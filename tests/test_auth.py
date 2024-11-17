@@ -1,3 +1,5 @@
+import requests
+import pytest
 from unittest.mock import Mock
 from custom_components.dimo.dimoapi import DimoClient, Auth
 
@@ -92,3 +94,21 @@ def test_auth_get_privileged_token(mocker):
     dimo_mock.token_exchange.exchange.assert_called_once_with(
         auth.token, privileges=[1, 3], token_id=vehicle_token_id
     )
+
+
+@pytest.mark.parametrize(
+    "mocked_exception,expected_exception",
+    [
+        (requests.exceptions.HTTPError("404"), Auth.InvalidClientIdError),
+        (requests.exceptions.HTTPError("400"), Auth.InvalidCredentialsError),
+        (ValueError("Invalid API key format"), Auth.InvalidApiKeyFormat),
+    ],
+)
+def test_auth_exceptions(mocker, mocked_exception, expected_exception):
+    dimo_mock = Mock()
+    dimo_mock.auth.get_token = Mock(side_effect=mocked_exception)
+
+    auth = Auth("client_id", "domain", "private_key", dimo=dimo_mock)
+
+    with pytest.raises(expected_exception):
+        auth.get_token()
