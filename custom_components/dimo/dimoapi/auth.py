@@ -1,9 +1,27 @@
+import requests
 import dimo as dimo_api
 import time
 from loguru import logger
 
 
 class Auth:
+    """Wrapper for the DIMO SDK authentication related features"""
+
+    class InvalidClientIdError(Exception):
+        """ClientID value is invalid or unknown"""
+
+        pass
+
+    class InvalidCredentialsError(Exception):
+        """Provided credentials are not correct"""
+
+        pass
+
+    class InvalidApiKeyFormat(Exception):
+        """API key format is invalid"""
+
+        pass
+
     def __init__(self, client_id, domain, private_key, dimo=None):
         self.client_id = client_id
         self.domain = domain
@@ -33,13 +51,24 @@ class Auth:
 
     def _get_auth(self):
         logger.debug("Retrieving access token")
-        auth_header = self.dimo.auth.get_token(
-            client_id=self.client_id,
-            domain=self.domain,
-            private_key=self.private_key,
-        )
-        self.token = auth_header["access_token"]
-        logger.debug("access token retrieved")
+        try:
+            auth_header = self.dimo.auth.get_token(
+                client_id=self.client_id,
+                domain=self.domain,
+                private_key=self.private_key,
+            )
+            self.token = auth_header["access_token"]
+            logger.debug("access token retrieved")
+        except requests.exceptions.HTTPError as e:
+            if "404" in str(e):
+                raise self.InvalidClientIdError
+            elif "400" in str(e):
+                raise self.InvalidCredentialsError
+            else:
+                raise  # Re-raise for unexpected errors
+
+        except ValueError as e:
+            raise self.InvalidApiKeyFormat
 
     def get_token(self):
         if self.token is None:
