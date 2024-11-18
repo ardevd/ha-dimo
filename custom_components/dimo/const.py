@@ -48,6 +48,12 @@ SIGNALS = {
         SensorDeviceClass.SPEED,
         UnitOfSpeed.KILOMETERS_PER_HOUR,
     ),
+    "powertrainRange": SignalDef(
+        "Powertrain Range",
+        Platform.SENSOR,
+        SensorDeviceClass.DISTANCE,
+        UnitOfLength.KILOMETERS,
+    ),
     "powertrainTransmissionTravelledDistance": SignalDef(
         "Odometer",
         Platform.SENSOR,
