@@ -10,6 +10,7 @@ from homeassistant.const import (
     UnitOfElectricPotential,
     UnitOfSpeed,
     UnitOfLength,
+    UnitOfPressure,
     UnitOfTemperature,
 )
 
@@ -64,5 +65,29 @@ SIGNALS = {
         Platform.SENSOR,
         SensorDeviceClass.BATTERY,
         PERCENTAGE,
+    ),
+    "chassisAxleRow1WheelLeftTirePressure": SignalDef(
+        "Axle Row 1 Wheel Left Tire Pressure",
+        Platform.SENSOR,
+        SensorDeviceClass.PRESSURE,
+        UnitOfPressure.KPA,
+    ),
+    "chassisAxleRow1WheelRightTirePressure": SignalDef(
+        "Axle Row 1 Wheel Right Tire Pressure",
+        Platform.SENSOR,
+        SensorDeviceClass.PRESSURE,
+        UnitOfPressure.KPA,
+    ),
+    "chassisAxleRow2WheelLeftTirePressure": SignalDef(
+        "Axle Row 2 Wheel Left Tire Pressure",
+        Platform.SENSOR,
+        SensorDeviceClass.PRESSURE,
+        UnitOfPressure.KPA,
+    ),
+    "chassisAxleRow2WheelRightTirePressure": SignalDef(
+        "Axle Row 2 Wheel Right Tire Pressure",
+        Platform.SENSOR,
+        SensorDeviceClass.PRESSURE,
+        UnitOfPressure.KPA,
     ),
 }
