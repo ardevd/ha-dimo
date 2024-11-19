@@ -37,8 +37,6 @@ class Auth:
         self.private_key = private_key
         self.token = None
         self.privileged_tokens: dict[str, PrivilegedToken] = {}
-        self.privileged_token = None
-        self.privileged_token_expiry = None
         self.dimo = dimo if dimo else dimo_api.DIMO("Production")
 
     def get_privileged_token(self, vehicle_token_id):
