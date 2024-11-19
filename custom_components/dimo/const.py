@@ -100,6 +100,36 @@ SIGNALS = {
         SensorDeviceClass.PRESSURE,
         UnitOfPressure.KPA,
     ),
+    "powertrainCombustionEngineSpeed": SignalDef(
+        "Engine Speed",
+        Platform.SENSOR,
+        None,
+        "RPM",
+    ),
+    "powertrainCombustionEngineTPS": SignalDef(
+        "Throttle Position",
+        Platform.SENSOR,
+        None,
+        PERCENTAGE,
+    ),
+    "powertrainFuelSystemRelativeLevel": SignalDef(
+        "Fuel Level",
+        Platform.SENSOR,
+        None,
+        PERCENTAGE,
+    ),
+    "obdIntakeTemp": SignalDef(
+        "Intake Temperature",
+        Platform.SENSOR,
+        SensorDeviceClass.TEMPERATURE,
+        UnitOfTemperature.CELSIUS,
+    ),
+    "obdEngineLoad": SignalDef(
+        "Engine Load",
+        Platform.SENSOR,
+        None,
+        PERCENTAGE,
+    ),
     # These are not processed but are here to stop being added as a sensor entity
     "currentLocationLatitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
     "currentLocationLongitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
