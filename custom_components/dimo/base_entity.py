@@ -3,7 +3,6 @@
 import logging
 from typing import Any
 
-from config.custom_components.dimo.const import SIGNALS
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.core import callback
@@ -11,6 +10,7 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import DimoUpdateCoordinator
+from .const import SIGNALS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ class DimoBaseEntity(CoordinatorEntity):
     ) -> None:
         """Initialise."""
         super().__init__(coordinator)
-
+        self.coordinator = coordinator
         self.vehicle_token_id = vehicle_token_id
         self.key = key
 

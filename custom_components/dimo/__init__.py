@@ -145,6 +145,9 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
                 self.vehicle_data[vehicle_token_id].available_signals = get_key(
                     "data.availableSignals", available_signals_data
                 )
+            _LOGGER.debug(
+                "AVAILABLE SIGNALS: %s - %s", vehicle_token_id, available_signals_data
+            )
         else:
             _LOGGER.error(
                 "Unable to fetch available signals data for %s.  Not a known vehicle on this account",
@@ -178,7 +181,6 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         for vehicle_token_id in self.vehicle_data:
             await self.get_signals_data_for_vehicle(vehicle_token_id)
 
-        _LOGGER.debug("VEHICLES DATA: %s", self.vehicle_data)
         return True
 
     def create_vehicle_device(self, vehicle_token_id: str):
