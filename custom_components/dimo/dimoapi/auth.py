@@ -35,7 +35,7 @@ class Auth:
         if not self.privileged_token or self._is_privileged_token_expired():
             logger.debug("Obtaining privileged token")
             self.privileged_token = self.dimo.token_exchange.exchange(
-                self.token, privileges=[1, 3], token_id=vehicle_token_id
+                self.token, privileges=[1, 2, 3, 4], token_id=vehicle_token_id
             )
             self.privileged_token_expiry = time.time() + 600
             logger.debug("New privileged token obtained")
