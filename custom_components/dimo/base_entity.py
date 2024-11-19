@@ -25,7 +25,7 @@ class DimoBaseEntity(CoordinatorEntity):
     ) -> None:
         """Initialise."""
         super().__init__(coordinator)
-
+        self.coordinator = coordinator
         self.vehicle_token_id = vehicle_token_id
         self.key = key
 
