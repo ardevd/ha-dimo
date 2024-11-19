@@ -1,7 +1,16 @@
+from dataclasses import dataclass
 import requests
 import dimo as dimo_api
 import time
 from loguru import logger
+
+
+@dataclass
+class PrivilegedToken:
+    """Class to hold privileged tokens."""
+
+    token: str
+    token_expiry: float = 0
 
 
 class Auth:
@@ -27,27 +36,33 @@ class Auth:
         self.domain = domain
         self.private_key = private_key
         self.token = None
+        self.privileged_tokens: dict[str, PrivilegedToken] = {}
         self.privileged_token = None
         self.privileged_token_expiry = None
         self.dimo = dimo if dimo else dimo_api.DIMO("Production")
 
     def get_privileged_token(self, vehicle_token_id):
-        if not self.privileged_token or self._is_privileged_token_expired():
-            logger.debug("Obtaining privileged token")
-            self.privileged_token = self.dimo.token_exchange.exchange(
+        if not self.privileged_tokens.get(
+            vehicle_token_id
+        ) or self._is_privileged_token_expired(vehicle_token_id):
+            logger.debug(f"Obtaining privileged token for {vehicle_token_id}")
+            token = self.dimo.token_exchange.exchange(
                 self.token, privileges=[1, 2, 3, 4], token_id=vehicle_token_id
             )
-            self.privileged_token_expiry = time.time() + 600
+            token_expiry = time.time() + 600
+
+            self.privileged_tokens[vehicle_token_id] = PrivilegedToken(
+                token, token_expiry
+            )
             logger.debug("New privileged token obtained")
 
-        return self.privileged_token
+        return self.privileged_tokens[vehicle_token_id].token
 
-    def _is_privileged_token_expired(self):
-        """Assert privileged token expiration"""
-        return (
-            not self.privileged_token_expiry
-            or time.time() >= self.privileged_token_expiry
-        )
+    def _is_privileged_token_expired(self, vehicle_token_id: str) -> bool:
+        """Assert privileged token expiration."""
+        if self.privileged_tokens.get(vehicle_token_id):
+            return time.time() >= self.privileged_tokens[vehicle_token_id].token_expiry
+        return True
 
     def _get_auth(self):
         logger.debug("Retrieving access token")
