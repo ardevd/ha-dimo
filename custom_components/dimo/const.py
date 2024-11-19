@@ -8,9 +8,9 @@ from homeassistant.const import (
     PERCENTAGE,
     Platform,
     UnitOfElectricPotential,
-    UnitOfSpeed,
     UnitOfLength,
     UnitOfPressure,
+    UnitOfSpeed,
     UnitOfTemperature,
 )
 
@@ -19,7 +19,11 @@ CONF_PRIVATE_KEY = "private_key"
 CONF_AUTH_PROVIDER = "auth_provider"
 CONF_LICENSE_ID = "license_id"
 
-PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR]
+PLATFORMS: list[Platform] = [
+    Platform.BINARY_SENSOR,
+    Platform.DEVICE_TRACKER,
+    Platform.SENSOR,
+]
 
 
 @dataclass
@@ -96,4 +100,7 @@ SIGNALS = {
         SensorDeviceClass.PRESSURE,
         UnitOfPressure.KPA,
     ),
+    # These are not processed but are here to stop being added as a sensor entity
+    "currentLocationLatitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
+    "currentLocationLongitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
 }
