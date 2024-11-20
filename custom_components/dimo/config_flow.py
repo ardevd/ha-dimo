@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+import requests
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
@@ -13,7 +14,13 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 
 from .const import CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DOMAIN
-from .dimoapi import Auth, DimoClient
+from .dimoapi import (
+    Auth,
+    DimoClient,
+    InvalidApiKeyFormat,
+    InvalidClientIdError,
+    InvalidCredentialsError,
+)
 from .helpers import get_key
 
 _LOGGER = logging.getLogger(__name__)
@@ -49,9 +56,10 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
                 _LOGGER.debug("CF Vehicles: %s", vehicles)
                 return {"title": "DIMO"}
         raise NoVehiclesException  # noqa: TRY301
-    except Exception as ex:
-        # TODO: Handle specific exceptions from DimoClient when added
-        raise CannotConnect("Error connecting to DIMO api") from ex
+    except InvalidCredentialsError as ex:
+        raise InvalidAuth from ex
+    except requests.exceptions.HTTPError as ex:
+        raise CannotConnect from ex
 
 
 class ConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -71,6 +79,10 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors["base"] = "cannot_connect"
             except InvalidAuth:
                 errors["base"] = "invalid_auth"
+            except InvalidClientIdError:
+                errors["base"] = "invalid_client_id"
+            except InvalidApiKeyFormat:
+                errors["base"] = "invalid_api_key"
             except NoVehiclesException:
                 errors["base"] = "no_vehicles"
             except Exception:
