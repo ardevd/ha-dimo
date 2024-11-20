@@ -142,6 +142,18 @@ SIGNALS = {
         BinarySensorDeviceClass.BATTERY_CHARGING,
         None,
     ),
+    "obdMAP": SignalDef(
+        "Intake Manifold Pressure",
+        Platform.SENSOR,
+        SensorDeviceClass.PRESSURE,
+        UnitOfPressure.KPA,
+    ),
+    "powertrainCombustionEngineMAF": SignalDef(
+        "Engine Mass Airflow",
+        Platform.SENSOR,
+        None,
+        "g/s",
+    ),
     # These are not processed but are here to stop being added as a sensor entity
     "currentLocationLatitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
     "currentLocationLongitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
