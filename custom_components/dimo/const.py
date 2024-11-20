@@ -100,6 +100,12 @@ SIGNALS = {
         SensorDeviceClass.PRESSURE,
         UnitOfPressure.KPA,
     ),
+    "obdBarometricPressure": SignalDef(
+        "Barometric Pressure",
+        Platform.SENSOR,
+        SensorDeviceClass.PRESSURE,
+        UnitOfPressure.KPA,
+    ),
     "powertrainCombustionEngineSpeed": SignalDef(
         "Engine Speed",
         Platform.SENSOR,
