@@ -136,6 +136,12 @@ SIGNALS = {
         None,
         PERCENTAGE,
     ),
+    "powertrainTractionBatteryChargingIsCharging": SignalDef(
+        "EV Battery Charging",
+        Platform.BINARY_SENSOR,
+        BinarySensorDeviceClass.BATTERY_CHARGING,
+        None,
+    ),
     # These are not processed but are here to stop being added as a sensor entity
     "currentLocationLatitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
     "currentLocationLongitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
