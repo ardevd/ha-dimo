@@ -137,9 +137,9 @@ SIGNALS = {
         PERCENTAGE,
     ),
     "powertrainTractionBatteryChargingIsCharging": SignalDef(
-        "EV Battery Charger",
+        "EV Battery Charging",
         Platform.BINARY_SENSOR,
-        BinarySensorDeviceClass.PLUG,
+        BinarySensorDeviceClass.BATTERY_CHARGING,
         None,
     ),
     # These are not processed but are here to stop being added as a sensor entity
