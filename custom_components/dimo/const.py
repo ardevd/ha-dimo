@@ -100,6 +100,12 @@ SIGNALS = {
         SensorDeviceClass.PRESSURE,
         UnitOfPressure.KPA,
     ),
+    "obdBarometricPressure": SignalDef(
+        "Barometric Pressure",
+        Platform.SENSOR,
+        SensorDeviceClass.PRESSURE,
+        UnitOfPressure.KPA,
+    ),
     # These are not processed but are here to stop being added as a sensor entity
     "currentLocationLatitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
     "currentLocationLongitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
