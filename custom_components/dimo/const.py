@@ -142,7 +142,7 @@ SIGNALS = {
         BinarySensorDeviceClass.BATTERY_CHARGING,
         None,
     ),
-    "obdMAP": SignaDef(
+    "obdMAP": SignalDef(
         "Intake Manifold Pressure",
         Platform.SENSOR,
         SensorDeviceClass.PRESSURE,
