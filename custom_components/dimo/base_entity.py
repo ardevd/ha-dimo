@@ -33,6 +33,7 @@ class DimoBaseEntity(CoordinatorEntity):
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         _LOGGER.debug("%s device update requested", self.name)
+        self.async_write_ha_state()
 
     @property
     def name(self):
