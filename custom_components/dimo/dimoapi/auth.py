@@ -16,21 +16,6 @@ class PrivilegedToken:
 class Auth:
     """Wrapper for the DIMO SDK authentication related features"""
 
-    class InvalidClientIdError(Exception):
-        """ClientID value is invalid or unknown"""
-
-        pass
-
-    class InvalidCredentialsError(Exception):
-        """Provided credentials are not correct"""
-
-        pass
-
-    class InvalidApiKeyFormat(Exception):
-        """API key format is invalid"""
-
-        pass
-
     def __init__(self, client_id, domain, private_key, dimo=None):
         self.client_id = client_id
         self.domain = domain
@@ -74,14 +59,13 @@ class Auth:
             logger.debug("access token retrieved")
         except requests.exceptions.HTTPError as e:
             if "404" in str(e):
-                raise self.InvalidClientIdError
-            elif "400" in str(e):
-                raise self.InvalidCredentialsError
-            else:
-                raise  # Re-raise for unexpected errors
+                raise InvalidClientIdError from e
+            if "400" in str(e):
+                raise InvalidCredentialsError from e
+            raise  # Re-raise for unexpected errors
 
         except ValueError as e:
-            raise self.InvalidApiKeyFormat
+            raise InvalidApiKeyFormat from e
 
     def get_token(self):
         if self.token is None:
@@ -90,3 +74,15 @@ class Auth:
 
     def get_dimo(self):
         return self.dimo
+
+
+class InvalidClientIdError(Exception):
+    """ClientID value is invalid or unknown."""
+
+
+class InvalidCredentialsError(Exception):
+    """Provided credentials are not correct."""
+
+
+class InvalidApiKeyFormat(Exception):
+    """API key format is invalid."""

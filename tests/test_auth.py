@@ -2,6 +2,11 @@ import requests
 import pytest
 from unittest.mock import Mock
 from custom_components.dimo.dimoapi import DimoClient, Auth
+from custom_components.dimo.dimoapi.auth import (
+    InvalidApiKeyFormat,
+    InvalidClientIdError,
+    InvalidCredentialsError,
+)
 
 
 def test_auth_get_token(mocker):
@@ -99,9 +104,9 @@ def test_auth_get_privileged_token(mocker):
 @pytest.mark.parametrize(
     "mocked_exception,expected_exception",
     [
-        (requests.exceptions.HTTPError("404"), Auth.InvalidClientIdError),
-        (requests.exceptions.HTTPError("400"), Auth.InvalidCredentialsError),
-        (ValueError("Invalid API key format"), Auth.InvalidApiKeyFormat),
+        (requests.exceptions.HTTPError("404"), InvalidClientIdError),
+        (requests.exceptions.HTTPError("400"), InvalidCredentialsError),
+        (ValueError("Invalid API key format"), InvalidApiKeyFormat),
     ],
 )
 def test_auth_exceptions(mocker, mocked_exception, expected_exception):

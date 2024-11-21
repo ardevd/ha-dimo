@@ -14,8 +14,15 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
+from .config_flow import InvalidAuth, NoVehiclesException
 from .const import CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DOMAIN, PLATFORMS
-from .dimoapi import Auth, DimoClient
+from .dimoapi import (
+    Auth,
+    DimoClient,
+    InvalidApiKeyFormat,
+    InvalidClientIdError,
+    InvalidCredentialsError,
+)
 from .helpers import get_key
 
 _LOGGER = logging.getLogger(__name__)
@@ -42,8 +49,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: DIMOConfigEntry) -> bool
     client = DimoClient(auth)
     try:
         await hass.async_add_executor_job(client.init)
+    except (
+        InvalidAuth,
+        InvalidClientIdError,
+        InvalidCredentialsError,
+        InvalidApiKeyFormat,
+    ):
+        _LOGGER.error(
+            "Unable to setup Dimo integration due to invalid credentials.  Please check them and try again"
+        )
+        return False
+    except NoVehiclesException as ex:
+        _LOGGER.error(
+            "Unable to setup Dimo integration due to having no vehicles shared with your account.  Please check you have vehicles shared"
+        )
+        raise ConfigEntryNotReady from ex
     except Exception as ex:
-        # TODO: Handle specific exceptions from api for failed token retrieval
         raise ConfigEntryNotReady from ex
 
     coordinator = DimoUpdateCoordinator(hass, entry, client)
@@ -115,14 +136,13 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
 
     async def get_user_data(self):
         """Get and store user data."""
-        # TODO: Not sure if we need this - remove if not
-        self.user_data = await self.hass.async_add_executor_job(
+        self.user_data = await self.get_api_data(
             self.client.dimo.user.user, self.client.auth.token
         )
 
     async def get_vehicles_data(self):
         """Get all vehicle data."""
-        vehicles_data = await self.hass.async_add_executor_job(
+        vehicles_data = await self.get_api_data(
             self.client.get_all_vehicles_for_license, self.entry.data[CONF_CLIENT_ID]
         )
         vehicles = get_key("data.vehicles.nodes", vehicles_data)
@@ -138,7 +158,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
 
         # Validate vehicle is in our list
         if vehicle_token_id in self.vehicle_data:
-            available_signals_data = await self.hass.async_add_executor_job(
+            available_signals_data = await self.get_api_data(
                 self.client.get_available_signals, vehicle_token_id
             )
             if available_signals_data:
@@ -157,7 +177,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
     async def get_signals_data_for_vehicle(self, vehicle_token_id: str):
         """Get data for list of available signals for vehicle."""
         if self.vehicle_data.get(vehicle_token_id):
-            signals_data = await self.hass.async_add_executor_job(
+            signals_data = await self.get_api_data(
                 self.client.get_latest_signals,
                 vehicle_token_id,
                 self.vehicle_data[vehicle_token_id].available_signals,
@@ -182,6 +202,32 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             await self.get_signals_data_for_vehicle(vehicle_token_id)
 
         return True
+
+    async def get_api_data(self, target, *args) -> dict[str, Any] | None:
+        """Request data from api."""
+        try:
+            return await self.hass.async_add_executor_job(target, *args)
+        except InvalidClientIdError:
+            _LOGGER.error(
+                "Unable to reteive data from the Dimo api due to an invalid client id"
+            )
+            raise
+        except InvalidApiKeyFormat:
+            _LOGGER.error(
+                "Unable to reteive data from the Dimo api due to an invalid api key"
+            )
+            raise
+        except NoVehiclesException:
+            _LOGGER.error(
+                "No vehicles exist on this account.  Please check your vehicle sharing in the Dimo app"
+            )
+            raise
+        except Exception as ex:  # noqa: BLE001
+            _LOGGER.error(
+                "An unknown error occurred trying to retrieve data from the Dimo api.  Error is: %s",
+                ex,
+            )
+            raise
 
     def create_vehicle_device(self, vehicle_token_id: str):
         """Create device for vehicle."""
