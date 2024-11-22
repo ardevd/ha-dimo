@@ -38,7 +38,7 @@ We realize that this is a high bar to entry, but the DIMO team is working on an 
 
 Ready to connect your car? Follow these steps:
 
-### 0: Sign up to DIMO and connect your vehicle(s)
+### 0. Sign up to DIMO and connect your vehicle(s)
 Download the DIMO mobile app to get going. You can use the smartcar connection and/or DIMO hardware 
 to onboard your vehicle(s).
 
