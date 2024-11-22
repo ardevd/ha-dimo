@@ -57,7 +57,7 @@ The Home Assistant integration can only access vehicles you've decided to share 
 - Select your vehicle and go to "Vehicle Settings"
 - Click "Permission Sharing", tap the "+" sign in the top corner and input the `client_id` address from the DIMO console.
 - High-five yourself for being tech-savvy! You've just interacted with a blockchain smart contract!
-    - You can use tools such as Polygonscan or tenderly to view your transaction and the source code it intercated with! It's pretty cool!
+    - You can use tools such as Polygonscan or tenderly to view your transaction and the source code it interacted with! It's pretty cool!
 
 ### 3. Configure the Integration in Home Assistant
 
