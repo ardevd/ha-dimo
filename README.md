@@ -17,7 +17,7 @@ Welcome to the **DIMO Integration for Home Assistant**! Bring your vehicle's tel
 ## 🛠 Installation
 
 First, a quick note. Onboarding is currently a tad bit convoluted and requires a license fee which, as of current writing, needs to be paid with DIMO or POL tokens.
-We realize that this is a high bar to entry, but the DIMO team is working on an update that will wave the fee requirement for personal/open source use. We're eager to have people test out this integration but consider yourself an early adopter.
+We realize that this is a high bar to entry, but the DIMO team is working on an update that will wave the fee requirement for personal/open source use. We're eager to have people test out this integration but consider yourself an early adopter. If you encounter any issues, feel free to reach out and create a Github issue.
 
 ### Option 1: HACS (Home Assistant Community Store) (COMING SOON)
 
@@ -95,6 +95,6 @@ This project is licensed under the MIT License—because sharing is caring.
 
 ## 🚦 Final Thoughts
 
-This integration, as well as DIMO is still relatively early in development. Things will change and (hopefully) improve with time. 
+This integration, as well as DIMO, is still relatively early in development. Things will change and (hopefully) improve with time.
 
 Also, the maintainers of this integration are not officially affiliated with DIMO.
