@@ -4,7 +4,7 @@ Welcome to the **DIMO Integration for Home Assistant**! Bring your vehicle's tel
 
 ## 🧐 What's DIMO?
 
-[DIMO](https://dimo.org) is an open-source platform that connects your vehicle to a decentralized network, providing secure and trustless access to your car's telemetry data. DIMO provides an open protocol using blockchain to establish universal digital vehicle identity, permissions, data transmission and vehicle control.
+[DIMO](https://dimo.co) is an open-source platform that connects your vehicle to a decentralized network, providing secure and trustless access to your car's telemetry data. DIMO provides an open protocol using blockchain to establish universal digital vehicle identity, permissions, data transmission and vehicle control.
 
 ## 🚀 Features
 
