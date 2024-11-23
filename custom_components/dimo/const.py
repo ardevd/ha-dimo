@@ -160,6 +160,12 @@ SIGNALS = {
         SensorDeviceClass.TEMPERATURE,
         UnitOfTemperature.CELSIUS,
     ),
+    "currentLocationAltitude": SignalDef(
+        "Altitude",
+        Platform.SENSOR,
+        SensorDeviceClass.DISTANCE,
+        UnitOfLength.METERS,
+    ),
     # These are not processed but are here to stop being added as a sensor entity
     "currentLocationLatitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
     "currentLocationLongitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
