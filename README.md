@@ -16,7 +16,8 @@ Welcome to the **DIMO Integration for Home Assistant**! Bring your vehicle's tel
 
 ## 🛠 Installation
 
-First, a quick note. Onboarding is currently a tad bit convoluted and requires a license fee which, as of current writing, needs to be paid with DIMO or POL tokens.
+First, a quick note. Onboarding is currently a tad bit convoluted and requires a license fee which, as of current writing, needs to be paid with DIMO or POL tokens. POL tokens are available on all major crypto currency exchanges.
+
 We realize that this is a high bar to entry, but the DIMO team is working on an update that will wave the fee requirement for personal/open source use. We're eager to have people test out this integration but consider yourself an early adopter. If you encounter any issues, feel free to reach out and create a Github issue.
 
 ### Option 1: HACS (Home Assistant Community Store) (COMING SOON)
@@ -63,7 +64,7 @@ The Home Assistant integration can only access vehicles you've decided to share 
 
 - In Home Assistant, go to **Configuration** > **Devices & Services**.
 - Click on **Add Integration** and search for "DIMO".
-- When prompted, enter your `client_id`, `domain`, and `private key`.
+- When prompted, enter your `client_id`, `Redirect URI`, and `API Key`.
 - Click **Submit** and let the integration work its magic.
 
 ## 🎉 You're All Set!
