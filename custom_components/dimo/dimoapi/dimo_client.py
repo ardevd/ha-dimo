@@ -1,5 +1,5 @@
 from loguru import logger
-from auth import Auth
+from .auth import Auth
 
 
 class DimoClient:

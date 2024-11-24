@@ -1,5 +1,5 @@
 from unittest.mock import Mock
-from dimo_client import DimoClient
+from custom_components.dimo.dimoapi import DimoClient
 
 
 def test_dimo_client_init():

@@ -1,0 +1,27 @@
+name: Publish
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  release_zip_file:
+    name: Publish Dimo zip file asset
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      # Pack the Dimo dir as a zip and upload to the release
+      - name: ZIP Dimo Dir
+        if: ${{ github.event_name == 'release' }}
+        run: |
+          cd ${{ github.workspace }}/custom_components/dimo
+          zip dimo.zip -r ./
+      - name: Upload zip to release
+        uses: softprops/action-gh-release@v2
+        if: ${{ github.event_name == 'release' }}
+        with:
+          files: ${{ github.workspace }}/custom_components/dimo/dimo.zip
