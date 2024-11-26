@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import requests
 import dimo as dimo_api
 import time
-import datetime
+from datetime import datetime, timezone
 from loguru import logger
 import jwt
 
@@ -50,6 +50,7 @@ class Auth:
             if exp:
                 expiration_time = datetime.fromtimestamp(exp, timezone.utc)
                 current_time = datetime.now(timezone.utc)
+
                 return current_time > expiration_time
         return True
 
