@@ -10,7 +10,6 @@ from custom_components.dimo.dimoapi.auth import (
     InvalidClientIdError,
     InvalidCredentialsError,
 )
-from astral import now
 
 
 def test_auth_get_token(mocker):
