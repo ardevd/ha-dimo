@@ -2,7 +2,9 @@ from dataclasses import dataclass
 import requests
 import dimo as dimo_api
 import time
+from datetime import datetime, timezone
 from loguru import logger
+import jwt
 
 
 @dataclass
@@ -10,7 +12,6 @@ class PrivilegedToken:
     """Class to hold privileged tokens."""
 
     token: str
-    token_expiry: float = 0
 
 
 class Auth:
@@ -32,11 +33,8 @@ class Auth:
             token = self.dimo.token_exchange.exchange(
                 self.token, privileges=[1, 2, 3, 4], token_id=vehicle_token_id
             )
-            token_expiry = time.time() + 600
 
-            self.privileged_tokens[vehicle_token_id] = PrivilegedToken(
-                token, token_expiry
-            )
+            self.privileged_tokens[vehicle_token_id] = PrivilegedToken(token)
             logger.debug("New privileged token obtained")
 
         return self.privileged_tokens[vehicle_token_id].token
@@ -44,7 +42,16 @@ class Auth:
     def _is_privileged_token_expired(self, vehicle_token_id: str) -> bool:
         """Assert privileged token expiration."""
         if self.privileged_tokens.get(vehicle_token_id):
-            return time.time() >= self.privileged_tokens[vehicle_token_id].token_expiry
+            decoded_token = jwt.decode(
+                self.privileged_tokens[vehicle_token_id].token["token"],
+                options={"verify_signature": False},
+            )
+            exp = decoded_token.get("exp")
+            if exp:
+                expiration_time = datetime.fromtimestamp(exp, timezone.utc)
+                current_time = datetime.now(timezone.utc)
+
+                return current_time > expiration_time
         return True
 
     def _get_auth(self):

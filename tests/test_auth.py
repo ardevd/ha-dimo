@@ -1,8 +1,11 @@
+import jwt
 import requests
+from datetime import datetime, timedelta, timezone
 import pytest
 from unittest.mock import Mock
 from custom_components.dimo.dimoapi import DimoClient, Auth
 from custom_components.dimo.dimoapi.auth import (
+    PrivilegedToken,
     InvalidApiKeyFormat,
     InvalidClientIdError,
     InvalidCredentialsError,
@@ -117,3 +120,41 @@ def test_auth_exceptions(mocker, mocked_exception, expected_exception):
 
     with pytest.raises(expected_exception):
         auth.get_token()
+
+
+def create_mock_token(exp_offset):
+    """
+    Helper function to create a mock JWT token with a specific expiration offset.
+    """
+    expiration_time = datetime.now(timezone.utc) + timedelta(seconds=exp_offset)
+    payload = {"exp": expiration_time.timestamp()}
+    return jwt.encode(payload, "secret", algorithm="HS256")
+
+
+def test_is_privileged_token_not_expired(mocker):
+    # Mock the instance and its privileged tokens
+    auth_instance = Auth("client_id", "domain", "private_key")
+    vehicle_token_id = "123"
+    token = create_mock_token(600)  # Expires in 10 minutes
+
+    auth_instance.privileged_tokens[vehicle_token_id] = PrivilegedToken(
+        {"token": token}
+    )
+
+    # Test the method
+    assert not auth_instance._is_privileged_token_expired(vehicle_token_id)
+
+
+def test_is_privileged_token_expired():
+    # Create an instance of Auth
+    auth_instance = Auth("client_id", "domain", "private_key")
+    vehicle_token_id = "123"
+
+    # Generate an expired token (expired 10 minutes ago)
+    jwt_value = create_mock_token(-600)  # Negative offset indicates past expiry
+    auth_instance.privileged_tokens[vehicle_token_id] = PrivilegedToken(
+        {"token": jwt_value}
+    )
+
+    # Assert the token is recognized as expired
+    assert auth_instance._is_privileged_token_expired(vehicle_token_id)
