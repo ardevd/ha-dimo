@@ -2,7 +2,9 @@ from dataclasses import dataclass
 import requests
 import dimo as dimo_api
 import time
+import datetime
 from loguru import logger
+import jwt
 
 
 @dataclass
@@ -44,7 +46,15 @@ class Auth:
     def _is_privileged_token_expired(self, vehicle_token_id: str) -> bool:
         """Assert privileged token expiration."""
         if self.privileged_tokens.get(vehicle_token_id):
-            return time.time() >= self.privileged_tokens[vehicle_token_id].token_expiry
+            decoded_token = jwt.decode(
+                self.privileged_tokens[vehicle_token_id].token["token"],
+                options={"verify_signature": False},
+            )
+            exp = decoded_token.get("exp")
+            if exp:
+                expiration_time = datetime.datetime.utcfromtimestamp(exp)
+                current_time = datetime.datetime.utcnow()
+                return current_time >= expiration_time
         return True
 
     def _get_auth(self):
