@@ -12,7 +12,6 @@ class PrivilegedToken:
     """Class to hold privileged tokens."""
 
     token: str
-    token_expiry: float = 0
 
 
 class Auth:
@@ -34,11 +33,8 @@ class Auth:
             token = self.dimo.token_exchange.exchange(
                 self.token, privileges=[1, 2, 3, 4], token_id=vehicle_token_id
             )
-            token_expiry = time.time() + 600
 
-            self.privileged_tokens[vehicle_token_id] = PrivilegedToken(
-                token, token_expiry
-            )
+            self.privileged_tokens[vehicle_token_id] = PrivilegedToken(token)
             logger.debug("New privileged token obtained")
 
         return self.privileged_tokens[vehicle_token_id].token
