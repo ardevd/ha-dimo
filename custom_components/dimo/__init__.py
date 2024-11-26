@@ -114,7 +114,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             _LOGGER,
             name=f"{DOMAIN} ({entry.unique_id})",
             update_method=self.async_update_data,
-            update_interval=timedelta(seconds=30),
+            update_interval=timedelta(seconds=60),
         )
 
         self.client = client
