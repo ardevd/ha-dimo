@@ -143,3 +143,18 @@ def test_is_privileged_token_not_expired(mocker):
 
     # Test the method
     assert not auth_instance._is_privileged_token_expired(vehicle_token_id)
+
+
+def test_is_privileged_token_expired():
+    # Create an instance of Auth
+    auth_instance = Auth("client_id", "domain", "private_key")
+    vehicle_token_id = "123"
+
+    # Generate an expired token (expired 10 minutes ago)
+    jwt_value = create_mock_token(-600)  # Negative offset indicates past expiry
+    auth_instance.privileged_tokens[vehicle_token_id] = PrivilegedToken(
+        {"token": jwt_value}
+    )
+
+    # Assert the token is recognized as expired
+    assert auth_instance._is_privileged_token_expired(vehicle_token_id)
