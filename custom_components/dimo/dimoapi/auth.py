@@ -48,9 +48,9 @@ class Auth:
             )
             exp = decoded_token.get("exp")
             if exp:
-                expiration_time = datetime.datetime.utcfromtimestamp(exp)
-                current_time = datetime.datetime.utcnow()
-                return current_time >= expiration_time
+                expiration_time = datetime.fromtimestamp(exp, timezone.utc)
+                current_time = datetime.now(timezone.utc)
+                return current_time > expiration_time
         return True
 
     def _get_auth(self):
