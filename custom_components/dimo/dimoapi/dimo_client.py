@@ -13,6 +13,14 @@ class DimoClient:
     def get_vehicle_makes(self):
         return self.dimo.device_definitions.list_device_makes()
 
+    def lock_doors(self, token_id):
+        priv_token = self.auth.get_privileged_token(token_id)
+        return self.dimo.devices.lock_doors(priv_token, token_id)
+
+    def unlock_doors(self, token_id):
+        priv_token = self.auth.get_privileged_token(token_id)
+        return self.dimo.devices.unlock_doors(priv_token, token_id)
+
     def get_available_signals(self, token_id):
         priv_token = self.auth.get_privileged_token(token_id)
         query = f"""
