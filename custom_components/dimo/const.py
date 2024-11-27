@@ -1,3 +1,5 @@
+from homeassistant.const import UnitOfEnergy
+
 """Constants for the DIMO integration."""
 
 from dataclasses import dataclass
@@ -165,6 +167,12 @@ SIGNALS = {
         Platform.SENSOR,
         SensorDeviceClass.DISTANCE,
         UnitOfLength.METERS,
+    ),
+    "powertrainTractionBatteryGrossCapacity": SignalDef(
+        "EV Battery Gross Capacity",
+        Platform.SENSOR,
+        None,
+        UnitOfEnergy.KILO_WATT_HOUR,
     ),
     # These are not processed but are here to stop being added as a sensor entity
     "currentLocationLatitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
