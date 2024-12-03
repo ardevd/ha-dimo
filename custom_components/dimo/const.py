@@ -187,6 +187,12 @@ SIGNALS = {
         SensorDeviceClass.DISTANCE,
         UnitOfLength.KILOMETERS,
     ),
+    "powertrainCombustionEngineECT": SignalDef(
+        "Engine Coolant Temperature",
+        Platform.SENSOR,
+        SensorDeviceClass.TEMPERATURE,
+        UnitOfTemperature.CELSIUS,
+    ),
     # These are not processed but are here to stop being added as a sensor entity
     "currentLocationLatitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
     "currentLocationLongitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
