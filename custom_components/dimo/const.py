@@ -1,3 +1,4 @@
+from homeassistant.const import UnitOfTime
 from homeassistant.const import UnitOfEnergy
 
 """Constants for the DIMO integration."""
@@ -174,6 +175,12 @@ SIGNALS = {
         None,
         UnitOfEnergy.KILO_WATT_HOUR,
     ),
+    "obdRunTime": SignalDef(
+        "Engine Run Time",
+        Platform.SENSOR,
+        None,
+        UnitOfTime.SECONDS,
+    )
     # These are not processed but are here to stop being added as a sensor entity
     "currentLocationLatitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
     "currentLocationLongitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
