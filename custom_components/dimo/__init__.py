@@ -212,7 +212,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         """Update data from api."""
         _LOGGER.debug("Updating from api")
         _LOGGER.debug("Updating Dimo data")
-        self.get_dimo_sensor_data()
+        await self.get_dimo_sensor_data()
 
         _LOGGER.debug("Updating vehicle data")
         for vehicle_token_id in self.vehicle_data:
