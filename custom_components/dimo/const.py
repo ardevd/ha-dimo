@@ -132,6 +132,7 @@ SIGNALS = {
         Platform.SENSOR,
         None,
         "RPM",
+        icon="mdi:engine",
     ),
     "powertrainCombustionEngineTPS": SignalDef(
         "Throttle Position",
@@ -144,6 +145,7 @@ SIGNALS = {
         Platform.SENSOR,
         None,
         PERCENTAGE,
+        icon="mdi:gas-station",
     ),
     "obdIntakeTemp": SignalDef(
         "Intake Temperature",
