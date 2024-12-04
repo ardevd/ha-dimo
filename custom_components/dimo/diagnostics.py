@@ -25,7 +25,12 @@ def _async_get_diagnostics(
     device: DeviceEntry | None = None,
 ) -> dict[str, Any]:
     coordinator = entry.runtime_data.coordinator
-    return [
+
+    diag = {}
+    diag["dimo_data"] = coordinator.dimo_data
+
+    diag["vehicles"] = [
         {token_id: vehicle_data.__dict__}
         for token_id, vehicle_data in coordinator.vehicle_data.items()
     ]
+    return diag
