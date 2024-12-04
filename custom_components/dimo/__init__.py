@@ -252,9 +252,9 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         device_registry.async_get_or_create(
             config_entry_id=self.entry.entry_id,
             identifiers={(DOMAIN, DOMAIN)},
-            manufacturer="Dimo",
-            name="Dimo",
-            model="Dimo",
+            manufacturer="DIMO",
+            name="DIMO",
+            model="DIMO",
         )
 
     def create_vehicle_device(self, vehicle_token_id: str):
