@@ -1,20 +1,20 @@
-from homeassistant.const import UnitOfTime
-from homeassistant.const import UnitOfEnergy
-
 """Constants for the DIMO integration."""
 
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
-from homeassistant.components.sensor import SensorDeviceClass
+from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.const import (
     PERCENTAGE,
     Platform,
     UnitOfElectricPotential,
+    UnitOfEnergy,
     UnitOfLength,
     UnitOfPressure,
     UnitOfSpeed,
     UnitOfTemperature,
+    UnitOfTime,
 )
 
 DOMAIN = "dimo"
@@ -38,7 +38,25 @@ class SignalDef:
     device_class: SensorDeviceClass | BinarySensorDeviceClass | None = None
     unit_of_measure: str | None = None
     icon: str | None = None
+    state_class: SensorStateClass | None = None
 
+
+@dataclass
+class DimoSensorDef(SignalDef):
+    """Class to hold sensor definition for non vehicle sensors."""
+
+    value_fn: str | Callable | None = None
+
+
+DIMO_SENSORS = {
+    "total_vehicles": DimoSensorDef(
+        "Total Dimo Vehicles",
+        Platform.SENSOR,
+        icon="mdi:counter",
+        value_fn="get_total_dimo_vehicles",
+        state_class=SensorStateClass.TOTAL_INCREASING,
+    )
+}
 
 # TODO: Add complete list from schema
 SIGNALS = {

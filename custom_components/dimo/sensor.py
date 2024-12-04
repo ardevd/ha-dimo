@@ -8,8 +8,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import DIMOConfigEntry
-from .base_entity import DimoBaseEntity
-from .const import SIGNALS
+from .base_entity import DimoBaseEntity, DimoBaseVehicleEntity
+from .const import DIMO_SENSORS, DOMAIN, SIGNALS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,10 +25,20 @@ async def async_setup_entry(
 
     entities = []
 
+    # Add Dimo entities
+    entities.extend(
+        [
+            DimoSensorEntity(coordinator, DOMAIN, key)
+            for key, sensor_def in DIMO_SENSORS.items()
+            if sensor_def.platform == Platform.SENSOR
+        ]
+    )
+
+    # Add vehicle entities
     for vehicle_token_id, vehicle_data in coordinator.vehicle_data.items():
         entities.extend(
             [
-                DimoSensorEntity(coordinator, vehicle_token_id, key)
+                DimoVehicleSensorEntity(coordinator, vehicle_token_id, key)
                 for key in vehicle_data.signal_data
                 if vehicle_data.signal_data[key]
                 and (
@@ -42,7 +52,25 @@ async def async_setup_entry(
 
 
 class DimoSensorEntity(DimoBaseEntity, SensorEntity):
-    """Sensor entity."""
+    """Dimo sensor entity."""
+
+    @property
+    def native_value(self):
+        """Return the native value of this entity."""
+        return self.coordinator.dimo_data.get(self.key)
+
+    @property
+    def native_unit_of_measurement(self) -> str | None:
+        """Return the unit of measurement of the sensor, if any."""
+        return (
+            DIMO_SENSORS[self.key].unit_of_measure
+            if DIMO_SENSORS.get(self.key)
+            else None
+        )
+
+
+class DimoVehicleSensorEntity(DimoBaseVehicleEntity, SensorEntity):
+    """Vehicle Sensor entity."""
 
     @property
     def native_value(self):

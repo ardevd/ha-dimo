@@ -15,7 +15,7 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .config_flow import InvalidAuth, NoVehiclesException
-from .const import CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DOMAIN, PLATFORMS
+from .const import CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DIMO_SENSORS, DOMAIN, PLATFORMS
 from .dimoapi import (
     Auth,
     DimoClient,
@@ -120,6 +120,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         self.client = client
         self.entry = entry
 
+        self.dimo_data: dict[str, Any] = {}
         self.user_data: dict[str, Any] = {}
         self.vehicle_data: dict[str, VehicleData] = {}
 
@@ -128,11 +129,23 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         await self.get_user_data()
         await self.get_vehicles_data()
 
+        # Add Dimo device for non vehicle specificic sensors
+        if DIMO_SENSORS:
+            self.create_dimo_device()
+            await self.get_dimo_sensor_data()
+
         if self.vehicle_data:
             for vehicle_token_id in self.vehicle_data:
                 await self.get_available_signals_for_vehicle(vehicle_token_id)
 
                 self.create_vehicle_device(vehicle_token_id)
+
+    async def get_dimo_sensor_data(self):
+        """Get Dimo sensor data from DIMO_SENSORS defs."""
+        for key, sensor_def in DIMO_SENSORS.items():
+            if hasattr(self.client, sensor_def.value_fn):
+                fn = getattr(self.client, sensor_def.value_fn)
+                self.dimo_data[key] = await self.hass.async_add_executor_job(fn)
 
     async def get_user_data(self):
         """Get and store user data."""
@@ -198,6 +211,10 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
     async def async_update_data(self):
         """Update data from api."""
         _LOGGER.debug("Updating from api")
+        _LOGGER.debug("Updating Dimo data")
+        await self.get_dimo_sensor_data()
+
+        _LOGGER.debug("Updating vehicle data")
         for vehicle_token_id in self.vehicle_data:
             await self.get_signals_data_for_vehicle(vehicle_token_id)
 
@@ -228,6 +245,17 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
                 ex,
             )
             raise
+
+    def create_dimo_device(self):
+        """Create device for Dimo sensors."""
+        device_registry = dr.async_get(self.hass)
+        device_registry.async_get_or_create(
+            config_entry_id=self.entry.entry_id,
+            identifiers={(DOMAIN, DOMAIN)},
+            manufacturer="Dimo",
+            name="Dimo",
+            model="Dimo",
+        )
 
     def create_vehicle_device(self, vehicle_token_id: str):
         """Create device for vehicle."""

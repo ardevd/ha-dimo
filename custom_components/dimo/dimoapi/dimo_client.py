@@ -75,4 +75,7 @@ class DimoClient:
         return self.dimo.identity.query(query=query_all_vehicles)
 
     def get_total_dimo_vehicles(self):
-        return self.dimo.identity.count_dimo_vehicles()
+        result = self.dimo.identity.count_dimo_vehicles()
+        if result:
+            return result.get("data", {}).get("vehicles", {}).get("totalCount")
+        return None
