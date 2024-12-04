@@ -21,6 +21,19 @@ class DimoClient:
         priv_token = self.auth.get_privileged_token(token_id)
         return self.dimo.devices.unlock_doors(priv_token, token_id)
 
+    def get_rewards(self, user_addr: str):
+        """Get total token rewards for user wallet"""
+
+        query = f"""
+query GetRewardsByOwner {{
+  rewards (user: "{user_addr}") {{
+    totalTokens
+  }}
+}}
+        """
+
+        return self.dimo.identity.query(query)
+
     def get_available_signals(self, token_id):
         priv_token = self.auth.get_privileged_token(token_id)
         query = f"""
