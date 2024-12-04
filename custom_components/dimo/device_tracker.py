@@ -7,7 +7,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import DIMOConfigEntry, DimoUpdateCoordinator
-from .base_entity import DimoBaseEntity
+from .base_entity import DimoBaseVehicleEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ async def async_setup_entry(
     add_entities(entities)
 
 
-class DimoTrackerEntity(DimoBaseEntity, TrackerEntity):
+class DimoTrackerEntity(DimoBaseVehicleEntity, TrackerEntity):
     """Sensor entity."""
 
     def __init__(
