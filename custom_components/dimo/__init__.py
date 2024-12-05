@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 import logging
 from typing import Any
 
@@ -24,6 +24,7 @@ from .dimoapi import (
     InvalidCredentialsError,
 )
 from .helpers import get_key
+from sqlalchemy.sql.sqltypes import DATETIME
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -210,8 +211,9 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             )
 
             if vehicle_token_rewards:
+                timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
                 self.vehicle_data[vehicle_token_id].signal_data["tokenRewards"] = {
-                    "timestamp": "",
+                    "timestamp": timestamp,
                     "value": vehicle_token_rewards["data"]["vehicle"]["earnings"][
                         "totalTokens"
                     ],
