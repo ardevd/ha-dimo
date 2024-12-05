@@ -24,7 +24,6 @@ from .dimoapi import (
     InvalidCredentialsError,
 )
 from .helpers import get_key
-from sqlalchemy.sql.sqltypes import DATETIME
 
 _LOGGER = logging.getLogger(__name__)
 
