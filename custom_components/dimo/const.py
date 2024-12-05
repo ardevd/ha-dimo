@@ -54,7 +54,7 @@ DIMO_SENSORS = {
         Platform.SENSOR,
         icon="mdi:counter",
         value_fn="get_total_dimo_vehicles",
-        state_class=SensorStateClass.TOTAL_INCREASING,
+        state_class=SensorStateClass.MEASUREMENT,
     )
 }
 
