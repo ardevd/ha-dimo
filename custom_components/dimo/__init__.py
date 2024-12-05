@@ -181,6 +181,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             _LOGGER.debug(
                 "AVAILABLE SIGNALS: %s - %s", vehicle_token_id, available_signals_data
             )
+
         else:
             _LOGGER.error(
                 "Unable to fetch available signals data for %s.  Not a known vehicle on this account",
@@ -202,6 +203,20 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             self.vehicle_data[vehicle_token_id].signal_data_errors = get_key(
                 "errors", signals_data
             )
+
+            vehicle_token_rewards = await self.get_api_data(
+                self.client.get_rewards_for_vehicle,
+                vehicle_token_id,
+            )
+
+            if vehicle_token_rewards:
+                self.vehicle_data[vehicle_token_id].signal_data["tokenRewards"] = {
+                    "timestamp": "",
+                    "value": vehicle_token_rewards["data"]["vehicle"]["earnings"][
+                        "totalTokens"
+                    ],
+                }
+
         else:
             _LOGGER.error(
                 "Unable to fetch signals data for %s.  Not a known vehicle on this account",
