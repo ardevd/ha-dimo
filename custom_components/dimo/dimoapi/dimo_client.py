@@ -13,11 +13,11 @@ class DimoClient:
     def get_vehicle_makes(self):
         return self.dimo.device_definitions.list_device_makes()
 
-    def lock_doors(self, token_id):
+    def lock_doors(self, token_id: str):
         priv_token = self.auth.get_privileged_token(token_id)
         return self.dimo.devices.lock_doors(priv_token, token_id)
 
-    def unlock_doors(self, token_id):
+    def unlock_doors(self, token_id: str):
         priv_token = self.auth.get_privileged_token(token_id)
         return self.dimo.devices.unlock_doors(priv_token, token_id)
 
@@ -35,7 +35,8 @@ query GetVehicleRewardsByTokenId {{
 
         return self.dimo.identity.query(query)
 
-    def get_available_signals(self, token_id):
+    def get_available_signals(self, token_id: str):
+        """Get list of available signals for a specified vehicle"""
         priv_token = self.auth.get_privileged_token(token_id)
         query = f"""
     query {{
@@ -47,6 +48,7 @@ query GetVehicleRewardsByTokenId {{
         return self.dimo.telemetry.query(query, priv_token["token"])
 
     def get_latest_signals(self, token_id, signal_names: list[str]):
+        """Get the latest signal values for the specified vehicle"""
         logger.debug(f"Querying API for {len(signal_names)} signals")
         priv_token = self.auth.get_privileged_token(token_id)
         signals_query = "\n".join(
@@ -65,6 +67,7 @@ query GetVehicleRewardsByTokenId {{
         return self.dimo.telemetry.query(query, priv_token["token"])
 
     def get_all_vehicles_for_license(self, license_id=None):
+        """List all vehicles for the specified license."""
         if license_id is None:
             license_id = self.auth.client_id
 
@@ -89,6 +92,7 @@ query GetVehicleRewardsByTokenId {{
         return self.dimo.identity.query(query=query_all_vehicles)
 
     def get_total_dimo_vehicles(self):
+        """Get the total number of vehicles on DIMO"""
         result = self.dimo.identity.count_dimo_vehicles()
         if result:
             return result.get("data", {}).get("vehicles", {}).get("totalCount")
