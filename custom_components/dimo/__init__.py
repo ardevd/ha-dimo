@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 import logging
 from typing import Any
 
@@ -181,6 +181,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             _LOGGER.debug(
                 "AVAILABLE SIGNALS: %s - %s", vehicle_token_id, available_signals_data
             )
+
         else:
             _LOGGER.error(
                 "Unable to fetch available signals data for %s.  Not a known vehicle on this account",
@@ -202,10 +203,41 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             self.vehicle_data[vehicle_token_id].signal_data_errors = get_key(
                 "errors", signals_data
             )
+
+            # Fetch and store token rewards
+            await self._update_token_rewards(vehicle_token_id)
         else:
             _LOGGER.error(
                 "Unable to fetch signals data for %s.  Not a known vehicle on this account",
                 vehicle_token_id,
+            )
+
+    @staticmethod
+    def _get_current_timestamp():
+        """Get the current UTC timestamp in ISO 8601 format."""
+        return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    async def _update_token_rewards(self, vehicle_token_id: str):
+        """Fetch and update token rewards for a vehicle."""
+        try:
+            rewards_data = await self.get_api_data(
+                self.client.get_rewards_for_vehicle,
+                vehicle_token_id,
+            )
+            if rewards_data:
+                timestamp = self._get_current_timestamp()
+                earnings = rewards_data["data"]["vehicle"]["earnings"]["totalTokens"]
+                self.vehicle_data[vehicle_token_id].signal_data["tokenRewards"] = {
+                    "timestamp": timestamp,
+                    "value": earnings,
+                }
+        except KeyError:
+            _LOGGER.warning(
+                "Rewards data structure unexpected for vehicle %s.", vehicle_token_id
+            )
+        except Exception as e:
+            _LOGGER.error(
+                "Error fetching token rewards for vehicle %s: %s", vehicle_token_id, e
             )
 
     async def async_update_data(self):
