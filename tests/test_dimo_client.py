@@ -3,13 +3,15 @@ from custom_components.dimo.dimoapi import DimoClient
 
 
 def test_dimo_client_init():
-    # Mock the Auth instance
+    # Arrange: Set up mocks
     auth_mock = Mock()
     dimo_client = DimoClient(auth=auth_mock)
 
-    # Check that DimoClient was initialized with the mocked auth
-    assert dimo_client.auth == auth_mock
-    assert dimo_client.dimo == auth_mock.get_dimo.return_value
+    # Act: Call the method under test
+    dimo_client.init()
+
+    # Assert: Verify interactions
+    auth_mock.get_token.assert_called_once()
 
 
 def test_dimo_client_get_vehicle_makes():
