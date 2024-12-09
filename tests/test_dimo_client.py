@@ -25,6 +25,33 @@ def test_dimo_client_get_vehicle_makes():
     dimo_mock.device_definitions.list_device_makes.assert_called_once()
 
 
+def test_dimo_client_get_rewards_for_vehicle():
+    # Arrange: Set up mocks
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    dimo_client = DimoClient(auth=auth_mock)
+    token_id = "vehicle123"
+
+    # Mock the GraphQL query result
+    query_result = {"data": {"vehicle": {"earnings": {"totalTokens": 100.5}}}}
+    dimo_mock.identity.query.return_value = query_result
+
+    # Act: Call the method under test
+    result = dimo_client.get_rewards_for_vehicle(token_id)
+
+    dimo_mock.identity.query.assert_called_once_with(
+        f"""
+query GetVehicleRewardsByTokenId {{
+  vehicle(tokenId: {token_id}) {{
+      earnings {{
+        totalTokens
+      }}
+    }}
+}}
+"""
+    )
+
+
 def test_dimo_client_get_available_signals():
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
