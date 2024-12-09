@@ -42,10 +42,10 @@ def test_dimo_client_get_available_signals():
     assert result == query_result
     dimo_mock.telemetry.query.assert_called_once_with(
         f"""
-    query {{
-      availableSignals(tokenId: {token_id})
-    }}
-    """,
+query AvailableSignals {{
+  availableSignals(tokenId: {token_id})
+}}
+""",
         priv_token["token"],
     )
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
