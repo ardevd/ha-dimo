@@ -43,9 +43,7 @@ def test_dimo_client_get_available_signals():
     dimo_mock.telemetry.query.assert_called_once_with(
         f"""
     query {{
-      availableSignals(
-        tokenId: {token_id}
-      )
+      availableSignals(tokenId: {token_id})
     }}
     """,
         priv_token["token"],
