@@ -60,7 +60,9 @@ DIMO_SENSORS = {
 
 # TODO: Add complete list from schema
 SIGNALS = {
-    "dimoAftermarketNSAT": SignalDef("No of GPS Satellites", Platform.SENSOR),
+    "dimoAftermarketNSAT": SignalDef(
+        "No of GPS Satellites", Platform.SENSOR, icon="mdi:satellite-variant"
+    ),
     "lowVoltageBatteryCurrentVoltage": SignalDef(
         "LV Battery Current Voltage",
         Platform.SENSOR,
@@ -158,6 +160,7 @@ SIGNALS = {
         Platform.SENSOR,
         None,
         PERCENTAGE,
+        icon="mdi:engine",
     ),
     "powertrainTractionBatteryChargingIsCharging": SignalDef(
         "EV Battery Charging",
@@ -176,6 +179,7 @@ SIGNALS = {
         Platform.SENSOR,
         None,
         "g/s",
+        icon="mdi:engine",
     ),
     "powertrainTractionBatteryTemperatureAverage": SignalDef(
         "EV Battery Average Temperature",
@@ -219,6 +223,11 @@ SIGNALS = {
         None,
         "$DIMO",
         icon="mdi:currency-usd",
+    ),
+    "powertrainType": SignalDef(
+        "Powertrain",
+        Platform.SENSOR,
+        icon="mdi:car-cog",
     ),
     # These are not processed but are here to stop being added as a sensor entity
     "currentLocationLatitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
