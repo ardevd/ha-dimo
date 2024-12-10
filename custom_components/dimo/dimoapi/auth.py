@@ -25,7 +25,8 @@ class Auth:
         self.privileged_tokens: dict[str, PrivilegedToken] = {}
         self.dimo = dimo if dimo else dimo_api.DIMO("Production")
 
-    def get_privileged_token(self, vehicle_token_id):
+    def get_privileged_token(self, vehicle_token_id: str) -> str:
+        """Get privileged token from DIMO token exchange API"""
         if not self.privileged_tokens.get(
             vehicle_token_id
         ) or self._is_privileged_token_expired(vehicle_token_id):
