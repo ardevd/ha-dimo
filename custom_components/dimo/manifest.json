@@ -10,7 +10,7 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/ardevd/ha-dimo/issues",
   "requirements": [
-    "ha-dimo-python-sdk==0.0.8",
+    "dimo-python-sdk==1.0.0",
     "loguru==0.7.2"
   ],
   "single_config_entry": true,
