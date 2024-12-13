@@ -1,6 +1,6 @@
 {
   "name": "DIMO Integration for Home Assistant",
-  "homeassistant": "2024.11",
+  "homeassistant": "2024.12",
   "render_readme": true,
   "zip_release": true,
   "filename": "dimo.zip"
