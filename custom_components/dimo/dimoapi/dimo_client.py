@@ -53,7 +53,6 @@ class DimoClient:
 
     def get_latest_signals(self, token_id, signal_names: list[str]):
         """Get the latest signal values for the specified vehicle"""
-        logger.debug(f"Querying API for {len(signal_names)} signals")
         priv_token = self._fetch_privileged_token(token_id)
         signals_query = "\n".join(
             [
