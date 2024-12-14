@@ -36,7 +36,6 @@ class Auth:
             )
 
             self.privileged_tokens[vehicle_token_id] = PrivilegedToken(token)
-            logger.debug("New privileged token obtained")
 
         return self.privileged_tokens[vehicle_token_id].token
 
