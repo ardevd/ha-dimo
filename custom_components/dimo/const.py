@@ -229,6 +229,12 @@ SIGNALS = {
         Platform.SENSOR,
         icon="mdi:car-cog",
     ),
+    "powertrainTractionBatteryStateOfHealth": SignalDef(
+        "EV Battery State of Health",
+        Platform.SENSOR,
+        unit_of_measure=PERCENTAGE,
+        icon="mdi:hospital",
+    ),
     # These are not processed but are here to stop being added as a sensor entity
     "currentLocationLatitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
     "currentLocationLongitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
