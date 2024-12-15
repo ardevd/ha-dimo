@@ -235,6 +235,12 @@ SIGNALS = {
         unit_of_measure=PERCENTAGE,
         icon="mdi:hospital",
     ),
+    "powertrainTractionBatteryCurrentVoltage": SignalDef(
+        "EV Battery Current Voltage",
+        Platform.SENSOR,
+        SensorDeviceClass.VOLTAGE,
+        UnitOfElectricPotential.VOLT,
+    ),
     # These are not processed but are here to stop being added as a sensor entity
     "currentLocationLatitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
     "currentLocationLongitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
