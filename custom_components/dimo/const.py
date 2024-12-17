@@ -187,6 +187,12 @@ SIGNALS = {
         SensorDeviceClass.TEMPERATURE,
         UnitOfTemperature.CELSIUS,
     ),
+    "powertrainTractionBatteryTemperature": SignalDef(
+        "EV Battery Temperature",
+        Platform.SENSOR,
+        SensorDeviceClass.TEMPERATURE,
+        UnitOfTemperature.CELSIUS,
+    ),
     "currentLocationAltitude": SignalDef(
         "Altitude",
         Platform.SENSOR,
