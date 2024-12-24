@@ -136,9 +136,15 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             await self.get_dimo_sensor_data()
 
         if self.vehicle_data:
+            # Fetch available signals for all available vehicles concurrently
+            await asyncio.gather(
+                *[
+                    self.get_available_signals_for_vehicle(vehicle_token_id)
+                    for vehicle_token_id in self.vehicle_data
+                ]
+            )
+            # Create devices for each vehicle
             for vehicle_token_id in self.vehicle_data:
-                await self.get_available_signals_for_vehicle(vehicle_token_id)
-
                 self.create_vehicle_device(vehicle_token_id)
 
     async def get_dimo_sensor_data(self):
