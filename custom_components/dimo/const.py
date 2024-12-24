@@ -1,3 +1,5 @@
+from homeassistant.const import UnitOfPower
+
 """Constants for the DIMO integration."""
 
 from collections.abc import Callable
@@ -246,6 +248,24 @@ SIGNALS = {
         Platform.SENSOR,
         SensorDeviceClass.VOLTAGE,
         UnitOfElectricPotential.VOLT,
+    ),
+    "powertrainTractionBatteryChargingAddedEnergy": SignalDef(
+        "Charging Added Energy",
+        Platform.SENSOR,
+        unit_of_measure=UnitOfEnergy.KILO_WATT_HOUR,
+        icon="mdi:lightning-bolt-circle",
+    ),
+    "powertrainTractionBatteryChargingChargeLimit": SignalDef(
+        "Charging Limit",
+        Platform.SENSOR,
+        unit_of_measure=PERCENTAGE,
+        icon="mdi:ev-station",
+    ),
+    "powertrainTractionBatteryCurrentPower": SignalDef(
+        "EV Battery Current Power",
+        Platform.SENSOR,
+        SensorDeviceClass.POWER,
+        UnitOfPower.WATT,
     ),
     # These are not processed but are here to stop being added as a sensor entity
     "currentLocationLatitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
