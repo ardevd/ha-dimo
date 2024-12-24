@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import timedelta, datetime, timezone
 import logging
+import asyncio
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
@@ -247,9 +248,12 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         await self.get_dimo_sensor_data()
 
         _LOGGER.debug("Updating vehicle data")
+        tasks = []
         for vehicle_token_id in self.vehicle_data:
-            await self.get_signals_data_for_vehicle(vehicle_token_id)
+            tasks.append(self.get_signals_data_for_vehicle(vehicle_token_id))
 
+        if tasks:
+            await asyncio.gather(*tasks)
         return True
 
     async def get_api_data(self, target, *args) -> dict[str, Any] | None:
