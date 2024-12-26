@@ -16,10 +16,6 @@ Welcome to the **DIMO Integration for Home Assistant**! Bring your vehicle's tel
 
 ## 🛠 Installation
 
-First, a quick note. Onboarding is currently a tad bit convoluted and requires a license fee which, as of current writing, needs to be paid with DIMO or POL tokens. POL tokens are available on all major crypto currency exchanges.
-
-We realize that this is a high bar to entry, but the DIMO team is working on an update that will wave the fee requirement for personal/open source use. We're eager to have people test out this integration but consider yourself an early adopter. If you encounter any issues, feel free to reach out and create a Github issue.
-
 ### Option 1: HACS (Home Assistant Community Store)
 
 A [PR](https://github.com/hacs/default/pull/2860) exists for including this integration in HACS, but as of now the PR backlog in HACS is almost a year long, so it will probably take some time before it gets merged.
@@ -53,7 +49,7 @@ to onboard your vehicle(s).
 
 - Visit [console.dimo.org](https://console.dimo.org).
 - Sign up or log in to your account.
-- Create a new application. This currently requires a license fee, but will be free for personal use in the near future.
+- Create a new application. This requires a license to be minted, which is free for personal use.
 - Once your application is ready, generate a new api key and add a redirect URI (can be anything, doesnt matter)
 
 ### 2. Share Your Vehicles in the DIMO Mobile App
@@ -83,7 +79,6 @@ Congratulations! Your vehicles are now connected to Home Assistant. You can now:
 
 ## 📝 Important Notes
 
-- **Privacy Matters**: Your connection is secure and trustless, thanks to blockchain technology. Your data is yours alone.
 - **Supported Vehicles**: DIMO supports a vast array of vehicles, but the amount of data you get varies based on vehicle type and how you're connecting to it.
 - **Need Help?**: If you encounter any issues, feel free to open an issue on the [GitHub repository](https://github.com/ardevd/ha-dimo).
 
