@@ -264,12 +264,12 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             return await self.hass.async_add_executor_job(target, *args)
         except InvalidClientIdError:
             _LOGGER.error(
-                "Unable to reteive data from the Dimo api due to an invalid client id"
+                "Unable to retreive data from the Dimo api due to an invalid client id"
             )
             raise
         except InvalidApiKeyFormat:
             _LOGGER.error(
-                "Unable to reteive data from the Dimo api due to an invalid api key"
+                "Unable to retreive data from the Dimo api due to an invalid api key"
             )
             raise
         except NoVehiclesException:
