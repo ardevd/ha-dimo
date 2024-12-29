@@ -1,5 +1,4 @@
 coverage==7.6.1
 ha-dimo-python-sdk==0.0.8
-loguru==0.7.2
 pytest-mock==3.14.0
 pytest-homeassistant-custom-component==0.13.183
