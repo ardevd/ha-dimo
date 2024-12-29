@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 import requests
 import dimo as dimo_api
-import time
 from datetime import datetime, timezone
 from typing import Optional
 import jwt
