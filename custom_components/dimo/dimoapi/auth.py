@@ -3,6 +3,7 @@ import requests
 import dimo as dimo_api
 import time
 from datetime import datetime, timezone
+from typing import Optional
 import jwt
 import logging
 
@@ -19,7 +20,16 @@ class PrivilegedToken:
 class Auth:
     """Wrapper for the DIMO SDK authentication related features"""
 
-    def __init__(self, client_id, domain, private_key, dimo=None):
+    def __init__(
+        self,
+        client_id: str,
+        domain: str,
+        private_key: str,
+        dimo: Optional[dimo_api.DIMO] = None,
+    ) -> None:
+        """
+        Initialize the authentication wrapper for the DIMO API.
+        """
         self.client_id = client_id
         self.domain = domain
         self.private_key = private_key
