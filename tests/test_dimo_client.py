@@ -57,7 +57,7 @@ query GetVehicleRewardsByTokenId {{
 def test_dimo_client_get_available_signals():
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
-    priv_token = {"token": "privileged_token_123"}
+    priv_token = "privileged_token_123"
     auth_mock.get_privileged_token.return_value = priv_token
 
     dimo_client = DimoClient(auth=auth_mock)
@@ -75,7 +75,7 @@ query AvailableSignals {{
   availableSignals(tokenId: {token_id})
 }}
 """,
-        priv_token["token"],
+        priv_token,
     )
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
 
@@ -83,7 +83,7 @@ query AvailableSignals {{
 def test_dimo_client_get_latest_signals():
     auth_mock = Mock()
     dimo_mock = Mock()
-    priv_token = {"token": "privileged_token_123"}
+    priv_token = "privileged_token_123"
     auth_mock.get_privileged_token.return_value = priv_token
 
     dimo_client = DimoClient(auth=auth_mock)
@@ -127,5 +127,5 @@ def test_dimo_client_get_latest_signals():
     ), f"Query mismatch.\nExpected:\n{expected_query}\nActual:\n{actual_query}"
 
     # Ensure privileged token was used
-    dimo_mock.telemetry.query.assert_called_once_with(actual_query, priv_token["token"])
+    dimo_mock.telemetry.query.assert_called_once_with(actual_query, priv_token)
     auth_mock.get_privileged_token.assert_called_once_with(token_id)

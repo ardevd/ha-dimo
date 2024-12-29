@@ -44,7 +44,7 @@ class Auth:
             _LOGGER.debug(f"Obtaining privileged token for {vehicle_token_id}")
             token = self.dimo.token_exchange.exchange(
                 self.token, privileges=[1, 2, 3, 4], token_id=vehicle_token_id
-            )
+            )["token"]
 
             self.privileged_tokens[vehicle_token_id] = PrivilegedToken(token)
 
@@ -54,7 +54,7 @@ class Auth:
         """Assert privileged token expiration."""
         if self.privileged_tokens.get(vehicle_token_id):
             decoded_token = jwt.decode(
-                self.privileged_tokens[vehicle_token_id].token["token"],
+                self.privileged_tokens[vehicle_token_id].token,
                 options={"verify_signature": False},
             )
             exp = decoded_token.get("exp")
