@@ -86,11 +86,12 @@ def test_auth_get_token_calls_get_auth_when_token_is_none(mocker):
 
 def test_auth_get_privileged_token(mocker):
     fake_privileged_token = "privileged_token_1234"
+    fake_response = {"token": fake_privileged_token}
     vehicle_token_id = "1337"
 
     # Mock DIMO instance and token_exchange
     dimo_mock = Mock()
-    dimo_mock.token_exchange.exchange = Mock(return_value=fake_privileged_token)
+    dimo_mock.token_exchange.exchange = Mock(return_value=fake_response)
 
     auth = Auth("client_id", "domain", "private_key", dimo=dimo_mock)
     auth.token = "current_token"
@@ -137,9 +138,7 @@ def test_is_privileged_token_not_expired(mocker):
     vehicle_token_id = "123"
     token = create_mock_token(600)  # Expires in 10 minutes
 
-    auth_instance.privileged_tokens[vehicle_token_id] = PrivilegedToken(
-        {"token": token}
-    )
+    auth_instance.privileged_tokens[vehicle_token_id] = PrivilegedToken(token)
 
     # Test the method
     assert not auth_instance._is_privileged_token_expired(vehicle_token_id)
@@ -152,9 +151,7 @@ def test_is_privileged_token_expired():
 
     # Generate an expired token (expired 10 minutes ago)
     jwt_value = create_mock_token(-600)  # Negative offset indicates past expiry
-    auth_instance.privileged_tokens[vehicle_token_id] = PrivilegedToken(
-        {"token": jwt_value}
-    )
+    auth_instance.privileged_tokens[vehicle_token_id] = PrivilegedToken(jwt_value)
 
     # Assert the token is recognized as expired
     assert auth_instance._is_privileged_token_expired(vehicle_token_id)
