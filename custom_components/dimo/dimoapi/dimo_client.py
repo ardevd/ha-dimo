@@ -51,7 +51,7 @@ class DimoClient:
         """Get list of available signals for a specified vehicle"""
         priv_token = self._fetch_privileged_token(token_id)
         query = GET_AVAILABLE_SIGNALS_QUERY.format(token_id=token_id)
-        return self.dimo.telemetry.query(query, priv_token["token"])
+        return self.dimo.telemetry.query(query, priv_token)
 
     def get_latest_signals(self, token_id, signal_names: list[str]):
         """Get the latest signal values for the specified vehicle"""
@@ -66,7 +66,7 @@ class DimoClient:
         query = GET_LATEST_SIGNALS_QUERY.format(
             token_id=token_id, signals=signals_query
         )
-        return self.dimo.telemetry.query(query, priv_token["token"])
+        return self.dimo.telemetry.query(query, priv_token)
 
     def get_all_vehicles_for_license(self, license_id=None):
         """List all vehicles for the specified license."""
