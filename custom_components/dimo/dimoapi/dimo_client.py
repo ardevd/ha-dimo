@@ -1,4 +1,4 @@
-from loguru import logger
+import logging
 from .auth import Auth
 from .queries import (
     GET_VEHICLE_REWARDS_QUERY,
@@ -6,6 +6,8 @@ from .queries import (
     GET_LATEST_SIGNALS_QUERY,
     GET_ALL_VEHICLES_QUERY,
 )
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class DimoClient:
@@ -18,7 +20,7 @@ class DimoClient:
         try:
             self.auth.get_token()
         except Exception as e:
-            logger.error(f"Failed to init Dimo client: {e}")
+            _LOGGER.error(f"Failed to init Dimo client: {e}")
             raise
 
     def _fetch_privileged_token(self, token_id: str) -> str:
@@ -26,7 +28,7 @@ class DimoClient:
         try:
             return self.auth.get_privileged_token(token_id)
         except Exception as e:
-            logger.error(f"Failed to obtain privileged token for {token_id}: {e}")
+            _LOGGER.error(f"Failed to obtain privileged token for {token_id}: {e}")
             raise
 
     def get_vehicle_makes(self):

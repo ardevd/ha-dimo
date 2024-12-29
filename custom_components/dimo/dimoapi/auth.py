@@ -3,8 +3,10 @@ import requests
 import dimo as dimo_api
 import time
 from datetime import datetime, timezone
-from loguru import logger
 import jwt
+import logging
+
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass
@@ -30,7 +32,7 @@ class Auth:
         if not self.privileged_tokens.get(
             vehicle_token_id
         ) or self._is_privileged_token_expired(vehicle_token_id):
-            logger.debug(f"Obtaining privileged token for {vehicle_token_id}")
+            _LOGGER.debug(f"Obtaining privileged token for {vehicle_token_id}")
             token = self.dimo.token_exchange.exchange(
                 self.token, privileges=[1, 2, 3, 4], token_id=vehicle_token_id
             )
@@ -55,7 +57,7 @@ class Auth:
         return True
 
     def _get_auth(self):
-        logger.debug("Retrieving access token")
+        _LOGGER.debug("Retrieving access token")
         try:
             auth_header = self.dimo.auth.get_token(
                 client_id=self.client_id,
@@ -63,7 +65,7 @@ class Auth:
                 private_key=self.private_key,
             )
             self.token = auth_header["access_token"]
-            logger.debug("access token retrieved")
+            _LOGGER.debug("access token retrieved")
         except requests.exceptions.HTTPError as e:
             if "404" in str(e):
                 raise InvalidClientIdError from e
