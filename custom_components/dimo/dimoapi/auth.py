@@ -50,19 +50,28 @@ class Auth:
 
         return self.privileged_tokens[vehicle_token_id].token
 
+    def _is_jwt_token_expired(self, token: str) -> bool:
+        """Assert jwt token expiration"""
+        decoded_token = jwt.decode(
+            token,
+            options={"verify_signature": False},
+        )
+        exp = decoded_token.get("exp")
+        if exp:
+            expiration_time = datetime.fromtimestamp(exp, timezone.utc)
+            current_time = datetime.now(timezone.utc)
+
+            return current_time > expiration_time
+
+        return True
+
     def _is_privileged_token_expired(self, vehicle_token_id: str) -> bool:
         """Assert privileged token expiration."""
         if self.privileged_tokens.get(vehicle_token_id):
-            decoded_token = jwt.decode(
-                self.privileged_tokens[vehicle_token_id].token,
-                options={"verify_signature": False},
+            return self._is_jwt_token_expired(
+                self.privileged_tokens.get(vehicle_token_id).token
             )
-            exp = decoded_token.get("exp")
-            if exp:
-                expiration_time = datetime.fromtimestamp(exp, timezone.utc)
-                current_time = datetime.now(timezone.utc)
 
-                return current_time > expiration_time
         return True
 
     def _get_auth(self):
@@ -86,11 +95,19 @@ class Auth:
             raise InvalidApiKeyFormat from e
 
     def get_token(self):
-        if self.token is None:
+        """
+        Get the DIMO API access token.
+        Will obtain a fresh token if no token exists or if
+        the current token is expired
+        """
+        if self.token is None or self._is_jwt_token_expired(self.token):
             self._get_auth()
         return self.token
 
     def get_dimo(self):
+        """
+        Return current DIMO api instance
+        """
         return self.dimo
 
 
