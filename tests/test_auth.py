@@ -48,7 +48,7 @@ def test_dimo_client_get_vehicle_makes(mocker):
 
 def test_auth_token_caching(mocker):
     # Mock DIMO instance and auth.get_token
-    fake_token = "cached_token"
+    fake_token = create_mock_token(3600)
     dimo_mock = Mock()
     dimo_mock.auth.get_token = Mock(return_value={"access_token": fake_token})
 
@@ -70,7 +70,7 @@ def test_auth_get_dimo():
 
 
 def test_auth_get_token_calls_get_auth_when_token_is_none(mocker):
-    fake_token = "new_token"
+    fake_token = create_mock_token(3600)  # 1 hour from now
     dimo_mock = Mock()
     dimo_mock.auth.get_token = Mock(return_value={"access_token": fake_token})
 
@@ -155,3 +155,20 @@ def test_is_privileged_token_expired():
 
     # Assert the token is recognized as expired
     assert auth_instance._is_privileged_token_expired(vehicle_token_id)
+
+
+def test_main_token_not_refreshed_if_not_expired(mocker):
+    """Ensures we don't refresh the main token if it's still valid."""
+    dimo_mock = Mock()
+    # Make sure if we do fetch, it would be some placeholder
+    dimo_mock.auth.get_token = Mock(return_value={"access_token": "unused_new_token"})
+
+    auth = Auth("client_id", "domain", "private_key", dimo=dimo_mock)
+    valid_token = create_mock_token(3600)  # 1 hour from now
+    auth.token = valid_token
+
+    # This call should NOT trigger a refresh
+    token = auth.get_token()
+
+    assert token == valid_token
+    dimo_mock.auth.get_token.assert_not_called()
