@@ -89,6 +89,12 @@ SIGNALS = {
         SensorDeviceClass.DISTANCE,
         UnitOfLength.KILOMETERS,
     ),
+    "powertrainTransmissionTemperature": SignalDef(
+        "Transmission Temperature",
+        Platform.SENSOR,
+        SensorDeviceClass.TEMPERATURE,
+        UnitOfTemperature.CELSIUS,
+    ),
     "exteriorAirTemperature": SignalDef(
         "Exterior Temperature",
         Platform.SENSOR,
