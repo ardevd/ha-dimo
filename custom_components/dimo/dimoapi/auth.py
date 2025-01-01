@@ -10,10 +10,21 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @dataclass
-class PrivilegedToken:
-    """Class to hold privileged tokens."""
+class AuthToken:
+    """Class to hold JWT based authentication tokens."""
 
     token: str
+
+    def get_expiration(self) -> float:
+        """Parse and return expiration timestamp from token"""
+        decoded_token = jwt.decode(
+            self.token,
+            options={"verify_signature": False},
+        )
+        exp = decoded_token.get("exp")
+        if exp:
+            return exp
+        return float(0)
 
 
 class Auth:
@@ -32,8 +43,8 @@ class Auth:
         self.client_id = client_id
         self.domain = domain
         self.private_key = private_key
-        self.token = None
-        self.privileged_tokens: dict[str, PrivilegedToken] = {}
+        self.access_token = None
+        self.privileged_tokens: dict[str, AuthToken] = {}
         self.dimo = dimo if dimo else dimo_api.DIMO("Production")
 
     def get_privileged_token(self, vehicle_token_id: str) -> str:
@@ -43,33 +54,28 @@ class Auth:
         ) or self._is_privileged_token_expired(vehicle_token_id):
             _LOGGER.debug(f"Obtaining privileged token for {vehicle_token_id}")
             token = self.dimo.token_exchange.exchange(
-                self.token, privileges=[1, 2, 3, 4], token_id=vehicle_token_id
+                self.access_token.token,
+                privileges=[1, 2, 3, 4],
+                token_id=vehicle_token_id,
             )["token"]
 
-            self.privileged_tokens[vehicle_token_id] = PrivilegedToken(token)
+            self.privileged_tokens[vehicle_token_id] = AuthToken(token)
 
         return self.privileged_tokens[vehicle_token_id].token
 
-    def _is_jwt_token_expired(self, token: str) -> bool:
+    def _is_jwt_token_expired(self, token: AuthToken) -> bool:
         """Assert jwt token expiration"""
-        decoded_token = jwt.decode(
-            token,
-            options={"verify_signature": False},
-        )
-        exp = decoded_token.get("exp")
-        if exp:
-            expiration_time = datetime.fromtimestamp(exp, timezone.utc)
-            current_time = datetime.now(timezone.utc)
+        exp = token.get_expiration()
+        expiration_time = datetime.fromtimestamp(exp, timezone.utc)
+        current_time = datetime.now(timezone.utc)
 
-            return current_time > expiration_time
-
-        return True
+        return current_time > expiration_time
 
     def _is_privileged_token_expired(self, vehicle_token_id: str) -> bool:
         """Assert privileged token expiration."""
         if self.privileged_tokens.get(vehicle_token_id):
             return self._is_jwt_token_expired(
-                self.privileged_tokens.get(vehicle_token_id).token
+                self.privileged_tokens.get(vehicle_token_id)
             )
 
         return True
@@ -82,7 +88,7 @@ class Auth:
                 domain=self.domain,
                 private_key=self.private_key,
             )
-            self.token = auth_header["access_token"]
+            self.access_token = AuthToken(auth_header["access_token"])
             _LOGGER.debug("access token retrieved")
         except requests.exceptions.HTTPError as e:
             if "404" in str(e):
@@ -94,15 +100,15 @@ class Auth:
         except ValueError as e:
             raise InvalidApiKeyFormat from e
 
-    def get_token(self):
+    def get_access_token(self) -> AuthToken:
         """
         Get the DIMO API access token.
         Will obtain a fresh token if no token exists or if
         the current token is expired
         """
-        if self.token is None or self._is_jwt_token_expired(self.token):
+        if self.access_token is None or self._is_jwt_token_expired(self.access_token):
             self._get_auth()
-        return self.token
+        return self.access_token
 
     def get_dimo(self):
         """

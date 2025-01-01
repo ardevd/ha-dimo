@@ -157,7 +157,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
     async def get_user_data(self):
         """Get and store user data."""
         self.user_data = await self.get_api_data(
-            self.client.dimo.user.user, self.client.auth.token
+            self.client.dimo.user.user, self.client.auth.access_token.token
         )
 
     async def get_vehicles_data(self):

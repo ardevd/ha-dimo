@@ -11,7 +11,7 @@ def test_dimo_client_init():
     dimo_client.init()
 
     # Assert: Verify interactions
-    auth_mock.get_token.assert_called_once()
+    auth_mock.get_access_token.assert_called_once()
 
 
 def test_dimo_client_get_vehicle_makes():
