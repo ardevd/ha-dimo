@@ -54,7 +54,9 @@ class Auth:
         ) or self._is_privileged_token_expired(vehicle_token_id):
             _LOGGER.debug(f"Obtaining privileged token for {vehicle_token_id}")
             token = self.dimo.token_exchange.exchange(
-                self.access_token, privileges=[1, 2, 3, 4], token_id=vehicle_token_id
+                self.access_token.token,
+                privileges=[1, 2, 3, 4],
+                token_id=vehicle_token_id,
             )["token"]
 
             self.privileged_tokens[vehicle_token_id] = AuthToken(token)
