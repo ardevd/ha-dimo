@@ -18,7 +18,7 @@ class DimoClient:
     def init(self) -> None:
         """Initialize the client by retrieving an authorization token"""
         try:
-            self.auth.get_token()
+            self.auth.get_access_token()
         except Exception as e:
             _LOGGER.error(f"Failed to init Dimo client: {e}")
             raise

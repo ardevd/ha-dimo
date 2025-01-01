@@ -15,7 +15,7 @@ class AuthToken:
 
     token: str
 
-    def get_expiration(self):
+    def get_expiration(self) -> float:
         """Parse and return expiration timestamp from token"""
         decoded_token = jwt.decode(
             self.token,
@@ -24,7 +24,7 @@ class AuthToken:
         exp = decoded_token.get("exp")
         if exp:
             return exp
-        return 0
+        return float(0)
 
 
 class Auth:
@@ -63,7 +63,7 @@ class Auth:
 
     def _is_jwt_token_expired(self, token: AuthToken) -> bool:
         """Assert jwt token expiration"""
-        exp = token.get_expiration
+        exp = token.get_expiration()
         expiration_time = datetime.fromtimestamp(exp, timezone.utc)
         current_time = datetime.now(timezone.utc)
 
@@ -98,7 +98,7 @@ class Auth:
         except ValueError as e:
             raise InvalidApiKeyFormat from e
 
-    def get_token(self) -> AuthToken:
+    def get_access_token(self) -> AuthToken:
         """
         Get the DIMO API access token.
         Will obtain a fresh token if no token exists or if
