@@ -94,14 +94,14 @@ def test_auth_get_privileged_token(mocker):
     dimo_mock.token_exchange.exchange = Mock(return_value=fake_response)
 
     auth = Auth("client_id", "domain", "private_key", dimo=dimo_mock)
-    auth.access_token = "current_token"
+    auth.access_token = AuthToken("current_token")
 
     # Test privileged token retrieval
     privileged_token = auth.get_privileged_token(vehicle_token_id)
 
     assert privileged_token == fake_privileged_token
     dimo_mock.token_exchange.exchange.assert_called_once_with(
-        auth.access_token, privileges=[1, 2, 3, 4], token_id=vehicle_token_id
+        auth.access_token.token, privileges=[1, 2, 3, 4], token_id=vehicle_token_id
     )
 
 
