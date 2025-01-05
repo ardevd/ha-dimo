@@ -55,7 +55,7 @@ class Auth:
             _LOGGER.debug(f"Obtaining privileged token for {vehicle_token_id}")
             token = self.dimo.token_exchange.exchange(
                 self.access_token.token,
-                privileges=[1, 2, 3, 4],
+                privileges=[1, 2, 3, 4, 5],
                 token_id=vehicle_token_id,
             )["token"]
 

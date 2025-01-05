@@ -7,6 +7,7 @@ from .queries import (
     GET_LATEST_SIGNALS_QUERY,
     GET_ALL_VEHICLES_QUERY,
 )
+from dimo.graphql import Telemetry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -89,3 +90,10 @@ class DimoClient:
         except Exception as e:
             _LOGGER.error(f"Failed to get total DIMO vehicles: {e}")
             return None
+
+    def get_vin(self, token_id) -> str:
+        """
+        Retrieve VIN for the specified token_id
+        """
+        vehicle_jwt = self._fetch_privileged_token(token_id)
+        return self.dimo.telemetry.get_vin(vehicle_jwt, token_id)
