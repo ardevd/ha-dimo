@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 from .auth import Auth
 from .queries import (
     GET_VEHICLE_REWARDS_QUERY,
@@ -76,9 +77,15 @@ class DimoClient:
         query = GET_ALL_VEHICLES_QUERY.format(license_id=license_id)
         return self.dimo.identity.query(query)
 
-    def get_total_dimo_vehicles(self):
-        """Get the total number of vehicles on DIMO"""
-        result = self.dimo.identity.count_dimo_vehicles()
-        if result:
+    def get_total_dimo_vehicles(self) -> Optional[int]:
+        """
+        Get the total number of vehicles on DIMO.
+
+        :return: Total count of vehicles or None if failed.
+        """
+        try:
+            result = self.dimo.identity.count_dimo_vehicles()
             return result.get("data", {}).get("vehicles", {}).get("totalCount")
-        return None
+        except Exception as e:
+            _LOGGER.error(f"Failed to get total DIMO vehicles: {e}")
+            return None
