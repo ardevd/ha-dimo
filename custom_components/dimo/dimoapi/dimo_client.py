@@ -92,8 +92,29 @@ class DimoClient:
 
     def get_vin(self, token_id) -> Optional[str]:
         """
-        Retrieve VIN for the specified token_id
+        Retrieve the Vehicle Identification Number (VIN) for the specified token ID.
+
+        :param token_id: Token ID associated with the vehicle.
+        :return: The VIN as a string, or None if unavailable.
         """
-        vehicle_jwt = self._fetch_privileged_token(token_id)
-        vin_response = self.dimo.telemetry.get_vin(vehicle_jwt, token_id)
-        return vin_response.get("data", {}).get("vinVCLatest", {}).get("vin")
+        try:
+            vehicle_jwt = self._fetch_privileged_token(token_id)
+            vin_response = self.dimo.telemetry.get_vin(vehicle_jwt, token_id)
+            vin = vin_response.get("data", {}).get("vinVCLatest", {}).get("vin")
+            if vin:
+                _LOGGER.debug(
+                    f"Successfully retrieved VIN for token_id {token_id}: {vin}"
+                )
+                return vin
+            _LOGGER.warning(
+                f"VIN not found in response for token_id {token_id}: {vin_response}"
+            )
+            return None
+        except KeyError as e:
+            _LOGGER.error(
+                f"Malformed response when retrieving VIN for token_id {token_id}: {e}"
+            )
+            return None
+        except Exception as e:
+            _LOGGER.error(f"Failed to retrieve VIN for token_id {token_id}: {e}")
+            return None
