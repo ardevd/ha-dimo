@@ -91,9 +91,10 @@ class DimoClient:
             _LOGGER.error(f"Failed to get total DIMO vehicles: {e}")
             return None
 
-    def get_vin(self, token_id) -> str:
+    def get_vin(self, token_id) -> Optional[str]:
         """
         Retrieve VIN for the specified token_id
         """
         vehicle_jwt = self._fetch_privileged_token(token_id)
-        return self.dimo.telemetry.get_vin(vehicle_jwt, token_id)
+        vin_response = self.dimo.telemetry.get_vin(vehicle_jwt, token_id)
+        return vin_response.get("data", {}).get("vinVCLatest", {}).get("vin")
