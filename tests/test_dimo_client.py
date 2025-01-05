@@ -129,3 +129,45 @@ def test_dimo_client_get_latest_signals():
     # Ensure privileged token was used
     dimo_mock.telemetry.query.assert_called_once_with(actual_query, priv_token)
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
+
+
+def test_dimo_client_get_vin_success():
+    # Arrange: Set up mocks
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    dimo_client = DimoClient(auth=auth_mock)
+    token_id = "vehicle123"
+
+    # Mock the privileged token and VIN response
+    auth_mock.get_privileged_token.return_value = "mocked_vehicle_jwt"
+    dimo_mock.telemetry.get_vin.return_value = {
+        "data": {"vinVCLatest": {"vin": "1HGCM82633A123456"}}
+    }
+
+    # Act: Call the method under test
+    vin = dimo_client.get_vin(token_id)
+
+    # Assert: Verify the results and interactions
+    assert vin == "1HGCM82633A123456"
+    auth_mock.get_privileged_token.assert_called_once_with(token_id)
+    dimo_mock.telemetry.get_vin.assert_called_once_with("mocked_vehicle_jwt", token_id)
+
+
+def test_dimo_client_get_vin_malformed_response():
+    # Arrange: Set up mocks
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    dimo_client = DimoClient(auth=auth_mock)
+    token_id = "vehicle123"
+
+    # Mock the privileged token and malformed response
+    auth_mock.get_privileged_token.return_value = "mocked_vehicle_jwt"
+    dimo_mock.telemetry.get_vin.return_value = {"unexpected_key": "unexpected_value"}
+
+    # Act: Call the method under test
+    vin = dimo_client.get_vin(token_id)
+
+    # Assert: Verify the results and interactions
+    assert vin is None
+    auth_mock.get_privileged_token.assert_called_once_with(token_id)
+    dimo_mock.telemetry.get_vin.assert_called_once_with("mocked_vehicle_jwt", token_id)
