@@ -122,12 +122,10 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         self.entry = entry
 
         self.dimo_data: dict[str, Any] = {}
-        self.user_data: dict[str, Any] = {}
         self.vehicle_data: dict[str, VehicleData] = {}
 
     async def async_initialise(self):
         """Get initial static data."""
-        await self.get_user_data()
         await self.get_vehicles_data()
 
         # Add Dimo device for non vehicle specificic sensors
@@ -153,12 +151,6 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             if hasattr(self.client, sensor_def.value_fn):
                 fn = getattr(self.client, sensor_def.value_fn)
                 self.dimo_data[key] = await self.hass.async_add_executor_job(fn)
-
-    async def get_user_data(self):
-        """Get and store user data."""
-        self.user_data = await self.get_api_data(
-            self.client.dimo.user.user, self.client.auth.access_token.token
-        )
 
     async def get_vehicles_data(self):
         """Get all vehicle data."""
