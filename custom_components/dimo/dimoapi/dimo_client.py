@@ -7,7 +7,6 @@ from .queries import (
     GET_LATEST_SIGNALS_QUERY,
     GET_ALL_VEHICLES_QUERY,
 )
-from dimo.graphql import Telemetry
 
 _LOGGER = logging.getLogger(__name__)
 
