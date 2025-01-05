@@ -171,3 +171,31 @@ def test_dimo_client_get_vin_malformed_response():
     assert vin is None
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
     dimo_mock.telemetry.get_vin.assert_called_once_with("mocked_vehicle_jwt", token_id)
+
+
+def test_dimo_client_get_total_dimo_vehicles_success():
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    dimo_client = DimoClient(auth=auth_mock)
+
+    dimo_mock.identity.count_dimo_vehicles.return_value = {
+        "data": {"vehicles": {"totalCount": 1234}}
+    }
+
+    total_vehicles = dimo_client.get_total_dimo_vehicles()
+
+    assert total_vehicles == 1234
+    dimo_mock.identity.count_dimo_vehicles.assert_called_once()
+
+
+def test_dimo_client_get_total_dimo_vehicles_exception():
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    dimo_client = DimoClient(auth=auth_mock)
+
+    dimo_mock.identity.count_dimo_vehicles.side_effect = Exception("API error")
+
+    total_vehicles = dimo_client.get_total_dimo_vehicles()
+
+    assert total_vehicles is None
+    dimo_mock.identity.count_dimo_vehicles.assert_called_once()
