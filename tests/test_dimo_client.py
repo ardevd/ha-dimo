@@ -186,3 +186,16 @@ def test_dimo_client_get_total_dimo_vehicles_success():
 
     assert total_vehicles == 1234
     dimo_mock.identity.count_dimo_vehicles.assert_called_once()
+
+
+def test_dimo_client_get_total_dimo_vehicles_exception():
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    dimo_client = DimoClient(auth=auth_mock)
+
+    dimo_mock.identity.count_dimo_vehicles.side_effect = Exception("API error")
+
+    total_vehicles = dimo_client.get_total_dimo_vehicles()
+
+    assert total_vehicles is None
+    dimo_mock.identity.count_dimo_vehicles.assert_called_once()
