@@ -243,11 +243,11 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         """Update data from api."""
         _LOGGER.debug("Updating from the DIMO api")
         tasks = [self.get_dimo_sensor_data()]
-        for vehicle_token_id in self.vehicle_data:
-            tasks.append(self.get_signals_data_for_vehicle(vehicle_token_id))
-
-        if tasks:
-            await asyncio.gather(*tasks)
+        tasks.extend(
+            self.get_signals_data_for_vehicle(token_id)
+            for token_id in self.vehicle_data
+        )
+        await asyncio.gather(*tasks)
         return True
 
     async def get_api_data(self, target, *args) -> dict[str, Any] | None:
