@@ -78,7 +78,7 @@ Congratulations! Your vehicles are now connected to Home Assistant. You can now:
 - Create automations based on vehicle data (flash your lights when your car arrives home, anyone?).
 
 ## 📝 Important Notes
-
+- **Units**: The DIMO API operates with metric units. However, you can easily change the unit of measurement in the entity settings from within Home Assistant.
 - **Supported Vehicles**: DIMO supports a vast array of vehicles, but the amount of data you get varies based on vehicle type and how you're connecting to it.
 - **Need Help?**: If you encounter any issues, feel free to open an issue on the [GitHub repository](https://github.com/ardevd/ha-dimo).
 
