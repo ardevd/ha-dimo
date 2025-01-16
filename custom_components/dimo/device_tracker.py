@@ -47,15 +47,26 @@ class DimoTrackerEntity(DimoBaseVehicleEntity, TrackerEntity):
     ) -> None:
         """Initialise."""
         super().__init__(coordinator, vehicle_token_id, longitude_key)
-        self._lattitude_key = latitude_key
+        self._latitude_key = latitude_key
         self._longitude_key = longitude_key
+
+    @property
+    def source_type(self) -> str:
+        """Return source type of the device"""
+        return "gps"
+
+    @property
+    def extra_state_attributes(self):
+        """Return additional tracker attributes"""
+        data = self.coordinator.vehicle_data[self.vehicle_token_id].signal_data
+        return {"altitude": data.get("currentLocationAltitude", {}).get("value")}
 
     @property
     def latitude(self) -> float | None:
         """Return latitude value of the device."""
         return (
             self.coordinator.vehicle_data[self.vehicle_token_id]
-            .signal_data[self._lattitude_key]
+            .signal_data[self._latitude_key]
             .get("value")
         )
 
