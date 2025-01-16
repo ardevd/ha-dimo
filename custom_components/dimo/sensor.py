@@ -55,6 +55,11 @@ class DimoSensorEntity(DimoBaseEntity, SensorEntity):
     """Dimo sensor entity."""
 
     @property
+    def should_poll(self) -> bool:
+        """Disable polling; updates come from the coordinator"""
+        return False
+
+    @property
     def native_value(self):
         """Return the native value of this entity."""
         return self.coordinator.dimo_data.get(self.key)
@@ -71,6 +76,11 @@ class DimoSensorEntity(DimoBaseEntity, SensorEntity):
 
 class DimoVehicleSensorEntity(DimoBaseVehicleEntity, SensorEntity):
     """Vehicle Sensor entity."""
+
+    @property
+    def should_poll(self) -> bool:
+        """Disable polling; updates come from the coordinator"""
+        return False
 
     @property
     def native_value(self):

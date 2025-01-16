@@ -53,6 +53,11 @@ class DimoBinarySensorEntity(DimoBaseEntity, BinarySensorEntity):
     """Binary Sensor entity."""
 
     @property
+    def should_poll(self) -> bool:
+        """Disable polling; updates come from the coordinator"""
+        return False
+
+    @property
     def is_on(self) -> bool | None:
         """Return true if the binary sensor is on."""
         return self.coordinator.dimo_data.get(self.key)
@@ -60,6 +65,11 @@ class DimoBinarySensorEntity(DimoBaseEntity, BinarySensorEntity):
 
 class DimoVehicleBinarySensorEntity(DimoBaseVehicleEntity, BinarySensorEntity):
     """Binary Sensor entity."""
+
+    @property
+    def should_poll(self) -> bool:
+        """Disable polling; updates come from the coordinator"""
+        return False
 
     @property
     def is_on(self) -> bool | None:
