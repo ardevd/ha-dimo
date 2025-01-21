@@ -21,7 +21,7 @@ class AuthToken:
             self.token,
             options={"verify_signature": False},
         )
-        self.exp = decoded_token.get("exp", 0.0)
+        self.expiration = decoded_token.get("exp", 0.0)
 
 
 class Auth:

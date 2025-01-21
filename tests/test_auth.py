@@ -87,8 +87,8 @@ def test_auth_get_token_calls_get_auth_when_token_is_none(mocker):
 
 
 def test_auth_get_privileged_token(mocker):
-    fake_privileged_token = "privileged_token_1234"
-    fake_response = {"token": fake_privileged_token}
+    fake_privileged_token = AuthToken(create_mock_token(1600))
+    fake_response = {"token": fake_privileged_token.token}
     vehicle_token_id = "1337"
 
     # Mock DIMO instance and token_exchange
@@ -96,12 +96,12 @@ def test_auth_get_privileged_token(mocker):
     dimo_mock.token_exchange.exchange = Mock(return_value=fake_response)
 
     auth = Auth("client_id", "domain", "private_key", dimo=dimo_mock)
-    auth.access_token = AuthToken("current_token")
+    auth.access_token = AuthToken(create_mock_token(3600))
 
     # Test privileged token retrieval
     privileged_token = auth.get_privileged_token(vehicle_token_id)
 
-    assert privileged_token == fake_privileged_token
+    assert privileged_token == fake_privileged_token.token
     dimo_mock.token_exchange.exchange.assert_called_once_with(
         auth.access_token.token, privileges=[1, 2, 3, 4], token_id=vehicle_token_id
     )
