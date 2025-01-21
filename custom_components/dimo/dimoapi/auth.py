@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import requests
 import dimo as dimo_api
 from datetime import datetime, timezone
@@ -14,17 +14,14 @@ class AuthToken:
     """Class to hold JWT based authentication tokens."""
 
     token: str
+    expiration: float = field(init=False)
 
-    def get_expiration(self) -> float:
-        """Parse and return expiration timestamp from token"""
+    def __post_init__(self):
         decoded_token = jwt.decode(
             self.token,
             options={"verify_signature": False},
         )
-        exp = decoded_token.get("exp")
-        if exp:
-            return exp
-        return float(0)
+        self.expiration = decoded_token.get("exp", 0.0)
 
 
 class Auth:
@@ -65,7 +62,7 @@ class Auth:
 
     def _is_jwt_token_expired(self, token: AuthToken) -> bool:
         """Assert jwt token expiration"""
-        exp = token.get_expiration()
+        exp = token.expiration
         expiration_time = datetime.fromtimestamp(exp, timezone.utc)
         current_time = datetime.now(timezone.utc)
 
