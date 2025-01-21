@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from typing import Optional
 import jwt
 import logging
-from pytoolconfig import fields
 
 _LOGGER = logging.getLogger(__name__)
 
