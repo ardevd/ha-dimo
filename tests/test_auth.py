@@ -13,7 +13,9 @@ from custom_components.dimo.dimoapi.auth import (
 
 
 def test_auth_get_token(mocker):
-    fake_token = AuthToken("abcdef1234")
+    fake_token = AuthToken(
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+    )
     # Mocking the DIMO instance and auth.get_token
     dimo_mock = Mock()
 

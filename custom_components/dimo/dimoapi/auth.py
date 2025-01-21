@@ -62,7 +62,7 @@ class Auth:
 
     def _is_jwt_token_expired(self, token: AuthToken) -> bool:
         """Assert jwt token expiration"""
-        exp = token.exp
+        exp = token.expiration
         expiration_time = datetime.fromtimestamp(exp, timezone.utc)
         current_time = datetime.now(timezone.utc)
 
