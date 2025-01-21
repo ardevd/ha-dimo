@@ -44,7 +44,7 @@ class Auth:
         self.privileged_tokens: dict[str, AuthToken] = {}
         self.dimo = dimo if dimo else dimo_api.DIMO("Production")
 
-    def get_privileged_token(self, vehicle_token_id: str) -> str:
+    def get_privileged_token(self, vehicle_token_id: str) -> AuthToken:
         """Get privileged token from DIMO token exchange API"""
         if not self.privileged_tokens.get(
             vehicle_token_id
@@ -58,7 +58,7 @@ class Auth:
 
             self.privileged_tokens[vehicle_token_id] = AuthToken(token)
 
-        return self.privileged_tokens[vehicle_token_id].token
+        return self.privileged_tokens[vehicle_token_id]
 
     def _is_jwt_token_expired(self, token: AuthToken) -> bool:
         """Assert jwt token expiration"""

@@ -1,3 +1,4 @@
+from .helper import create_mock_token
 import jwt
 import requests
 from datetime import datetime, timedelta, timezone
@@ -50,7 +51,7 @@ def test_dimo_client_get_vehicle_makes(mocker):
 
 def test_auth_token_caching(mocker):
     # Mock DIMO instance and auth.get_token
-    fake_token = AuthToken(create_mock_token(3600))
+    fake_token = create_mock_token(3600)
     dimo_mock = Mock()
     dimo_mock.auth.get_token = Mock(return_value={"access_token": fake_token})
 
@@ -72,7 +73,7 @@ def test_auth_get_dimo():
 
 
 def test_auth_get_token_calls_get_auth_when_token_is_none(mocker):
-    fake_token = AuthToken(create_mock_token(3600))  # 1 hour from now
+    fake_token = create_mock_token(3600)  # 1 hour from now
     dimo_mock = Mock()
     dimo_mock.auth.get_token = Mock(return_value={"access_token": fake_token.token})
 
@@ -87,7 +88,7 @@ def test_auth_get_token_calls_get_auth_when_token_is_none(mocker):
 
 
 def test_auth_get_privileged_token(mocker):
-    fake_privileged_token = AuthToken(create_mock_token(1600))
+    fake_privileged_token = create_mock_token(1600)
     fake_response = {"token": fake_privileged_token.token}
     vehicle_token_id = "1337"
 
@@ -96,12 +97,12 @@ def test_auth_get_privileged_token(mocker):
     dimo_mock.token_exchange.exchange = Mock(return_value=fake_response)
 
     auth = Auth("client_id", "domain", "private_key", dimo=dimo_mock)
-    auth.access_token = AuthToken(create_mock_token(3600))
+    auth.access_token = create_mock_token(3600)
 
     # Test privileged token retrieval
     privileged_token = auth.get_privileged_token(vehicle_token_id)
 
-    assert privileged_token == fake_privileged_token.token
+    assert privileged_token.token == fake_privileged_token.token
     dimo_mock.token_exchange.exchange.assert_called_once_with(
         auth.access_token.token, privileges=[1, 2, 3, 4], token_id=vehicle_token_id
     )
@@ -125,22 +126,13 @@ def test_auth_exceptions(mocker, mocked_exception, expected_exception):
         auth.get_access_token()
 
 
-def create_mock_token(exp_offset):
-    """
-    Helper function to create a mock JWT token with a specific expiration offset.
-    """
-    expiration_time = datetime.now(timezone.utc) + timedelta(seconds=exp_offset)
-    payload = {"exp": expiration_time.timestamp()}
-    return jwt.encode(payload, "secret", algorithm="HS256")
-
-
 def test_is_privileged_token_not_expired(mocker):
     # Mock the instance and its privileged tokens
     auth_instance = Auth("client_id", "domain", "private_key")
     vehicle_token_id = "123"
     token = create_mock_token(600)  # Expires in 10 minutes
 
-    auth_instance.privileged_tokens[vehicle_token_id] = AuthToken(token)
+    auth_instance.privileged_tokens[vehicle_token_id] = token
 
     # Test the method
     assert not auth_instance._is_privileged_token_expired(vehicle_token_id)
@@ -153,7 +145,7 @@ def test_is_privileged_token_expired():
 
     # Generate an expired token (expired 10 minutes ago)
     jwt_value = create_mock_token(-600)  # Negative offset indicates past expiry
-    auth_instance.privileged_tokens[vehicle_token_id] = AuthToken(jwt_value)
+    auth_instance.privileged_tokens[vehicle_token_id] = jwt_value
 
     # Assert the token is recognized as expired
     assert auth_instance._is_privileged_token_expired(vehicle_token_id)
@@ -166,7 +158,7 @@ def test_access_token_not_refreshed_if_not_expired(mocker):
     dimo_mock.auth.get_token = Mock(return_value={"access_token": "unused_new_token"})
 
     auth = Auth("client_id", "domain", "private_key", dimo=dimo_mock)
-    valid_token = AuthToken(create_mock_token(3600))  # 1 hour from now
+    valid_token = create_mock_token(3600)  # 1 hour from now
     auth.access_token = valid_token
 
     # This call should NOT trigger a refresh
