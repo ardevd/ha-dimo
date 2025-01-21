@@ -27,7 +27,7 @@ class DimoClient:
     def _fetch_privileged_token(self, token_id: str) -> str:
         """Retrieve privileged token for specified token id"""
         try:
-            return self.auth.get_privileged_token(token_id)
+            return self.auth.get_privileged_token(token_id).token
         except Exception as e:
             _LOGGER.error(f"Failed to obtain privileged token for {token_id}: {e}")
             raise
