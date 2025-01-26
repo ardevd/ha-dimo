@@ -49,7 +49,7 @@ to onboard your vehicle(s).
 
 - Visit [console.dimo.org](https://console.dimo.org).
 - Sign up or log in to your account.
-- Create a new application. This requires a license to be minted, which is free for personal use.
+- Create a new application. This requires a license to be minted, which is free for personal use. The application name must be globally unique, so if you get any errors, try modifying the application name.
 - Once your application is ready, generate a new api key and add a redirect URI (can be anything, doesnt matter)
 
 ### 2. Share Your Vehicles in the DIMO Mobile App
