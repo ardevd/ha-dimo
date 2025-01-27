@@ -29,47 +29,32 @@ class DimoBaseEntity(CoordinatorEntity):
         self.vehicle_token_id = vehicle_token_id
         self.key = key
 
+        sensor_def = DIMO_SENSORS.get(key)
+        if sensor_def:
+            self._attr_name = sensor_def.name
+            self._attr_icon = sensor_def.icon
+            self._attr_device_class = sensor_def.device_class
+            self._attr_state_class = sensor_def.state_class
+        else:
+            # Fallbacks if the key isn't found in DIMO_SENSORS
+            self._attr_name = key
+            self._attr_icon = None
+            self._attr_device_class = None
+            self._attr_state_class = None
+
+        self._attr_unique_id = f"{coordinator.entry.domain}_{vehicle_token_id}_{key}"
+        self._attr_device_info = DeviceInfo(
+            identifiers={(coordinator.entry.domain, vehicle_token_id)}
+        )
+
+        # Use the built-in feature to automatically adopt the device's name
+        self._attr_has_entity_name = True
+
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         _LOGGER.debug("%s device update requested", self.name)
         self.async_write_ha_state()
-
-    @property
-    def unique_id(self):
-        """Return uniqueid."""
-        return f"{self.coordinator.entry.domain}_{self.vehicle_token_id}_{self.key}"
-
-    @property
-    def device_info(self):
-        """Return device specific attributes."""
-        return DeviceInfo(
-            identifiers={(self.coordinator.entry.domain, self.vehicle_token_id)}
-        )
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return DIMO_SENSORS[self.key].name if DIMO_SENSORS.get(self.key) else self.key
-
-    @property
-    def icon(self) -> str | None:
-        """Return the icon to use in the frontend, if any."""
-        return DIMO_SENSORS[self.key].icon if DIMO_SENSORS.get(self.key) else None
-
-    @property
-    def device_class(self) -> BinarySensorDeviceClass | SensorDeviceClass | None:
-        """Return the class of this entity."""
-        return (
-            DIMO_SENSORS[self.key].device_class if DIMO_SENSORS.get(self.key) else None
-        )
-
-    @property
-    def state_class(self) -> SensorStateClass | str | None:
-        """Return the state class of this entity, if any."""
-        return (
-            DIMO_SENSORS[self.key].state_class if DIMO_SENSORS.get(self.key) else None
-        )
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
