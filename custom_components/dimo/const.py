@@ -50,7 +50,7 @@ class DimoSensorDef(SignalDef):
     value_fn: str | Callable | None = None
 
 
-DIMO_SENSORS = {
+DIMO_SENSORS: dict[str, DimoSensorDef] = {
     "total_vehicles": DimoSensorDef(
         "Total Dimo Vehicles",
         Platform.SENSOR,
@@ -61,7 +61,7 @@ DIMO_SENSORS = {
 }
 
 # TODO: Add complete list from schema
-SIGNALS = {
+SIGNALS: dict[str, SignalDef] = {
     "dimoAftermarketNSAT": SignalDef(
         "No of GPS Satellites", Platform.SENSOR, icon="mdi:satellite-variant"
     ),
