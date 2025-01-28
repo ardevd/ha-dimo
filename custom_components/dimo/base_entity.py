@@ -11,6 +11,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import DimoUpdateCoordinator
 from .const import DIMO_SENSORS, SIGNALS
+from custom_components.dimo.const import SignalDef
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -63,33 +64,40 @@ class DimoBaseEntity(CoordinatorEntity):
 
 
 class DimoBaseVehicleEntity(DimoBaseEntity):
-    """Base of a vehicle entity."""
+    """Base representation of a vehicle entity."""
 
     @property
-    def name(self):
+    def _signal(self) -> SignalDef | None:
+        """Return the signal config if present."""
+        return SIGNALS.get(self.key)
+
+    @property
+    def name(self) -> str:
         """Return the name of the sensor."""
-        return SIGNALS[self.key].name if SIGNALS.get(self.key) else self.key
+        if self._signal and self._signal.name:
+            return self._signal.name
+        return self.key
 
     @property
     def icon(self) -> str | None:
         """Return the icon to use in the frontend, if any."""
-        return SIGNALS[self.key].icon if SIGNALS.get(self.key) else None
+        return self._signal.icon if self._signal else None
 
     @property
     def device_class(self) -> BinarySensorDeviceClass | SensorDeviceClass | None:
         """Return the class of this entity."""
-        return SIGNALS[self.key].device_class if SIGNALS.get(self.key) else None
+        return self._signal.device_class if self._signal else None
 
     @property
     def state_class(self) -> SensorStateClass | str | None:
         """Return the state class of this entity, if any."""
-        return SIGNALS[self.key].state_class if SIGNALS.get(self.key) else None
+        return self._signal.state_class if self._signal else None
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return extra state attributes."""
+        vehicle_data = self.coordinator.vehicle_data[self.vehicle_token_id]
+        signal_data = vehicle_data.signal_data.get(self.key, {})
         return {
-            "timestamp": self.coordinator.vehicle_data[self.vehicle_token_id]
-            .signal_data[self.key]
-            .get("timestamp")
+            "timestamp": signal_data.get("timestamp"),
         }
