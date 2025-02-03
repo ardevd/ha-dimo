@@ -104,5 +104,5 @@ class InvalidAuth(HomeAssistantError):
     """Error to indicate there is invalid auth."""
 
 
-class NoVehiclesException(BaseException):
+class NoVehiclesException(HomeAssistantError):
     """Error to indicate no vehicles on the account."""
