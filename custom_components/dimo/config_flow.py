@@ -44,7 +44,6 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
             data[CONF_CLIENT_ID], data[CONF_AUTH_PROVIDER], data[CONF_PRIVATE_KEY]
         )
         client = DimoClient(auth)
-        # vehicles = client.get_all_vehicles_for_license()
         await hass.async_add_executor_job(client.init)
         _LOGGER.debug("Token retrieved")
         # Get list of vehicles on account and return for next step
