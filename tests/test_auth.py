@@ -104,7 +104,7 @@ def test_auth_get_privileged_token(mocker):
 
     assert privileged_token.token == fake_privileged_token.token
     dimo_mock.token_exchange.exchange.assert_called_once_with(
-        auth.access_token.token, privileges=[1, 2, 3, 4], token_id=vehicle_token_id
+        auth.access_token.token, privileges=[1, 2, 3, 4, 5], token_id=vehicle_token_id
     )
 
 

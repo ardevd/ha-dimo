@@ -25,6 +25,7 @@ from .dimoapi import (
     InvalidCredentialsError,
 )
 from .helpers import get_key
+from typing import Optional
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -95,9 +96,10 @@ class VehicleData:
     """Class to hold vehicle data."""
 
     definition: dict
-    available_signals: dict | None = None
-    signal_data: dict | None = None
-    signal_data_errors: dict | None = None
+    vin: Optional[str] = None
+    available_signals: Optional[dict] = None
+    signal_data: Optional[dict] = None
+    signal_data_errors: Optional[dict] = None
 
 
 class DimoUpdateCoordinator(DataUpdateCoordinator):
@@ -143,6 +145,8 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             )
             # Create devices for each vehicle
             for vehicle_token_id in self.vehicle_data:
+                # Grab VIN before creating
+                await self._get_vehicle_vin(vehicle_token_id)
                 self.create_vehicle_device(vehicle_token_id)
 
     async def get_dimo_sensor_data(self):
@@ -215,6 +219,18 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
     def _get_current_timestamp():
         """Get the current UTC timestamp in ISO 8601 format."""
         return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    async def _get_vehicle_vin(self, vehicle_token_id: str):
+        """Retrieve VIN for a vehicle"""
+        _LOGGER.debug("Retrieving VIN for %s", vehicle_token_id)
+        try:
+
+            vin = await self.get_api_data(self.client.get_vin, vehicle_token_id)
+            if vin:
+                self.vehicle_data[vehicle_token_id].vin = vin
+
+        except Exception as e:
+            _LOGGER.error("Error getting VIN for vehicle %s: %s", vehicle_token_id, e)
 
     async def _update_token_rewards(self, vehicle_token_id: str):
         """Fetch and update token rewards for a vehicle."""
@@ -290,10 +306,19 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
     def create_vehicle_device(self, vehicle_token_id: str):
         """Create device for vehicle."""
         vehicle = self.vehicle_data[vehicle_token_id]
+
+        # Build a set of identifiers for the vehicle device
+        # including vin, if available
+
+        identifiers = {(DOMAIN, vehicle_token_id)}
+        if vehicle.vin:
+            _LOGGER.debug("Got vin for %s", vehicle_token_id)
+            identifiers.add((DOMAIN, vehicle.vin))
+
         device_registry = dr.async_get(self.hass)
         device_registry.async_get_or_create(
             config_entry_id=self.entry.entry_id,
-            identifiers={(DOMAIN, vehicle_token_id)},
+            identifiers=identifiers,
             manufacturer=vehicle.definition["make"],
             name=f"{vehicle.definition["make"]} {vehicle.definition["model"]}",
             model=vehicle.definition["model"],
