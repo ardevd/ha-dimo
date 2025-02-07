@@ -1,6 +1,15 @@
 from .helper import create_mock_token
 from unittest.mock import Mock
 from custom_components.dimo.dimoapi import DimoClient
+from custom_components.dimo.dimoapi.dimo_client import hex_to_permissions
+from custom_components.dimo.dimoapi.dimo_client import VehicleSharingPermission
+
+
+def dummy_permission_checker(token_id):
+    # Simulate a permission object for testing purposes.
+    return VehicleSharingPermission(
+        client_id="dummy_client", privileges=[1, 2, 3, 4, 5]
+    )
 
 
 def test_dimo_client_init():
@@ -61,8 +70,10 @@ def test_dimo_client_get_available_signals():
     priv_token = create_mock_token(3600)
     auth_mock.get_privileged_token.return_value = priv_token
 
-    dimo_client = DimoClient(auth=auth_mock)
     token_id = "vehicle123"
+    dimo_client = DimoClient(
+        auth=auth_mock, permission_checker=dummy_permission_checker
+    )
     query_result = {"availableSignals": []}
     dimo_mock.telemetry.query.return_value = query_result
 
@@ -78,7 +89,9 @@ query AvailableSignals {{
 """,
         priv_token.token,
     )
-    auth_mock.get_privileged_token.assert_called_once_with(token_id)
+    auth_mock.get_privileged_token.assert_called_once_with(
+        token_id, dummy_permission_checker(token_id).privileges
+    )
 
 
 def test_dimo_client_get_latest_signals():
@@ -87,7 +100,9 @@ def test_dimo_client_get_latest_signals():
     priv_token = create_mock_token(3600)
     auth_mock.get_privileged_token.return_value = priv_token
 
-    dimo_client = DimoClient(auth=auth_mock)
+    dimo_client = DimoClient(
+        auth=auth_mock, permission_checker=dummy_permission_checker
+    )
     dimo_client.dimo = dimo_mock  # Inject the dimo mock
 
     token_id = "123"
@@ -129,14 +144,18 @@ def test_dimo_client_get_latest_signals():
 
     # Ensure privileged token was used
     dimo_mock.telemetry.query.assert_called_once_with(actual_query, priv_token.token)
-    auth_mock.get_privileged_token.assert_called_once_with(token_id)
+    auth_mock.get_privileged_token.assert_called_once_with(
+        token_id, dummy_permission_checker(token_id).privileges
+    )
 
 
 def test_dimo_client_get_vin_success():
     # Arrange: Set up mocks
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
-    dimo_client = DimoClient(auth=auth_mock)
+    dimo_client = DimoClient(
+        auth=auth_mock, permission_checker=dummy_permission_checker
+    )
     token_id = "vehicle123"
 
     # Mock the privileged token and VIN response
@@ -151,7 +170,9 @@ def test_dimo_client_get_vin_success():
 
     # Assert: Verify the results and interactions
     assert vin == "1HGCM82633A123456"
-    auth_mock.get_privileged_token.assert_called_once_with(token_id)
+    auth_mock.get_privileged_token.assert_called_once_with(
+        token_id, dummy_permission_checker(token_id).privileges
+    )
     dimo_mock.telemetry.get_vin.assert_called_once_with(mocked_token.token, token_id)
 
 
@@ -159,7 +180,9 @@ def test_dimo_client_get_vin_malformed_response():
     # Arrange: Set up mocks
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
-    dimo_client = DimoClient(auth=auth_mock)
+    dimo_client = DimoClient(
+        auth=auth_mock, permission_checker=dummy_permission_checker
+    )
     token_id = "vehicle123"
 
     # Mock the privileged token and malformed response
@@ -172,7 +195,9 @@ def test_dimo_client_get_vin_malformed_response():
 
     # Assert: Verify the results and interactions
     assert vin is None
-    auth_mock.get_privileged_token.assert_called_once_with(token_id)
+    auth_mock.get_privileged_token.assert_called_once_with(
+        token_id, dummy_permission_checker(token_id).privileges
+    )
     dimo_mock.telemetry.get_vin.assert_called_once_with(mocked_token.token, token_id)
 
 
@@ -202,3 +227,15 @@ def test_dimo_client_get_total_dimo_vehicles_exception():
 
     assert total_vehicles is None
     dimo_mock.identity.count_dimo_vehicles.assert_called_once()
+
+
+def test_dimo_client_hex_to_permissions():
+    permissions_hex = "0x3ffc"
+    permissions_list = hex_to_permissions(permissions_hex)
+    assert permissions_list == [1, 2, 3, 4, 5, 6]
+
+    one_to_five_hex = "0xffc"
+    assert hex_to_permissions(one_to_five_hex) == [1, 2, 3, 4, 5]
+
+    another_hex = "0x3fcc"
+    assert hex_to_permissions(another_hex) == [1, 3, 4, 5, 6]

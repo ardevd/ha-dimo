@@ -224,7 +224,6 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         """Retrieve VIN for a vehicle"""
         _LOGGER.debug("Retrieving VIN for %s", vehicle_token_id)
         try:
-
             vin = await self.get_api_data(self.client.get_vin, vehicle_token_id)
             if vin:
                 self.vehicle_data[vehicle_token_id].vin = vin
