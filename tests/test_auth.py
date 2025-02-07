@@ -91,6 +91,7 @@ def test_auth_get_privileged_token(mocker):
     fake_privileged_token = create_mock_token(1600)
     fake_response = {"token": fake_privileged_token.token}
     vehicle_token_id = "1337"
+    permissions = [1, 2, 3, 4, 5]
 
     # Mock DIMO instance and token_exchange
     dimo_mock = Mock()
@@ -100,11 +101,36 @@ def test_auth_get_privileged_token(mocker):
     auth.access_token = create_mock_token(3600)
 
     # Test privileged token retrieval
-    privileged_token = auth.get_privileged_token(vehicle_token_id)
+    privileged_token = auth.get_privileged_token(vehicle_token_id, permissions)
 
     assert privileged_token.token == fake_privileged_token.token
     dimo_mock.token_exchange.exchange.assert_called_once_with(
-        auth.access_token.token, privileges=[1, 2, 3, 4], token_id=vehicle_token_id
+        auth.access_token.token,
+        privileges=permissions,
+        token_id=vehicle_token_id,
+    )
+
+
+def test_auth_get_privileged_token_without_permissions(mocker):
+    fake_privileged_token = create_mock_token(1600)
+    fake_response = {"token": fake_privileged_token.token}
+    vehicle_token_id = "1337"
+
+    # Mock DIMO instance and token_exchange
+    dimo_mock = Mock()
+    dimo_mock.token_exchange.exchange = Mock(return_value=fake_response)
+
+    auth = Auth("client_id", "domain", "private_key", dimo=dimo_mock)
+    auth.access_token = create_mock_token(3600)
+
+    # Test privileged token retrieval
+    privileged_token = auth.get_privileged_token(vehicle_token_id, None)
+
+    assert privileged_token.token == fake_privileged_token.token
+    dimo_mock.token_exchange.exchange.assert_called_once_with(
+        auth.access_token.token,
+        privileges=[1, 2, 3, 4, 5, 6],
+        token_id=vehicle_token_id,
     )
 
 

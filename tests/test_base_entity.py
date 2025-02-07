@@ -5,7 +5,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from custom_components.dimo.base_entity import DimoBaseEntity
-from custom_components.dimo.const import DIMO_SENSORS
+from custom_components.dimo.const import DIMO_SENSORS, DOMAIN
+from custom_components.dimo.base_entity import DimoBaseVehicleEntity
 
 
 @pytest.fixture
@@ -14,6 +15,7 @@ def mock_coordinator() -> DataUpdateCoordinator:
     coordinator = MagicMock(spec=DataUpdateCoordinator)
     coordinator.entry = MagicMock()
     coordinator.entry.domain = "dimo"
+    coordinator.vehicle_data = {}
     return coordinator
 
 
@@ -101,3 +103,29 @@ def test_dimo_base_entity_extra_state_attributes(
     entity.hass = hass
 
     assert entity.extra_state_attributes == {}
+
+
+def test_device_info_with_vin(
+    hass: HomeAssistant, mock_coordinator: DataUpdateCoordinator
+):
+    """Test device_info when the VIN is available."""
+    vehicle_token_id = "12345"
+    vin_value = "ABC3A7Y14412335211"
+    # Create a fake vehicle data with a VIN.
+    vehicle_data = MagicMock()
+    vehicle_data.vin = vin_value
+    vehicle_data.definition = {"make": "Tesla", "model": "Model 3"}
+    mock_coordinator.vehicle_data[vehicle_token_id] = vehicle_data
+
+    # Create the entity.
+    entity = DimoBaseVehicleEntity(mock_coordinator, vehicle_token_id, "mock_key")
+
+    dev_info = entity.device_info
+    print(dev_info)
+    # The identifiers should include both the token id and the VIN.
+    expected_identifiers = {(DOMAIN, vehicle_token_id), (DOMAIN, vin_value)}
+    assert dev_info["identifiers"] == expected_identifiers
+    # Check other metadata.
+    assert dev_info["manufacturer"] == "Tesla"
+    assert dev_info["name"] == "Tesla Model 3"
+    assert dev_info["model"] == "Model 3"

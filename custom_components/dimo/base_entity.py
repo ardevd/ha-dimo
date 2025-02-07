@@ -10,8 +10,9 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import DimoUpdateCoordinator
-from .const import DIMO_SENSORS, SIGNALS
+from .const import DIMO_SENSORS, SIGNALS, DOMAIN
 from custom_components.dimo.const import SignalDef
+from custom_components.dimo import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -98,6 +99,25 @@ class DimoBaseVehicleEntity(DimoBaseEntity):
         """Return extra state attributes."""
         vehicle_data = self.coordinator.vehicle_data[self.vehicle_token_id]
         signal_data = vehicle_data.signal_data.get(self.key, {})
-        return {
-            "timestamp": signal_data.get("timestamp"),
-        }
+
+        extra_attr = {"timestamp": signal_data.get("timestamp")}
+
+        return extra_attr
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return device information for the vehicle, including its VIN if available."""
+        vehicle = self.coordinator.vehicle_data[self.vehicle_token_id]
+        identifiers = {(DOMAIN, self.vehicle_token_id)}
+        vin = ""
+        if vehicle.vin:
+            identifiers.add((DOMAIN, vehicle.vin))
+            vin = vehicle.vin
+
+        return DeviceInfo(
+            identifiers=identifiers,
+            manufacturer=vehicle.definition.get("make", "DIMO"),
+            name=f"{vehicle.definition.get('make', 'Unknown')} {vehicle.definition.get('model', 'Unknown')}",
+            model=vehicle.definition.get("model", "Unknown Model"),
+            serial_number=vin,
+        )

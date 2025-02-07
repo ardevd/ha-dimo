@@ -34,3 +34,16 @@ query VehiclesForLicense {{
   }}
 }}
 """
+
+CHECK_SACD_QUERY = """
+  query CheckSACD {{
+  vehicle(tokenId: {token_id}) {{
+    sacds(first:100) {{
+      nodes {{
+        permissions
+        grantee
+      }}
+    }}
+  }}
+}}
+"""

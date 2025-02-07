@@ -1,4 +1,6 @@
+from attr import dataclass
 import logging
+from dataclasses import dataclass
 from typing import Optional
 from .auth import Auth
 from .queries import (
@@ -7,14 +9,24 @@ from .queries import (
     GET_LATEST_SIGNALS_QUERY,
     GET_ALL_VEHICLES_QUERY,
 )
+from custom_components.dimo.dimoapi.queries import CHECK_SACD_QUERY
 
 _LOGGER = logging.getLogger(__name__)
 
 
+@dataclass
+class VehicleSharingPermission:
+    """SACD permission model class"""
+
+    client_id: str
+    privileges: list
+
+
 class DimoClient:
-    def __init__(self, auth: Auth):
+    def __init__(self, auth: Auth, permission_checker=None):
         self.auth = auth
         self.dimo = auth.get_dimo()
+        self.permission_checker = permission_checker or self._check_sacd_permissions
 
     def init(self) -> None:
         """Initialize the client by retrieving an authorization token"""
@@ -27,7 +39,10 @@ class DimoClient:
     def _fetch_privileged_token(self, token_id: str) -> str:
         """Retrieve privileged token for specified token id"""
         try:
-            return self.auth.get_privileged_token(token_id).token
+            permissions = self.permission_checker(token_id)
+            return self.auth.get_privileged_token(
+                token_id, permissions.privileges
+            ).token
         except Exception as e:
             _LOGGER.error(f"Failed to obtain privileged token for {token_id}: {e}")
             raise
@@ -90,6 +105,24 @@ class DimoClient:
             _LOGGER.error(f"Failed to get total DIMO vehicles: {e}")
             return None
 
+    def _check_sacd_permissions(self, token_id) -> Optional[VehicleSharingPermission]:
+        """
+        Get Service Access Contract Definition details for a given vehicle,
+        including which clients the vehicle has been shared with and
+        with what permissions
+        """
+        result = self.dimo.identity.query(CHECK_SACD_QUERY.format(token_id=token_id))
+        permissions_dict = result["data"]["vehicle"]["sacds"]["nodes"]
+
+        for perm in permissions_dict:
+            grantee = perm["grantee"]
+            if grantee == self.auth.client_id:
+                return VehicleSharingPermission(
+                    grantee, hex_to_permissions(perm["permissions"])
+                )
+
+        return None
+
     def get_vin(self, token_id) -> Optional[str]:
         """
         Retrieve the Vehicle Identification Number (VIN) for the specified token ID.
@@ -117,4 +150,34 @@ class DimoClient:
             return None
         except Exception as e:
             _LOGGER.error(f"Failed to retrieve VIN for token_id {token_id}: {e}")
+            VehicleSharingPermission
             return None
+
+
+def hex_to_permissions(hex_value):
+    """
+    Convert a hex–encoded permission value into a list of permission levels.
+    """
+    num = int(hex_value, 0)
+    num >>= 2
+
+    bin_str = bin(num)[2:]
+
+    # Ensure an even number of bits by padding with a leading zero if needed.
+    if len(bin_str) % 2 != 0:
+        bin_str = "0" + bin_str
+
+    permissions = []
+    group_count = len(bin_str) // 2
+
+    # Process each group from right to left.
+    # The right–most group corresponds to permission level 1, the next to level 2, etc.
+    for i in range(group_count):
+        start = len(bin_str) - 2 * (i + 1)
+        end = len(bin_str) - 2 * i
+        group = bin_str[start:end]
+        # If the 2–bit group is nonzero, the permission is granted.
+        if int(group, 2) != 0:
+            permissions.append(i + 1)
+
+    return permissions
