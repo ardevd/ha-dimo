@@ -177,6 +177,11 @@ SIGNALS: dict[str, SignalDef] = {
         PERCENTAGE,
         icon="mdi:engine",
     ),
+    "obdDTCList": SignalDef(
+        "Diagnostics Trouble Codes",
+        Platform.SENSOR,
+        icon="mdi:alert-circle-outline",
+    ),
     "powertrainTractionBatteryChargingIsCharging": SignalDef(
         "EV Battery Charging",
         Platform.BINARY_SENSOR,
