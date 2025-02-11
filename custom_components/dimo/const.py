@@ -17,6 +17,7 @@ from homeassistant.const import (
     UnitOfSpeed,
     UnitOfTemperature,
     UnitOfTime,
+    UnitOfVolume,
 )
 
 DOMAIN = "dimo"
@@ -60,7 +61,6 @@ DIMO_SENSORS: dict[str, DimoSensorDef] = {
     )
 }
 
-# TODO: Add complete list from schema
 SIGNALS: dict[str, SignalDef] = {
     "dimoAftermarketNSAT": SignalDef(
         "No of GPS Satellites", Platform.SENSOR, icon="mdi:satellite-variant"
@@ -155,6 +155,13 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         PERCENTAGE,
+        icon="mdi:gas-station",
+    ),
+    "powertrainFuelSystemAbsoluteLevel": SignalDef(
+        "Absolute Fuel Level",
+        Platform.SENSOR,
+        SensorDeviceClass.VOLUME,
+        UnitOfVolume.LITERS,
         icon="mdi:gas-station",
     ),
     "obdIntakeTemp": SignalDef(
