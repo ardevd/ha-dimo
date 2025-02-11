@@ -52,15 +52,13 @@ to onboard your vehicle(s).
 - Create a new application. This requires a license to be minted, which is free for personal use. The application name must be globally unique, so if you get any errors, try modifying the application name.
 - Once your application is ready, generate a new api key and add a redirect URI (can be anything, doesnt matter)
 
-### 2. Share Your Vehicles in the DIMO Mobile App
+### 2. Share Your Vehicle
 
-The Home Assistant integration can only access vehicles you've decided to share with your DIMO console application. 
+The Home Assistant integration can only access vehicles you've decided to share with your DIMO console application. This can be done through the DIMO mobile app, but it currently does not support all privileges used by this integration. The recommended way to share your vehicle is through a Login With DIMO URL.
 
-- Open the DIMO mobile app on your smartphone.
-- Select your vehicle and go to "Vehicle Settings"
-- Click "Permission Sharing", tap the "+" sign in the top corner and input the `client_id` address from the DIMO console.
-- High-five yourself for being tech-savvy! You've just interacted with a blockchain smart contract!
-    - You can use tools such as Polygonscan or tenderly to view your transaction and the source code it interacted with! It's pretty cool!
+Open up the following URL scheme in your browser: `https://login.dimo.org/?clientId=<users-clientId>&redirectUri=<users-redirectUri>&permissionTemplateId=1&entryState=VEHICLE_MANAGER`. Make sure to substitute your client id and redirect URI according to your DIMO console application.
+
+There you can manage your vehicle sharing. After which, you're ready to set up the integration in Home Assistant.
 
 ### 3. Configure the Integration in Home Assistant
 
