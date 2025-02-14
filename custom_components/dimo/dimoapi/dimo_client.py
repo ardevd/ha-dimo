@@ -71,6 +71,9 @@ class DimoClient:
 
     def get_latest_signals(self, token_id, signal_names: list[str]):
         """Get the latest signal values for the specified vehicle"""
+        if signal_names is None:
+            signal_names = []
+            
         priv_token = self._fetch_privileged_token(token_id)
         signals_query = "\n".join(
             [
