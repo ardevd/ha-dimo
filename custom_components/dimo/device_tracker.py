@@ -27,13 +27,15 @@ async def async_setup_entry(
     entities = []
 
     for vehicle_token_id, vehicle_data in coordinator.vehicle_data.items():
-        if vehicle_data.signal_data[LAT_KEY] and vehicle_data.signal_data[LONG_KEY]:
+        latitude = vehicle_data.signal_data.get(LAT_KEY, {}).get("value")
+        longitude = vehicle_data.signal_data.get(LONG_KEY, {}).get("value")
+
+        if latitude is not None and longitude is not None:
             entities.append(
                 DimoTrackerEntity(coordinator, vehicle_token_id, LAT_KEY, LONG_KEY)
             )
 
     add_entities(entities)
-
 
 class DimoTrackerEntity(DimoBaseVehicleEntity, TrackerEntity):
     """Sensor entity."""
