@@ -73,7 +73,7 @@ class DimoClient:
         """Get the latest signal values for the specified vehicle"""
         if signal_names is None:
             signal_names = []
-            
+
         priv_token = self._fetch_privileged_token(token_id)
         signals_query = "\n".join(
             [
@@ -153,7 +153,6 @@ class DimoClient:
             return None
         except Exception as e:
             _LOGGER.error(f"Failed to retrieve VIN for token_id {token_id}: {e}")
-            VehicleSharingPermission
             return None
 
 
