@@ -162,7 +162,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             self.client.get_all_vehicles_for_license, self.entry.data[CONF_CLIENT_ID]
         )
         if vehicles_data is None:
-            _LOGGER.warning("Got no data from the API. Skipping update")
+            _LOGGER.warning("Got no vehicle data from the API. Skipping update")
             return
 
         vehicles = get_key("data.vehicles.nodes", vehicles_data)
@@ -183,7 +183,9 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             )
 
             if available_signals_data is None:
-                _LOGGER.warning("Got no data from the API. Skipping update")
+                _LOGGER.warning(
+                    "Got no available signals from the API. Skipping update"
+                )
                 return
 
             self.vehicle_data[vehicle_token_id].available_signals = get_key(
@@ -209,7 +211,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             )
 
             if signals_data is None:
-                _LOGGER.warning("Got no data from the API. Skipping update")
+                _LOGGER.warning("Got no signals data from the API. Skipping update")
                 return
 
             _LOGGER.debug("SIGNALS DATA: %s", signals_data)
