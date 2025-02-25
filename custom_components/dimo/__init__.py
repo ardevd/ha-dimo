@@ -1,5 +1,3 @@
-from http.client import RemoteDisconnected
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -299,10 +297,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
                 "No vehicles exist on this account.  Please check your vehicle sharing in the Dimo app"
             )
             raise
-        except (
-            ConnectionResetError,
-            RemoteDisconnected,
-        ) as ex:  # Non-critical exceptions.
+        except ConnectionError as ex:  # Non-critical exceptions.
             _LOGGER.warn("DIMO API request error: %s", ex)
             return None
         except Exception as ex:  # noqa: BLE001
