@@ -1,5 +1,3 @@
-"""The DIMO integration."""
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -161,6 +159,10 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         vehicles_data = await self.get_api_data(
             self.client.get_all_vehicles_for_license, self.entry.data[CONF_CLIENT_ID]
         )
+        if vehicles_data is None:
+            _LOGGER.warning("Got no vehicle data from the API. Skipping update")
+            return
+
         vehicles = get_key("data.vehicles.nodes", vehicles_data)
         for vehicle in vehicles:
             vehicle_token_id = vehicle.get("tokenId")
@@ -177,10 +179,16 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             available_signals_data = await self.get_api_data(
                 self.client.get_available_signals, vehicle_token_id
             )
-            if available_signals_data:
-                self.vehicle_data[vehicle_token_id].available_signals = get_key(
-                    "data.availableSignals", available_signals_data
+
+            if available_signals_data is None:
+                _LOGGER.warning(
+                    "Got no available signals from the API. Skipping update"
                 )
+                return
+
+            self.vehicle_data[vehicle_token_id].available_signals = get_key(
+                "data.availableSignals", available_signals_data
+            )
             _LOGGER.debug(
                 "AVAILABLE SIGNALS: %s - %s", vehicle_token_id, available_signals_data
             )
@@ -199,6 +207,11 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
                 vehicle_token_id,
                 self.vehicle_data[vehicle_token_id].available_signals,
             )
+
+            if signals_data is None:
+                _LOGGER.warning("Got no signals data from the API. Skipping update")
+                return
+
             _LOGGER.debug("SIGNALS DATA: %s", signals_data)
             self.vehicle_data[vehicle_token_id].signal_data = get_key(
                 "data.signalsLatest", signals_data
@@ -284,6 +297,9 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
                 "No vehicles exist on this account.  Please check your vehicle sharing in the Dimo app"
             )
             raise
+        except ConnectionError as ex:  # Non-critical exceptions.
+            _LOGGER.warn("DIMO API request error: %s", ex)
+            return None
         except Exception as ex:  # noqa: BLE001
             _LOGGER.error(
                 "An unknown error occurred trying to retrieve data from the Dimo api.  Error is: %s",
