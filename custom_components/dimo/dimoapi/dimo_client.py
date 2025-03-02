@@ -114,7 +114,7 @@ class DimoClient:
         including which clients the vehicle has been shared with and
         with what permissions
         """
-        result = self.dimo.identity.query(CHECK_SACD_QUERY.format(token_id=token_id))
+        result = self.dimo.identity.check_vehicle_privileges(token_id)
         permissions_dict = result["data"]["vehicle"]["sacds"]["nodes"]
 
         for perm in permissions_dict:
