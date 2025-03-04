@@ -15,7 +15,7 @@
             "user": {
                 "data": {
                     "client_id": "Client ID",
-                    "auth_provider": "Domain",
+                    "auth_provider": "Redirect URI",
                     "private_key": "API Key"
                 }
             }

@@ -13,7 +13,7 @@
           "user": {
               "data": {
                   "client_id": "Client ID",
-                  "domain": "Domain",
+                  "domain": "Redirect URI",
                   "private_key": "API Key"
               }
           }
