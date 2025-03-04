@@ -9,7 +9,6 @@ from .queries import (
     GET_LATEST_SIGNALS_QUERY,
     GET_ALL_VEHICLES_QUERY,
 )
-from custom_components.dimo.dimoapi.queries import CHECK_SACD_QUERY
 
 _LOGGER = logging.getLogger(__name__)
 
