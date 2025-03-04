@@ -261,6 +261,11 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         icon="mdi:car-cog",
     ),
+    "dimoAftermarketHDOP": SignalDef(
+        "Horizontal dilution of GPS precision",
+        Platform.SENSOR,
+        icon="mdi:satellite-variant",
+    ),
     "powertrainTractionBatteryStateOfHealth": SignalDef(
         "EV Battery State of Health",
         Platform.SENSOR,
