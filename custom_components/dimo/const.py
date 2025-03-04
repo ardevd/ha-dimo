@@ -83,6 +83,12 @@ SIGNALS: dict[str, SignalDef] = {
         SensorDeviceClass.DISTANCE,
         UnitOfLength.KILOMETERS,
     ),
+    "powertrainTractionBatteryRange": SignalDef(
+        "EV Range",
+        Platform.SENSOR,
+        SensorDeviceClass.DISTANCE,
+        UnitOfLength.KILOMETERS,
+    ),
     "powertrainTransmissionTravelledDistance": SignalDef(
         "Odometer",
         Platform.SENSOR,
