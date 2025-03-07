@@ -38,6 +38,9 @@ class DimoClient:
     def _fetch_privileged_token(self, token_id: str) -> str:
         """Retrieve privileged token for specified token id"""
         try:
+            # Assert access token validity
+            self.auth.get_access_token()
+            # Get privileged token with the granted permissions
             permissions = self.permission_checker(token_id)
             return self.auth.get_privileged_token(
                 token_id, permissions.privileges
