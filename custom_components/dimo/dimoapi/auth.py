@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 import requests
 import dimo as dimo_api
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Optional
 import jwt
 import logging
@@ -73,7 +73,7 @@ class Auth:
         expiration_time = datetime.fromtimestamp(exp, timezone.utc)
         current_time = datetime.now(timezone.utc)
 
-        return current_time > expiration_time
+        return current_time + timedelta(seconds=60) > expiration_time
 
     def _is_privileged_token_expired(self, vehicle_token_id: str) -> bool:
         """Assert privileged token expiration."""
