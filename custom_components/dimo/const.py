@@ -155,6 +155,7 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         PERCENTAGE,
+        icon="mdi:speedometer",
     ),
     "powertrainFuelSystemRelativeLevel": SignalDef(
         "Fuel Level",
