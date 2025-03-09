@@ -237,6 +237,7 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         UnitOfTime.SECONDS,
+        icon="mdi:engine",
     ),
     "obdDistanceWithMIL": SignalDef(
         "Distance with MIL",
