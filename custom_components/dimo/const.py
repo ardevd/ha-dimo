@@ -263,6 +263,11 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         icon="mdi:car-cog",
     ),
+    "currentLocationIsRedacted": SignalDef(
+        "Location Redacted",
+        Platform.BINARY_SENSOR,
+        icon="mdi:map-marker",
+    ),
     "dimoAftermarketHDOP": SignalDef(
         "Horizontal dilution of GPS precision",
         Platform.SENSOR,
