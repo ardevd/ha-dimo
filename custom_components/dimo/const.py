@@ -264,7 +264,7 @@ SIGNALS: dict[str, SignalDef] = {
         icon="mdi:car-cog",
     ),
     "currentLocationIsRedacted": SignalDef(
-        "Location Redacted",
+        "Approximate Location",
         Platform.BINARY_SENSOR,
         icon="mdi:map-marker",
     ),
