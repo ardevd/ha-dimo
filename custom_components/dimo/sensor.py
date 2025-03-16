@@ -75,11 +75,13 @@ class DimoVehicleSensorEntity(DimoBaseVehicleEntity, SensorEntity):
     @property
     def native_value(self):
         """Return the native value of this entity."""
-        return (
-            self.coordinator.vehicle_data[self.vehicle_token_id]
-            .signal_data[self.key]
-            .get("value")
-        )
+        vehicle = self.coordinator.vehicle_data.get(self.vehicle_token_id, {})
+        if vehicle is None:
+            return None
+
+        signal_data = getattr(vehicle, "signal_data", {})
+        data = signal_data.get(self.key)
+        return data.get("value") if data else None
 
     @property
     def native_unit_of_measurement(self) -> str | None:
