@@ -107,11 +107,13 @@ class DimoClient:
             result = self.dimo.identity.count_dimo_vehicles()
             return result.get("data", {}).get("vehicles", {}).get("totalCount")
         except ConnectionError as ex:
-            _LOGGER.warn("DIMO API request error when retrieving DIMO vehicle count %s", ex)
+            _LOGGER.warn(
+                "DIMO API request error when retrieving DIMO vehicle count %s", ex
+            )
             return None
         except Exception as e:
             _LOGGER.error(f"Failed to get total DIMO vehicles: {e}")
-            raise
+            return None
 
     def _check_sacd_permissions(self, token_id) -> Optional[VehicleSharingPermission]:
         """
