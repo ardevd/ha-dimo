@@ -8,12 +8,6 @@ query GetVehicleRewardsByTokenId {{
 }}
 """
 
-GET_AVAILABLE_SIGNALS_QUERY = """
-query AvailableSignals {{
-  availableSignals(tokenId: {token_id})
-}}
-"""
-
 GET_LATEST_SIGNALS_QUERY = """
 query {{
   signalsLatest(tokenId: {token_id}) {{

@@ -64,19 +64,15 @@ def test_dimo_client_get_available_signals():
     dimo_client = DimoClient(auth=auth_mock)
     token_id = "vehicle123"
     query_result = {"availableSignals": []}
-    dimo_mock.telemetry.query.return_value = query_result
+    dimo_mock.telemetry.available_signals.return_value = query_result
 
     result = dimo_client.get_available_signals(token_id)
 
     # Assert the result and query
     assert result == query_result
-    dimo_mock.telemetry.query.assert_called_once_with(
-        f"""
-query AvailableSignals {{
-  availableSignals(tokenId: {token_id})
-}}
-""",
+    dimo_mock.telemetry.available_signals.assert_called_once_with(
         priv_token.token,
+        token_id,
     )
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
 

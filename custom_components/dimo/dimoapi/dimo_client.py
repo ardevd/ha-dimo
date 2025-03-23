@@ -3,7 +3,6 @@ from typing import Optional
 from .auth import Auth
 from .queries import (
     GET_VEHICLE_REWARDS_QUERY,
-    GET_AVAILABLE_SIGNALS_QUERY,
     GET_LATEST_SIGNALS_QUERY,
     GET_ALL_VEHICLES_QUERY,
 )
@@ -54,8 +53,7 @@ class DimoClient:
     def get_available_signals(self, token_id: str):
         """Get list of available signals for a specified vehicle"""
         priv_token = self._fetch_privileged_token(token_id)
-        query = GET_AVAILABLE_SIGNALS_QUERY.format(token_id=token_id)
-        return self.dimo.telemetry.query(query, priv_token)
+        return self.dimo.telemetry.available_signals(priv_token, token_id)
 
     def get_latest_signals(self, token_id, signal_names: list[str]):
         """Get the latest signal values for the specified vehicle"""
