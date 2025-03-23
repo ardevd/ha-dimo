@@ -4,7 +4,7 @@ Welcome to the **DIMO Integration for Home Assistant**! Bring your vehicle's tel
 
 ## 🧐 What's DIMO?
 
-[DIMO](https://dimo.co) is an open-source platform that connects your vehicle to a decentralized network, providing secure and trustless access to your car's telemetry data. DIMO provides an open protocol using blockchain to establish universal digital vehicle identity, permissions, data transmission and vehicle control.
+[DIMO](https://dimo.co) is an open-source platform that connects your vehicle to a decentralized network. DIMO provides an open protocol using blockchain to establish universal digital vehicle identity, permissions, data transmission and vehicle control.
 
 ## 🚀 Features
 
@@ -12,7 +12,7 @@ Welcome to the **DIMO Integration for Home Assistant**! Bring your vehicle's tel
 
 - **Device Tracker**: Keep tabs on your vehicles with device tracker entities. Perfect for ensuring your car isn't sneaking out past curfew.
 
-- **Secure & Trustless Connection**: Enjoy peace of mind with a blockchain-backed, trustless connection to the DIMO API. Your data stays yours without a need to trust a third party server.
+- **Secure & Trustless Connection**: Enjoy peace of mind with a blockchain-backed, trustless connection to the DIMO API. Your data stays yours without a need to trust a third party server as all data sharing can be validated through smart contract code and transactions all openly available on the blockchain.
 
 ## 🛠 Installation
 
@@ -39,11 +39,11 @@ Until then, the integration can be added as a custom repository in HACS for simp
 
 ## 🔧 Setup Guide
 
-Ready to connect your car? Follow these steps:
+Got the integration installed and ready to connect your car? Follow these steps:
 
 ### 0. Sign up to DIMO and connect your vehicle(s)
-Download the DIMO mobile app to get going. You can use the smartcar connection and/or DIMO hardware 
-to onboard your vehicle(s).
+Download the DIMO mobile app to get going. You can use the Smartcar connection and/or DIMO hardware 
+to onboard your vehicle(s). Note that the Smartcar connection provides limited data and only updated data around once every 1-2 hours. Tesla have DIMO integration built in to the infotainment so no hardware device is needed or supported.
 
 ### 1. Sign Up on the DIMO Developer Console
 
