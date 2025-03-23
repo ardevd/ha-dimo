@@ -1,3 +1,4 @@
+import requests
 import logging
 from typing import Optional
 from .auth import Auth
@@ -90,7 +91,7 @@ class DimoClient:
         try:
             result = self.dimo.identity.count_dimo_vehicles()
             return result.get("data", {}).get("vehicles", {}).get("totalCount")
-        except ConnectionError as ex:
+        except requests.exceptions.ConnectionError as ex:
             _LOGGER.warn(
                 "DIMO API request error when retrieving DIMO vehicle count %s", ex
             )

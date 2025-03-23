@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import timedelta, datetime, timezone
 import logging
+import requests
 import asyncio
 from typing import Any
 
@@ -297,7 +298,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
                 "No vehicles exist on this account.  Please check your vehicle sharing in the Dimo app"
             )
             raise
-        except ConnectionError as ex:  # Non-critical exceptions.
+        except (requests.exceptions.ConnectionError,) as ex:  # Non-critical exceptions.
             _LOGGER.warn("DIMO API request error: %s", ex)
             return None
         except Exception as ex:  # noqa: BLE001
