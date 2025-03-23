@@ -1,6 +1,4 @@
-from attr import dataclass
 import logging
-from dataclasses import dataclass
 from typing import Optional
 from .auth import Auth
 from .queries import (
