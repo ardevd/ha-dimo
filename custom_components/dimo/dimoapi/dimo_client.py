@@ -92,7 +92,7 @@ class DimoClient:
             result = self.dimo.identity.count_dimo_vehicles()
             return result.get("data", {}).get("vehicles", {}).get("totalCount")
         except requests.exceptions.ConnectionError as ex:
-            _LOGGER.warn(
+            _LOGGER.warning(
                 "DIMO API request error when retrieving DIMO vehicle count %s", ex
             )
             return None
