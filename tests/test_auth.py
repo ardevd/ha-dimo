@@ -20,14 +20,14 @@ def test_auth_get_token(mocker):
     # Mocking the DIMO instance and auth.get_token
     dimo_mock = Mock()
 
-    dimo_mock.auth.get_token = Mock(return_value={"access_token": fake_token.token})
+    dimo_mock.auth.get_dev_jwt = Mock(return_value={"access_token": fake_token.token})
     auth = Auth("client_id", "domain", "private_key", dimo=dimo_mock)
 
     # Test token retrieval
     token = auth.get_access_token()
 
     assert token == fake_token
-    dimo_mock.auth.get_token.assert_called_once_with(
+    dimo_mock.auth.get_dev_jwt.assert_called_once_with(
         client_id="client_id", domain="domain", private_key="private_key"
     )
 
@@ -75,14 +75,14 @@ def test_auth_get_dimo():
 def test_auth_get_token_calls_get_auth_when_token_is_none(mocker):
     fake_token = create_mock_token(3600)  # 1 hour from now
     dimo_mock = Mock()
-    dimo_mock.auth.get_token = Mock(return_value={"access_token": fake_token.token})
+    dimo_mock.auth.get_dev_jwt = Mock(return_value={"access_token": fake_token.token})
 
     auth = Auth("client_id", "domain", "private_key", dimo=dimo_mock)
 
     token = auth.get_access_token()
 
     assert token == fake_token
-    dimo_mock.auth.get_token.assert_called_once_with(
+    dimo_mock.auth.get_dev_jwt.assert_called_once_with(
         client_id="client_id", domain="domain", private_key="private_key"
     )
 
@@ -91,7 +91,6 @@ def test_auth_get_privileged_token(mocker):
     fake_privileged_token = create_mock_token(1600)
     fake_response = {"token": fake_privileged_token.token}
     vehicle_token_id = "1337"
-    permissions = [1, 2, 3, 4, 5]
 
     # Mock DIMO instance and token_exchange
     dimo_mock = Mock()
@@ -101,12 +100,11 @@ def test_auth_get_privileged_token(mocker):
     auth.access_token = create_mock_token(3600)
 
     # Test privileged token retrieval
-    privileged_token = auth.get_privileged_token(vehicle_token_id, permissions)
+    privileged_token = auth.get_privileged_token(vehicle_token_id)
 
     assert privileged_token.token == fake_privileged_token.token
     dimo_mock.token_exchange.exchange.assert_called_once_with(
-        auth.access_token.token,
-        privileges=permissions,
+        developer_jwt=auth.access_token.token,
         token_id=vehicle_token_id,
     )
 
@@ -124,12 +122,11 @@ def test_auth_get_privileged_token_without_permissions(mocker):
     auth.access_token = create_mock_token(3600)
 
     # Test privileged token retrieval
-    privileged_token = auth.get_privileged_token(vehicle_token_id, None)
+    privileged_token = auth.get_privileged_token(vehicle_token_id)
 
     assert privileged_token.token == fake_privileged_token.token
     dimo_mock.token_exchange.exchange.assert_called_once_with(
-        auth.access_token.token,
-        privileges=[1, 2, 3, 4, 5, 6],
+        developer_jwt=auth.access_token.token,
         token_id=vehicle_token_id,
     )
 
@@ -144,7 +141,7 @@ def test_auth_get_privileged_token_without_permissions(mocker):
 )
 def test_auth_exceptions(mocker, mocked_exception, expected_exception):
     dimo_mock = Mock()
-    dimo_mock.auth.get_token = Mock(side_effect=mocked_exception)
+    dimo_mock.auth.get_dev_jwt = Mock(side_effect=mocked_exception)
 
     auth = Auth("client_id", "domain", "private_key", dimo=dimo_mock)
 
@@ -181,7 +178,7 @@ def test_access_token_not_refreshed_if_not_expired(mocker):
     """Ensures we don't refresh the access token if it's still valid."""
     dimo_mock = Mock()
     # Make sure if we do fetch, it would be some placeholder
-    dimo_mock.auth.get_token = Mock(return_value={"access_token": "unused_new_token"})
+    dimo_mock.auth.get_dev_jwt = Mock(return_value={"access_token": "unused_new_token"})
 
     auth = Auth("client_id", "domain", "private_key", dimo=dimo_mock)
     valid_token = create_mock_token(3600)  # 1 hour from now
@@ -191,4 +188,4 @@ def test_access_token_not_refreshed_if_not_expired(mocker):
     token = auth.get_access_token()
 
     assert token == valid_token
-    dimo_mock.auth.get_token.assert_not_called()
+    dimo_mock.auth.get_dev_jwt.assert_not_called()

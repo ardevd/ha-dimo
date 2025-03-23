@@ -44,22 +44,14 @@ class Auth:
         self.privileged_tokens: dict[str, AuthToken] = {}
         self.dimo = dimo if dimo else dimo_api.DIMO("Production")
 
-    def get_privileged_token(
-        self, vehicle_token_id: str, permissions: Optional[list]
-    ) -> AuthToken:
+    def get_privileged_token(self, vehicle_token_id: str) -> AuthToken:
         """Get privileged token from DIMO token exchange API"""
         if not self.privileged_tokens.get(
             vehicle_token_id
         ) or self._is_privileged_token_expired(vehicle_token_id):
-            if permissions is None:
-                _LOGGER.debug("No permissions specified. Fallback to default")
-                permissions = [1, 2, 3, 4, 5, 6]
-            _LOGGER.debug(
-                f"Obtaining privileged token for {vehicle_token_id} with privileges {permissions}"
-            )
+            _LOGGER.debug(f"Obtaining privileged token for {vehicle_token_id}")
             token = self.dimo.token_exchange.exchange(
-                self.access_token.token,
-                privileges=permissions,
+                developer_jwt=self.access_token.token,
                 token_id=vehicle_token_id,
             )["token"]
 
@@ -87,7 +79,7 @@ class Auth:
     def _get_auth(self):
         _LOGGER.debug("Retrieving access token")
         try:
-            auth_header = self.dimo.auth.get_token(
+            auth_header = self.dimo.auth.get_dev_jwt(
                 client_id=self.client_id,
                 domain=self.domain,
                 private_key=self.private_key,
