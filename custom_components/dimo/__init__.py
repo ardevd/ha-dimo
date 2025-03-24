@@ -255,10 +255,11 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             if rewards_data:
                 timestamp = self._get_current_timestamp()
                 earnings = rewards_data["data"]["vehicle"]["earnings"]["totalTokens"]
-                self.vehicle_data[vehicle_token_id].signal_data["tokenRewards"] = {
-                    "timestamp": timestamp,
-                    "value": earnings,
-                }
+                if self.vehicle_data[vehicle_token_id].signal_data:
+                    self.vehicle_data[vehicle_token_id].signal_data["tokenRewards"] = {
+                        "timestamp": timestamp,
+                        "value": earnings,
+                    }
         except KeyError:
             _LOGGER.warning(
                 "Rewards data structure unexpected for vehicle %s.", vehicle_token_id
