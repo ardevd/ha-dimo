@@ -1,5 +1,8 @@
 [![Coverage](https://sonarqube.redbird.no/api/project_badges/measure?project=ha-dimo&metric=coverage&token=sqb_643a3d992a975c231854c306cf2a3cdcb1a66f53)](https://sonarqube.redbird.no/dashboard?id=ha-dimo)
 [![Lines of Code](https://sonarqube.redbird.no/api/project_badges/measure?project=ha-dimo&metric=ncloc&token=sqb_643a3d992a975c231854c306cf2a3cdcb1a66f53)](https://sonarqube.redbird.no/dashboard?id=ha-dimo)
+[![Maintainability Rating](https://sonarqube.redbird.no/api/project_badges/measure?project=ha-dimo&metric=software_quality_maintainability_rating&token=sqb_643a3d992a975c231854c306cf2a3cdcb1a66f53)](https://sonarqube.redbird.no/dashboard?id=ha-dimo)
+[![Reliability Rating](https://sonarqube.redbird.no/api/project_badges/measure?project=ha-dimo&metric=software_quality_reliability_rating&token=sqb_643a3d992a975c231854c306cf2a3cdcb1a66f53)](https://sonarqube.redbird.no/dashboard?id=ha-dimo)
+[![Security Rating](https://sonarqube.redbird.no/api/project_badges/measure?project=ha-dimo&metric=software_quality_security_rating&token=sqb_643a3d992a975c231854c306cf2a3cdcb1a66f53)](https://sonarqube.redbird.no/dashboard?id=ha-dimo)
 
 # 🚗🔌 DIMO Integration for Home Assistant
 
