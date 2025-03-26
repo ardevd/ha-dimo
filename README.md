@@ -1,3 +1,6 @@
+[![Coverage](https://sonarqube.redbird.no/api/project_badges/measure?project=ha-dimo&metric=coverage&token=sqb_643a3d992a975c231854c306cf2a3cdcb1a66f53)](https://sonarqube.redbird.no/dashboard?id=ha-dimo)
+[![Lines of Code](https://sonarqube.redbird.no/api/project_badges/measure?project=ha-dimo&metric=ncloc&token=sqb_643a3d992a975c231854c306cf2a3cdcb1a66f53)](https://sonarqube.redbird.no/dashboard?id=ha-dimo)
+
 # 🚗🔌 DIMO Integration for Home Assistant
 
 Welcome to the **DIMO Integration for Home Assistant**! Bring your vehicle's telemetry data right into Home Assistant. Buckle up, because we're about to take a data-driven joyride!
