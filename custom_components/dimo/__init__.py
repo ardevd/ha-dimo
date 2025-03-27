@@ -299,8 +299,14 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
                 "No vehicles exist on this account.  Please check your vehicle sharing in the Dimo app"
             )
             raise
-        except (requests.exceptions.ConnectionError,) as ex:  # Non-critical exceptions.
-            _LOGGER.warn("DIMO API request error: %s", ex)
+        except requests.exceptions.ConnectionError as ex:  # Non-critical exceptions.
+            _LOGGER.warn("DIMO API request connection error: %s", ex)
+            return None
+
+        except requests.exceptions.HTTPError as ex:
+            _LOGGER.warn(
+                "DIMO API request returned an unexpected result from the server: %s", ex
+            )
             return None
         except Exception as ex:  # noqa: BLE001
             _LOGGER.error(
