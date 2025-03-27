@@ -300,11 +300,11 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             )
             raise
         except requests.exceptions.ConnectionError as ex:  # Non-critical exceptions.
-            _LOGGER.warn("DIMO API request connection error: %s", ex)
+            _LOGGER.warning("DIMO API request connection error: %s", ex)
             return None
 
         except requests.exceptions.HTTPError as ex:
-            _LOGGER.warn(
+            _LOGGER.warning(
                 "DIMO API request returned an unexpected result from the server: %s", ex
             )
             return None
