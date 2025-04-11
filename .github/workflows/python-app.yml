@@ -33,7 +33,7 @@ jobs:
           uv venv
           source .venv/bin/activate
           uv pip install flake8 pytest
-          uv pip install -r requirements_test.txt
+          uv pip install -r requirements_test.txt --prerelease=allow
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
