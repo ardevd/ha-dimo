@@ -28,8 +28,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          sudo apt update && sudo apt install -y uv
           python -m pip install --upgrade pip
+          pip install uv
           uv pip install flake8 pytest
           uv pip install -r requirements_test.txt
       - name: Lint with flake8
