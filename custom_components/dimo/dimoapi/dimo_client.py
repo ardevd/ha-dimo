@@ -125,6 +125,9 @@ class DimoClient:
                 f"Malformed response when retrieving VIN for token_id {token_id}: {e}"
             )
             return None
+        except requests.exceptions.ConnectionError as ex:
+            _LOGGER.warning("Connect error occurred while retrieving VIN: %s", ex)
+            return None
         except Exception as e:
             _LOGGER.error(f"Failed to retrieve VIN for token_id {token_id}: {e}")
             return None
