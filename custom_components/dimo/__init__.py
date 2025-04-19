@@ -25,6 +25,7 @@ from .dimoapi import (
 )
 from .helpers import get_key
 from typing import Optional
+from typing_extensions import Mapping
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -280,7 +281,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         await asyncio.gather(*tasks)
         return True
 
-    async def get_api_data(self, target, *args) -> dict[str, Any] | None:
+    async def get_api_data(self, target, *args) -> Optional[Mapping[str, any]]:
         """Request data from api."""
         try:
             return await self.hass.async_add_executor_job(target, *args)
