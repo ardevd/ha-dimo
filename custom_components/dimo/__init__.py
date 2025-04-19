@@ -281,7 +281,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         await asyncio.gather(*tasks)
         return True
 
-    async def get_api_data(self, target, *args) -> Optional[Mapping[str, any]]:
+    async def get_api_data(self, target, *args) -> Optional[Mapping[str, Any]]:
         """Request data from api."""
         try:
             return await self.hass.async_add_executor_job(target, *args)
@@ -344,6 +344,6 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             config_entry_id=self.entry.entry_id,
             identifiers=identifiers,
             manufacturer=vehicle.definition["make"],
-            name=f"{vehicle.definition["make"]} {vehicle.definition["model"]}",
+            name=f"{vehicle.definition['make']} {vehicle.definition['model']}",
             model=vehicle.definition["model"],
         )
