@@ -17,11 +17,7 @@ def requires_vehicle_jwt(method):
 
     @wraps(method)
     def wrapper(self, token_id: str, *args, **kwargs):
-        try:
-            vehicle_jwt = self._fetch_privileged_token(token_id)
-        except:
-            # logging handled by _fetch_privileged_token
-            raise
+        vehicle_jwt = self._fetch_privileged_token(token_id)
         return method(self, vehicle_jwt, token_id, *args, **kwargs)
 
     return wrapper
