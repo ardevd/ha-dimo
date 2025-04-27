@@ -3,6 +3,7 @@ import requests
 import dimo as dimo_api
 from datetime import datetime, timezone, timedelta
 from typing import Optional
+from requests.adapters import HTTPAdapter, Retry
 import jwt
 import logging
 
@@ -42,7 +43,27 @@ class Auth:
         self.private_key = private_key
         self.access_token = None
         self.privileged_tokens: dict[str, AuthToken] = {}
-        self.dimo = dimo if dimo else dimo_api.DIMO("Production")
+        self.dimo = (
+            dimo
+            if dimo
+            else dimo_api.DIMO(env="Production", session=self.build_session())
+        )
+
+    def build_session(self) -> requests.Session:
+        retry_strategy = Retry(
+            total=3,
+            backoff_factor=0.3,
+            status_forcelist=(500, 502, 503, 504),
+            allowed_methods=frozenset(["GET", "POST", "PUT", "DELETE", "PATCH"]),
+            raise_on_status=False,
+            respect_retry_after_header=True,
+        )
+
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        session = requests.Session()
+
+        session.mount("https://", adapter)
+        return session
 
     def get_privileged_token(self, vehicle_token_id: str) -> AuthToken:
         """Get privileged token from DIMO token exchange API"""
