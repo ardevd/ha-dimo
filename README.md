@@ -24,18 +24,7 @@ Welcome to the **DIMO Integration for Home Assistant**! Bring your vehicle's tel
 
 ### Option 1: HACS (Home Assistant Community Store)
 
-A [PR](https://github.com/hacs/default/pull/2860) exists for including this integration in HACS, but as of now the PR backlog in HACS is almost a year long, so it will probably take some time before it gets merged.
-
-Until then, the integration can be added as a custom repository in HACS for simple integration management.
-
-1. **Prerequisite**: Ensure you have [HACS](https://hacs.xyz/) installed.
-2. Navigate to HACS in your Home Assistant sidebar.
-3. Click on the three dots in the top right corner. 
-4. Select "Custom Repositories"
-5. Input "https://github.com/ardevd/ha-dimo" as the repository value, and pick "Integration" as the type.
-6. Click "Add"
-7. The integration should be installed, and you'll have to restart Home Assistant for the changes to be applied.
-8. Finally, add the integration under Settings -> Devices & Services to get started!
+The integration can be easily added through HACS. Ensure you have [HACS](https://hacs.xyz/) installed and simply search and add the DIMO integration.
 
 ### Option 2: Manual Installation
 
