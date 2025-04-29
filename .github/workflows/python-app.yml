@@ -44,4 +44,8 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v3.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: coverage.xml 
