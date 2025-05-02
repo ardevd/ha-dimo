@@ -1,9 +1,9 @@
+import dimo as dimo_sdk
 from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import timedelta, datetime, timezone
 import logging
-import requests
 import asyncio
 from typing import Any
 
@@ -300,14 +300,8 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
                 "No vehicles exist on this account.  Please check your vehicle sharing in the Dimo app"
             )
             raise
-        except requests.exceptions.ConnectionError as ex:  # Non-critical exceptions.
-            _LOGGER.warning("DIMO API request connection error: %s", ex)
-            return None
-
-        except requests.exceptions.HTTPError as ex:
-            _LOGGER.warning(
-                "DIMO API request returned an unexpected result from the server: %s", ex
-            )
+        except dimo_sdk.HTTPError as ex:
+            _LOGGER.warning("DIMO API request HTTP error: %s", ex)
             return None
         except Exception as ex:  # noqa: BLE001
             _LOGGER.error(
