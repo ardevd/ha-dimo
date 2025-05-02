@@ -1,6 +1,6 @@
 from .helper import create_mock_token
 import jwt
-import requests
+import dimo as dimo_sdk
 from datetime import datetime, timedelta, timezone
 import pytest
 from unittest.mock import Mock
@@ -134,8 +134,14 @@ def test_auth_get_privileged_token_without_permissions(mocker):
 @pytest.mark.parametrize(
     "mocked_exception,expected_exception",
     [
-        (requests.exceptions.HTTPError("404"), InvalidClientIdError),
-        (requests.exceptions.HTTPError("400"), InvalidCredentialsError),
+        (
+            dimo_sdk.request.HTTPError(status=404, message="Invalid Client ID"),
+            InvalidClientIdError,
+        ),
+        (
+            dimo_sdk.request.HTTPError(status=400, message="Invalid credentials error"),
+            InvalidCredentialsError,
+        ),
         (ValueError("Invalid API key format"), InvalidApiKeyFormat),
     ],
 )

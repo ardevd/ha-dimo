@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-import requests
+import dimo as dimo_sdk
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
@@ -57,7 +57,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
         raise NoVehiclesException  # noqa: TRY301
     except InvalidCredentialsError as ex:
         raise InvalidAuth from ex
-    except requests.exceptions.HTTPError as ex:
+    except dimo_sdk.request.HTTPError as ex:
         raise CannotConnect from ex
 
 

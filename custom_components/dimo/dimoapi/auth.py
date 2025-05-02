@@ -107,10 +107,10 @@ class Auth:
             )
             self.access_token = AuthToken(auth_header["access_token"])
             _LOGGER.debug("access token retrieved")
-        except requests.exceptions.HTTPError as e:
-            if "404" in str(e):
+        except dimo_api.request.HTTPError as e:
+            if e.status == 402:
                 raise InvalidClientIdError from e
-            if "400" in str(e):
+            if e.status == 400::
                 raise InvalidCredentialsError from e
             raise  # Re-raise for unexpected errors
 
