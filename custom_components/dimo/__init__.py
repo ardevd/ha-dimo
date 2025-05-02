@@ -1,6 +1,6 @@
-import dimo as dimo_sdk
 from __future__ import annotations
 
+import dimo as dimo_sdk
 from dataclasses import dataclass
 from datetime import timedelta, datetime, timezone
 import logging
