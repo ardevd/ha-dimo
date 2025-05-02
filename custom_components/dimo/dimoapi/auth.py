@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 import requests
-import dimo as dimo_api
+import dimo as dimo_sdk
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 from requests.adapters import HTTPAdapter, Retry
@@ -33,7 +33,7 @@ class Auth:
         client_id: str,
         domain: str,
         private_key: str,
-        dimo: Optional[dimo_api.DIMO] = None,
+        dimo: Optional[dimo_sdk.DIMO] = None,
     ) -> None:
         """
         Initialize the authentication wrapper for the DIMO API.
@@ -46,7 +46,7 @@ class Auth:
         self.dimo = (
             dimo
             if dimo
-            else dimo_api.DIMO(env="Production", session=self.build_session())
+            else dimo_sdk.DIMO(env="Production", session=self.build_session())
         )
 
     def build_session(self) -> requests.Session:
@@ -107,7 +107,7 @@ class Auth:
             )
             self.access_token = AuthToken(auth_header["access_token"])
             _LOGGER.debug("access token retrieved")
-        except dimo_api.request.HTTPError as e:
+        except dimo_sdk.request.HTTPError as e:
             if e.status == 404:
                 raise InvalidClientIdError from e
             if e.status == 400:
