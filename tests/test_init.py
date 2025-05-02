@@ -1,10 +1,11 @@
 import pytest
 from unittest.mock import MagicMock, patch
-
+import dimo as dimo_sdk
 from homeassistant.core import HomeAssistant
 
 from custom_components.dimo.__init__ import DimoUpdateCoordinator, VehicleData
 from custom_components.dimo import DOMAIN
+import logging
 
 
 @pytest.fixture
@@ -92,3 +93,15 @@ def test_create_vehicle_device_with_vin(coordinator):
         name=f'{vehicle.definition["make"]} {vehicle.definition["model"]}',
         model=vehicle.definition["model"],
     )
+
+
+@pytest.mark.asyncio
+async def test_get_api_data_http_error_returns_none(coordinator, caplog):
+    """get_api_data should log a warning and return None on dimo_sdk.HTTPError."""
+    caplog.set_level(logging.WARNING)
+    dummy_fn = lambda: None
+    http_err = dimo_sdk.request.HTTPError(status=502, message="timeout")
+    with patch.object(coordinator.hass, "async_add_executor_job", side_effect=http_err):
+        result = await coordinator.get_api_data(dummy_fn, "arg1", "arg2")
+    assert result is None
+    assert "dimo api request http error" in caplog.text.lower()

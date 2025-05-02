@@ -300,7 +300,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
                 "No vehicles exist on this account.  Please check your vehicle sharing in the Dimo app"
             )
             raise
-        except dimo_sdk.HTTPError as ex:
+        except dimo_sdk.request.HTTPError as ex:
             _LOGGER.warning("DIMO API request HTTP error: %s", ex)
             return None
         except Exception as ex:  # noqa: BLE001
