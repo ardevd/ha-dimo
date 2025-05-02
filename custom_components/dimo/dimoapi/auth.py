@@ -110,7 +110,7 @@ class Auth:
         except dimo_api.request.HTTPError as e:
             if e.status == 402:
                 raise InvalidClientIdError from e
-            if e.status == 400::
+            if e.status == 400:
                 raise InvalidCredentialsError from e
             raise  # Re-raise for unexpected errors
 
