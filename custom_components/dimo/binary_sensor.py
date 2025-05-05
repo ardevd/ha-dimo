@@ -64,8 +64,12 @@ class DimoVehicleBinarySensorEntity(DimoBaseVehicleEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool | None:
         """Return true if the binary sensor is on."""
-        return (
-            self.coordinator.vehicle_data[self.vehicle_token_id]
-            .signal_data[self.key]
-            .get("value")
-        )
+        vehicle = self.coordinator.vehicle_data.get(self.vehicle_token_id)
+        if vehicle is None:
+            return None
+
+        signal = vehicle.signal_data.get(self.key)
+        if not signal or "value" not in signal:
+            return None
+
+        return signal.get("value")
