@@ -58,12 +58,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: DIMOConfigEntry) -> bool
         InvalidApiKeyFormat,
     ):
         _LOGGER.error(
-            "Unable to setup Dimo integration due to invalid credentials.  Please check them and try again"
+            "Unable to setup Dimo integration due to invalid credentials. Please check them and try again"
         )
         return False
     except NoVehiclesException as ex:
         _LOGGER.error(
-            "Unable to setup Dimo integration due to having no vehicles shared with your account.  Please check you have vehicles shared"
+            "Unable to setup Dimo integration due to having no vehicles shared with your account. Please check you have vehicles shared"
         )
         raise ConfigEntryNotReady from ex
     except Exception as ex:
