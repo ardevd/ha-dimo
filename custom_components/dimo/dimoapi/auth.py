@@ -15,14 +15,17 @@ class AuthToken:
     """Class to hold JWT based authentication tokens."""
 
     token: str
-    expiration: float = field(init=False)
+    expiration: datetime = field(init=False)
 
     def __post_init__(self):
         decoded_token = jwt.decode(
             self.token,
             options={"verify_signature": False},
         )
-        self.expiration = decoded_token.get("exp", 0.0)
+        exp = decoded_token.get("exp")
+        if exp is None:
+            raise ValueError("JWT missing 'exp' claim")
+        self.expiration = datetime.fromtimestamp(exp, tz=timezone.utc)
 
     def is_expired(self, leeway: timedelta = timedelta(seconds=60)) -> bool:
         return datetime.now(timezone.utc) + leeway >= self.expiration
