@@ -14,9 +14,7 @@ from custom_components.dimo.dimoapi.auth import (
 
 
 def test_auth_get_token(mocker):
-    fake_token = AuthToken(
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-    )
+    fake_token = create_mock_token(3600)
     # Mocking the DIMO instance and auth.get_token
     dimo_mock = Mock()
 
@@ -164,7 +162,7 @@ def test_is_privileged_token_not_expired(mocker):
     auth_instance.privileged_tokens[vehicle_token_id] = token
 
     # Test the method
-    assert not auth_instance._is_privileged_token_expired(vehicle_token_id)
+    assert not auth_instance.privileged_tokens[vehicle_token_id].is_expired()
 
 
 def test_is_privileged_token_expired():
@@ -177,7 +175,7 @@ def test_is_privileged_token_expired():
     auth_instance.privileged_tokens[vehicle_token_id] = jwt_value
 
     # Assert the token is recognized as expired
-    assert auth_instance._is_privileged_token_expired(vehicle_token_id)
+    assert auth_instance.privileged_tokens[vehicle_token_id].is_expired
 
 
 def test_access_token_not_refreshed_if_not_expired(mocker):

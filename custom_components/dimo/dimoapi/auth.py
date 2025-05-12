@@ -15,14 +15,20 @@ class AuthToken:
     """Class to hold JWT based authentication tokens."""
 
     token: str
-    expiration: float = field(init=False)
+    expiration: datetime = field(init=False)
 
     def __post_init__(self):
         decoded_token = jwt.decode(
             self.token,
             options={"verify_signature": False},
         )
-        self.expiration = decoded_token.get("exp", 0.0)
+        exp = decoded_token.get("exp")
+        if exp is None:
+            raise ValueError("JWT missing 'exp' claim")
+        self.expiration = datetime.fromtimestamp(exp, tz=timezone.utc)
+
+    def is_expired(self, leeway: timedelta = timedelta(seconds=60)) -> bool:
+        return datetime.now(timezone.utc) + leeway >= self.expiration
 
 
 class Auth:
@@ -67,9 +73,8 @@ class Auth:
 
     def get_privileged_token(self, vehicle_token_id: str) -> AuthToken:
         """Get privileged token from DIMO token exchange API"""
-        if not self.privileged_tokens.get(
-            vehicle_token_id
-        ) or self._is_privileged_token_expired(vehicle_token_id):
+        token = self.privileged_tokens.get(vehicle_token_id)
+        if token is None or token.is_expired():
             _LOGGER.debug(f"Obtaining privileged token for {vehicle_token_id}")
             token = self.dimo.token_exchange.exchange(
                 developer_jwt=self.access_token.token,
@@ -79,23 +84,6 @@ class Auth:
             self.privileged_tokens[vehicle_token_id] = AuthToken(token)
 
         return self.privileged_tokens[vehicle_token_id]
-
-    def _is_jwt_token_expired(self, token: AuthToken) -> bool:
-        """Assert jwt token expiration"""
-        exp = token.expiration
-        expiration_time = datetime.fromtimestamp(exp, timezone.utc)
-        current_time = datetime.now(timezone.utc)
-
-        return current_time + timedelta(seconds=60) > expiration_time
-
-    def _is_privileged_token_expired(self, vehicle_token_id: str) -> bool:
-        """Assert privileged token expiration."""
-        if self.privileged_tokens.get(vehicle_token_id):
-            return self._is_jwt_token_expired(
-                self.privileged_tokens.get(vehicle_token_id)
-            )
-
-        return True
 
     def _get_auth(self):
         _LOGGER.debug("Retrieving access token")
@@ -123,7 +111,7 @@ class Auth:
         Will obtain a fresh token if no token exists or if
         the current token is expired
         """
-        if self.access_token is None or self._is_jwt_token_expired(self.access_token):
+        if self.access_token is None or self.access_token.is_expired():
             self._get_auth()
         return self.access_token
 
