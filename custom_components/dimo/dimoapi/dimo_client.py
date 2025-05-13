@@ -71,8 +71,7 @@ class DimoClient:
     @requires_vehicle_jwt
     def get_latest_signals(self, vehicle_jwt: str, token_id, signal_names: list[str]):
         """Get the latest signal values for the specified vehicle"""
-        if signal_names is None:
-            signal_names = []
+        signal_names = signal_names or []
 
         signals_query = "\n".join(
             [
@@ -88,8 +87,7 @@ class DimoClient:
 
     def get_all_vehicles_for_license(self, license_id=None):
         """List all vehicles for the specified license."""
-        if license_id is None:
-            license_id = self.auth.client_id
+        license_id = license_id or self.auth.client_id
 
         query = GET_ALL_VEHICLES_QUERY.format(license_id=license_id)
         return self.dimo.identity.query(query)
