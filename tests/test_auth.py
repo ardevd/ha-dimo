@@ -6,7 +6,6 @@ import pytest
 from unittest.mock import Mock
 from custom_components.dimo.dimoapi import DimoClient, Auth
 from custom_components.dimo.dimoapi.auth import (
-    AuthToken,
     InvalidApiKeyFormat,
     InvalidClientIdError,
     InvalidCredentialsError,
