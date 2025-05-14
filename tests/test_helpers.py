@@ -1,8 +1,3 @@
-"""
-Unit tests for the `deep_get` helper function.
-Adjust the import path below to point to the module where `deep_get` is defined.
-"""
-
 import pytest
 
 from custom_components.dimo.helpers import (
