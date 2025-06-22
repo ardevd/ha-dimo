@@ -83,7 +83,7 @@ class Auth:
 
             token = result.get("token")
             if not token:
-                raise ValueError("Token exchange did not return a token")
+                raise ValueError(f"Token exchange failed for {vehicle_token_id}, response: {result}")
 
             self.privileged_tokens[vehicle_token_id] = AuthToken(token)
 
