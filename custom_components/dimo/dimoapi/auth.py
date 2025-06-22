@@ -76,10 +76,14 @@ class Auth:
         token = self.privileged_tokens.get(vehicle_token_id)
         if token is None or token.is_expired():
             _LOGGER.debug(f"Obtaining privileged token for {vehicle_token_id}")
-            token = self.dimo.token_exchange.exchange(
+            result = self.dimo.token_exchange.exchange(
                 developer_jwt=self.access_token.token,
                 token_id=vehicle_token_id,
-            )["token"]
+            )
+
+            token = result.get("token")
+            if not token:
+                raise ValueError("Token exchange did not return a token")
 
             self.privileged_tokens[vehicle_token_id] = AuthToken(token)
 
