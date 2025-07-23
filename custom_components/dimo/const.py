@@ -171,6 +171,13 @@ SIGNALS: dict[str, SignalDef] = {
         UnitOfVolume.LITERS,
         icon="mdi:gas-station",
     ),
+    "powertrainCombustionEngineDieselExhaustFluidLevel": SignalDef(
+        "Diesel Exhaust Fluid Level",
+        Platform.SENSOR,
+        None,
+        PERCENTAGE,
+        icon="mdi:fuel",
+    ),
     "obdIntakeTemp": SignalDef(
         "Intake Temperature",
         Platform.SENSOR,
