@@ -51,39 +51,45 @@ async def async_setup_entry(
     add_entities(entities)
 
 
-class DimoSensorEntity(DimoBaseEntity, SensorEntity):
-    """Dimo sensor entity."""
+class _DimoSensorMixin:
+    """Mixin that implements the SensorEntity interface in terms of two helper methods"""
 
     @property
     def native_value(self):
-        """Return the native value of this entity."""
-        return self.coordinator.dimo_data.get(self.key)
+        return self._get_value()
 
     @property
     def native_unit_of_measurement(self) -> str | None:
-        """Return the unit of measurement of the sensor, if any."""
+        return self._get_unit()
+
+    def _get_value(self):
+        raise NotImplementedError
+
+    def _get_unit(self):
+        raise NotImplementedError
+
+
+class DimoSensorEntity(DimoBaseEntity, _DimoSensorMixin, SensorEntity):
+    """Non‐vehicle sensors come from coordinator.dimo_data."""
+
+    def _get_value(self):
+        return self.coordinator.dimo_data.get(self.key)
+
+    def _get_unit(self):
         return (
-            DIMO_SENSORS[self.key].unit_of_measure
+            DIMO_SENSORS.get(self.key).unit_of_measure
             if DIMO_SENSORS.get(self.key)
             else None
         )
 
 
-class DimoVehicleSensorEntity(DimoBaseVehicleEntity, SensorEntity):
-    """Vehicle Sensor entity."""
+class DimoVehicleSensorEntity(DimoBaseVehicleEntity, _DimoSensorMixin, SensorEntity):
+    """Vehicle sensors come from the per‑vehicle signal_data blob."""
 
-    @property
-    def native_value(self):
-        """Return the native value of this entity."""
+    def _get_value(self):
         vehicle = self.coordinator.vehicle_data.get(self.vehicle_token_id, {})
-        if vehicle is None:
-            return None
-
-        signal_data = getattr(vehicle, "signal_data", {})
-        data = signal_data.get(self.key)
+        data = getattr(vehicle, "signal_data", {}).get(self.key)
         return data.get("value") if data else None
 
-    @property
-    def native_unit_of_measurement(self) -> str | None:
-        """Return the unit of measurement of the sensor, if any."""
-        return SIGNALS[self.key].unit_of_measure if SIGNALS.get(self.key) else None
+    def _get_unit(self):
+        return SIGNALS.get(self.key).unit_of_measure if SIGNALS.get(self.key) else None
