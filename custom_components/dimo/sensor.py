@@ -10,6 +10,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import DIMOConfigEntry
 from .base_entity import DimoBaseEntity, DimoBaseVehicleEntity
 from .const import DIMO_SENSORS, DOMAIN, SIGNALS
+from requests import get
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -77,7 +78,7 @@ class DimoSensorEntity(DimoBaseEntity, _DimoSensorMixin, SensorEntity):
 
     def _get_unit(self):
         return (
-            DIMO_SENSORS.get(self.key).unit_of_measure
+            DIMO_SENSORS[self.key].unit_of_measure
             if DIMO_SENSORS.get(self.key)
             else None
         )
@@ -92,4 +93,4 @@ class DimoVehicleSensorEntity(DimoBaseVehicleEntity, _DimoSensorMixin, SensorEnt
         return data.get("value") if data else None
 
     def _get_unit(self):
-        return SIGNALS.get(self.key).unit_of_measure if SIGNALS.get(self.key) else None
+        return SIGNALS[self.key].unit_of_measure if SIGNALS.get(self.key) else None
