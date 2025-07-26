@@ -1,5 +1,6 @@
 from homeassistant.const import UnitOfPower
 
+
 """Constants for the DIMO integration."""
 
 from collections.abc import Callable
@@ -274,6 +275,26 @@ SIGNALS: dict[str, SignalDef] = {
         "Powertrain",
         Platform.SENSOR,
         icon="mdi:car-cog",
+    ),
+    "cabinDoorRow1DriverSideWindowIsOpen": SignalDef(
+        "Front Driver Side Window Open",
+        Platform.BINARY_SENSOR,
+        icon="mdi:window-open",
+    ),
+    "cabinDoorRow1PassengerSideWindowIsOpen": SignalDef(
+        "Front Passenger Side Window Open",
+        Platform.BINARY_SENSOR,
+        icon="mdi:window-open",
+    ),
+    "cabinDoorRow2DriverSideWindowIsOpen": SignalDef(
+        "Back Driver Side Window Open",
+        Platform.BINARY_SENSOR,
+        icon="mdi:window-open",
+    ),
+    "cabinDoorRow2PassengerSideWindowIsOpen": SignalDef(
+        "Back Passenger Side Window Open",
+        Platform.BINARY_SENSOR,
+        icon="mdi:window-open",
     ),
     "currentLocationIsRedacted": SignalDef(
         "Approximate Location",
