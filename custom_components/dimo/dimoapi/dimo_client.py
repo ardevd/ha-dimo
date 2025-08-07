@@ -11,17 +11,13 @@ from .queries import (
 
 _LOGGER = logging.getLogger(__name__)
 
-
 def requires_vehicle_jwt(method):
     """Decorator that fetches vehicle jwt and unpacks token into call"""
-
     @wraps(method)
     def wrapper(self, token_id: str, *args, **kwargs):
         vehicle_jwt = self._fetch_privileged_token(token_id)
         return method(self, vehicle_jwt, token_id, *args, **kwargs)
-
     return wrapper
-
 
 class DimoClient:
     def __init__(self, auth: Auth):
@@ -39,23 +35,24 @@ class DimoClient:
     def _fetch_privileged_token(self, token_id: str) -> str:
         """Retrieve privileged token for specified token id"""
         try:
-            # Assert access token validity
-            self.auth.get_access_token()
-            # Get privileged token with the granted permissions
+            self.auth.get_access_token() 
             return self.auth.get_privileged_token(token_id).token
         except Exception as e:
             _LOGGER.error(f"Failed to obtain privileged token for {token_id}: {e}")
             raise
 
     def get_vehicle_makes(self):
+        """Retrieve vehicle makes."""
         return self.dimo.device_definitions.list_device_makes()
 
     @requires_vehicle_jwt
     def lock_doors(self, vehicle_jwt: str, token_id: str):
+        """Lock the doors of the vehicle."""
         return self.dimo.devices.lock_doors(vehicle_jwt, token_id)
 
     @requires_vehicle_jwt
     def unlock_doors(self, vehicle_jwt: str, token_id: str):
+        """Unlock the doors of the vehicle."""
         return self.dimo.devices.unlock_doors(vehicle_jwt, token_id)
 
     def get_rewards_for_vehicle(self, token_id: str):
@@ -69,17 +66,14 @@ class DimoClient:
         return self.dimo.telemetry.available_signals(vehicle_jwt, token_id)
 
     @requires_vehicle_jwt
-    def get_latest_signals(self, vehicle_jwt: str, token_id, signal_names: list[str]):
+    def get_latest_signals(self, vehicle_jwt: str, token_id: str, signal_names: list[str]):
         """Get the latest signal values for the specified vehicle"""
-        signal_names = signal_names or []
-
         signals_query = "\n".join(
             [
                 f"{signal_name} {{\n  timestamp\n  value\n}}"
-                for signal_name in signal_names
+                for signal_name in (signal_names or [])
             ]
         )
-
         query = GET_LATEST_SIGNALS_QUERY.format(
             token_id=token_id, signals=signals_query
         )
@@ -87,60 +81,37 @@ class DimoClient:
 
     def get_all_vehicles_for_license(self, license_id=None):
         """List all vehicles for the specified license."""
-        license_id = license_id or self.auth.client_id
-
-        query = GET_ALL_VEHICLES_QUERY.format(license_id=license_id)
+        query = GET_ALL_VEHICLES_QUERY.format(license_id=license_id or self.auth.client_id)
         return self.dimo.identity.query(query)
 
     def get_total_dimo_vehicles(self) -> Optional[int]:
-        """
-        Get the total number of vehicles on DIMO.
-
-        :return: Total count of vehicles or None if failed.
-        """
+        """Get the total number of vehicles on DIMO."""
         try:
             result = self.dimo.identity.count_dimo_vehicles()
             return result.get("data", {}).get("vehicles", {}).get("totalCount")
         except requests.exceptions.ConnectionError as ex:
-            _LOGGER.warning(
-                "DIMO API request error when retrieving DIMO vehicle count %s", ex
-            )
+            _LOGGER.warning("DIMO API request error when retrieving DIMO vehicle count: %s", ex)
             return None
         except Exception as e:
             _LOGGER.error(f"Failed to get total DIMO vehicles: {e}")
             return None
 
     @requires_vehicle_jwt
-    def get_vin(self, vehicle_jwt: str, token_id) -> Optional[str]:
-        """
-        Retrieve the Vehicle Identification Number (VIN) for the specified token ID.
-
-        :param token_id: Token ID associated with the vehicle.
-        :return: The VIN as a string, or None if unavailable.
-        """
+    def get_vin(self, vehicle_jwt: str, token_id: str) -> Optional[str]:
+        """Retrieve the Vehicle Identification Number (VIN) for the specified token ID."""
         try:
             vin_response = self.dimo.telemetry.get_vin(vehicle_jwt, token_id)
             vin = vin_response.get("data", {}).get("vinVCLatest", {}).get("vin")
             if vin:
-                _LOGGER.debug(
-                    f"Successfully retrieved VIN for token_id {token_id}: {vin}"
-                )
+                _LOGGER.debug(f"Successfully retrieved VIN for token_id {token_id}: {vin}")
                 return vin
-            _LOGGER.warning(
-                f"VIN not found in response for token_id {token_id}: {vin_response}"
-            )
+            _LOGGER.warning(f"VIN not found in response for token_id {token_id}: {vin_response}")
             return None
         except KeyError as e:
-            _LOGGER.error(
-                f"Malformed response when retrieving VIN for token_id {token_id}: {e}"
-            )
+            _LOGGER.error(f"Malformed response when retrieving VIN for token_id {token_id}: {e}")
             return None
         except requests.exceptions.ConnectionError as ex:
-            _LOGGER.warning(
-                "Connect error occurred while retrieving VIN for token id %s: %s",
-                token_id,
-                ex,
-            )
+            _LOGGER.warning("Connection error occurred while retrieving VIN for token id %s: %s", token_id, ex)
             return None
         except Exception as e:
             _LOGGER.error(f"Failed to retrieve VIN for token_id {token_id}: {e}")
