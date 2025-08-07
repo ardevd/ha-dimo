@@ -66,7 +66,7 @@ class DimoClient:
         return self.dimo.telemetry.available_signals(vehicle_jwt, token_id)
 
     @requires_vehicle_jwt
-    def get_latest_signals(self, vehicle_jwt: str, token_id: str, signal_names: list[str]):
+    def get_latest_signals(self, vehicle_jwt: str, token_id: str, signal_names: Optional[list[str]]):
         """Get the latest signal values for the specified vehicle"""
         signals_query = "\n".join(
             [
