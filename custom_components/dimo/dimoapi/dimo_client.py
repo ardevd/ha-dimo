@@ -151,7 +151,7 @@ class DimoClient:
         Returns a combined GraphQL-style response dict.
         """
         if not signal_names:
-            return {"data": {}}
+            return {"data": {"signalsLatest": {}}}
 
         chunk_size = max(initial_chunk_size, min_chunk_size)
         merged_responses: List[Dict[str, Any]] = []
