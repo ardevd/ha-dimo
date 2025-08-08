@@ -122,7 +122,7 @@ class DimoClient:
             return False
         for e in errs:
             code = (e.get("extensions", {}).get("code") or "").upper()
-            if code in {"COMPLEXITY_LIMIT_EXCEEDED"}:
+            if code == "COMPLEXITY_LIMIT_EXCEEDED":
                 return True
         return False
 
