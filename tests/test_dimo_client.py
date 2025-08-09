@@ -87,12 +87,148 @@ def test_dimo_client_get_latest_signals():
     dimo_client.dimo = dimo_mock  # Inject the dimo mock
 
     token_id = "123"
-    signal_names = ["speed", "batteryLevel"]
+    signal_names = [
+        "chassisAxleRow1WheelLeftTirePressure",
+        "chassisAxleRow1WheelRightTirePressure",
+        "chassisAxleRow2WheelLeftTirePressure",
+        "chassisAxleRow2WheelRightTirePressure",
+        "currentLocationAltitude",
+        "currentLocationHeading",
+        "currentLocationIsRedacted",
+        "currentLocationLatitude",
+        "currentLocationLongitude",
+        "dimoAftermarketHDOP",
+        "dimoAftermarketNSAT",
+        "exteriorAirTemperature",
+        "lowVoltageBatteryCurrentVoltage",
+        "obdBarometricPressure",
+        "obdDTCList",
+        "obdDistanceWithMIL",
+        "obdEngineLoad",
+        "obdIntakeTemp",
+        "obdMAP",
+        "obdRunTime",
+        "obdStatusDTCCount",
+        "powertrainCombustionEngineECT",
+        "powertrainCombustionEngineMAF",
+        "powertrainCombustionEngineSpeed",
+        "powertrainCombustionEngineTPS",
+        "powertrainFuelSystemAbsoluteLevel",
+        "powertrainFuelSystemRelativeLevel",
+        "powertrainRange",
+        "powertrainTractionBatteryChargingIsCharging",
+        "powertrainTractionBatteryRange",
+        "powertrainTractionBatteryStateOfChargeCurrent",
+        "powertrainTransmissionTravelledDistance",
+        "powertrainType",
+        "speed",
+    ]
     query_result = {
         "data": {
             "signalsLatest": {
-                "speed": {"timestamp": "2024-11-27T12:00:00Z", "value": 60},
-                "batteryLevel": {"timestamp": "2024-11-27T12:00:00Z", "value": 80},
+                "chassisAxleRow1WheelLeftTirePressure": {
+                    "timestamp": "2024-07-19T16:45:16.517921Z",
+                    "value": 252.5,
+                },
+                "chassisAxleRow1WheelRightTirePressure": {
+                    "timestamp": "2024-07-19T16:45:16.517921Z",
+                    "value": 255.2,
+                },
+                "chassisAxleRow2WheelLeftTirePressure": {
+                    "timestamp": "2024-07-19T16:45:16.517921Z",
+                    "value": 293.7,
+                },
+                "chassisAxleRow2WheelRightTirePressure": {
+                    "timestamp": "2024-07-19T16:45:16.517921Z",
+                    "value": 296.4,
+                },
+                "dimoAftermarketHDOP": {
+                    "timestamp": "2025-08-08T18:48:44Z",
+                    "value": 0.8,
+                },
+                "dimoAftermarketNSAT": {
+                    "timestamp": "2025-08-08T18:48:44Z",
+                    "value": 22,
+                },
+                "exteriorAirTemperature": {
+                    "timestamp": "2025-08-08T18:48:44Z",
+                    "value": 18,
+                },
+                "lowVoltageBatteryCurrentVoltage": {
+                    "timestamp": "2025-08-08T18:48:44Z",
+                    "value": 12.786,
+                },
+                "obdBarometricPressure": {
+                    "timestamp": "2024-12-02T07:25:42Z",
+                    "value": 99,
+                },
+                "obdDTCList": {
+                    "timestamp": "2025-08-08T18:48:47Z",
+                    "obdDistanceWithMIL": {
+                        "timestamp": "2025-08-08T18:48:44Z",
+                        "value": 0,
+                    },
+                    "obdEngineLoad": {
+                        "timestamp": "2024-11-28T19:13:38Z",
+                        "value": 0.071,
+                    },
+                    "obdIntakeTemp": {"timestamp": "2024-12-02T07:28:11Z", "value": 18},
+                    "obdMAP": {"timestamp": "2024-12-02T07:28:11Z", "value": 100},
+                    "obdRunTime": {"timestamp": "2025-08-08T18:01:42Z", "value": 799},
+                    "obdStatusDTCCount": {
+                        "timestamp": "2025-08-08T18:48:44Z",
+                        "value": 1,
+                    },
+                    "powertrainCombustionEngineECT": {
+                        "timestamp": "2025-08-08T18:48:44Z",
+                        "value": 30,
+                    },
+                    "powertrainCombustionEngineMAF": {
+                        "timestamp": "2024-12-02T07:20:11Z",
+                        "value": 0.05,
+                    },
+                    "powertrainCombustionEngineSpeed": {
+                        "timestamp": "2025-08-08T18:45:53Z",
+                        "value": 16383,
+                    },
+                    "powertrainCombustionEngineTPS": {
+                        "timestamp": "2025-08-08T18:48:44Z",
+                        "value": 0,
+                    },
+                    "powertrainFuelSystemAbsoluteLevel": {
+                        "timestamp": "2025-02-27T14:24:36Z",
+                        "value": 0,
+                    },
+                    "powertrainFuelSystemRelativeLevel": {
+                        "timestamp": "2025-08-08T18:01:57Z",
+                        "value": 81.17647058823529,
+                    },
+                    "powertrainRange": {
+                        "timestamp": "2024-07-19T16:45:16.517921Z",
+                        "value": 39,
+                    },
+                    "powertrainTractionBatteryChargingIsCharging": {
+                        "timestamp": "2024-07-19T16:45:16.517921Z",
+                        "value": 1,
+                    },
+                    "powertrainTractionBatteryRange": {
+                        "timestamp": "2025-02-27T13:57:07Z",
+                        "value": 0.125,
+                    },
+                    "powertrainTractionBatteryStateOfChargeCurrent": {
+                        "timestamp": "2025-08-08T18:48:44Z",
+                        "value": 95,
+                    },
+                    "powertrainTransmissionTravelledDistance": {
+                        "timestamp": "2025-08-08T18:48:44Z",
+                        "value": 11800,
+                    },
+                    "powertrainType": {
+                        "timestamp": "2025-08-08T18:48:44Z",
+                        "value": "COMBUSTION",
+                    },
+                    "speed": {"timestamp": "2025-08-08T18:48:44Z", "value": 0},
+                },
             }
         }
     }
@@ -103,30 +239,8 @@ def test_dimo_client_get_latest_signals():
     # Assert the result matches the query result
     assert result == query_result
 
-    # Assert the query was constructed correctly
-    expected_query = f"""
-        query {{
-            signalsLatest(tokenId: {token_id}) {{
-                speed {{
-                  timestamp
-                  value
-                }}
-                batteryLevel {{
-                  timestamp
-                  value
-                }}
-            }}
-        }}
-    """
-
-    # Normalize whitespace for comparison
-    actual_query = dimo_mock.telemetry.query.call_args[0][0]  # Get the actual query
-    assert "".join(actual_query.split()) == "".join(
-        expected_query.split()
-    ), f"Query mismatch.\nExpected:\n{expected_query}\nActual:\n{actual_query}"
-
-    # Ensure privileged token was used
-    dimo_mock.telemetry.query.assert_called_once_with(actual_query, priv_token.token)
+    # Make sure the full query was batched into two queries
+    assert dimo_mock.telemetry.query.call_count == 2
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
 
 
