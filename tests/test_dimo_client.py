@@ -96,7 +96,7 @@ def test_dimo_client_get_latest_signals():
     }
     dimo_mock.telemetry.query.return_value = query_result
 
-    result = dimo_client.get_latest_signals(token_id, signal_names)
+    result = dimo_client.get_latest_signals_batched(token_id, signal_names)
 
     # Assert the result matches the query result
     assert result == query_result

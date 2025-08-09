@@ -205,7 +205,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         """Get data for list of available signals for vehicle."""
         if self.vehicle_data.get(vehicle_token_id):
             signals_data = await self.get_api_data(
-                self.client.get_latest_signals,
+                self.client.get_latest_signals_batched,
                 vehicle_token_id,
                 self.vehicle_data[vehicle_token_id].available_signals,
             )
