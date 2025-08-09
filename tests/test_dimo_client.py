@@ -89,9 +89,11 @@ def test_dimo_client_get_latest_signals():
     token_id = "123"
     signal_names = ["speed", "batteryLevel"]
     query_result = {
-        "signalsLatest": {
-            "speed": {"timestamp": "2024-11-27T12:00:00Z", "value": 60},
-            "batteryLevel": {"timestamp": "2024-11-27T12:00:00Z", "value": 80},
+        "data": {
+            "signalsLatest": {
+                "speed": {"timestamp": "2024-11-27T12:00:00Z", "value": 60},
+                "batteryLevel": {"timestamp": "2024-11-27T12:00:00Z", "value": 80},
+            }
         }
     }
     dimo_mock.telemetry.query.return_value = query_result
