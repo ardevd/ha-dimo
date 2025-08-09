@@ -33,7 +33,7 @@ def test_dimo_client_get_rewards_for_vehicle():
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
     dimo_client = DimoClient(auth=auth_mock)
-    token_id = "vehicle123"
+    token_id = "75948"
 
     # Mock the GraphQL query result
     query_result = {"data": {"vehicle": {"earnings": {"totalTokens": 100.5}}}}
@@ -62,7 +62,7 @@ def test_dimo_client_get_available_signals():
     auth_mock.get_privileged_token.return_value = priv_token
 
     dimo_client = DimoClient(auth=auth_mock)
-    token_id = "vehicle123"
+    token_id = "75123"
     query_result = {"availableSignals": []}
     dimo_mock.telemetry.available_signals.return_value = query_result
 
@@ -86,7 +86,7 @@ def test_dimo_client_get_latest_signals():
     dimo_client = DimoClient(auth=auth_mock)
     dimo_client.dimo = dimo_mock  # Inject the dimo mock
 
-    token_id = "123"
+    token_id = "88888"
     signal_names = [
         "chassisAxleRow1WheelLeftTirePressure",
         "chassisAxleRow1WheelRightTirePressure",
@@ -229,7 +229,7 @@ def test_dimo_client_get_latest_signals():
                     },
                     "speed": {"timestamp": "2025-08-08T18:48:44Z", "value": 0},
                 },
-            }
+            },
         }
     }
     dimo_mock.telemetry.query.return_value = query_result
@@ -253,7 +253,7 @@ def test_dimo_client_get_latest_signals_batched_empty():
     dimo_client = DimoClient(auth=auth_mock)
     dimo_client.dimo = dimo_mock  # Inject the dimo mock
 
-    token_id = "123"
+    token_id = "777"
     signal_names = []  # Empty signal names
 
     # Call the method under test
@@ -272,7 +272,7 @@ def test_dimo_client_get_latest_signals_batched_normal():
     dimo_client = DimoClient(auth=auth_mock)
     dimo_client.dimo = dimo_mock  # Inject the dimo mock
 
-    token_id = "123"
+    token_id = "90019"
     signal_names = ["signal1", "signal2", "signal3"]
     query_result = {
         "data": {
@@ -302,7 +302,7 @@ def test_dimo_client_get_latest_signals_batched_complexity_error():
     dimo_client = DimoClient(auth=auth_mock)
     dimo_client.dimo = dimo_mock  # Inject the dimo mock
 
-    token_id = "123"
+    token_id = "88001"
     signal_names = [f"signal{i}" for i in range(50)]  # Large number of signals to test chunking
 
     def complexity_error_simulation(query, vehicle_jwt):
@@ -318,12 +318,11 @@ def test_dimo_client_get_latest_signals_batched_complexity_error():
         assert str(e) == "GraphQL complexity limit exceeded at minimum chunk size"
 
 
-
     # Arrange: Set up mocks
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
     dimo_client = DimoClient(auth=auth_mock)
-    token_id = "vehicle123"
+    token_id = "18003"
 
     # Mock the privileged token and VIN response
     mocked_token = create_mock_token(3600)
@@ -346,7 +345,7 @@ def test_dimo_client_get_vin_malformed_response():
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
     dimo_client = DimoClient(auth=auth_mock)
-    token_id = "vehicle123"
+    token_id = "65999"
 
     # Mock the privileged token and malformed response
     mocked_token = create_mock_token(1200)
@@ -395,7 +394,7 @@ def test_dimo_client_lock_doors():
     priv_token = create_mock_token(600)
     auth_mock.get_privileged_token.return_value = priv_token
     dimo_client = DimoClient(auth=auth_mock)
-    token_id = "vehicle-lock"
+    token_id = "99994"
     dimo_mock.devices.lock_doors.return_value = {"result": "locked"}
     result = dimo_client.lock_doors(token_id)
     assert result == {"result": "locked"}
@@ -408,7 +407,7 @@ def test_dimo_client_unlock_doors():
     priv_token = create_mock_token(600)
     auth_mock.get_privileged_token.return_value = priv_token
     dimo_client = DimoClient(auth=auth_mock)
-    token_id = "vehicle-unlock"
+    token_id = "99995"
     dimo_mock.devices.unlock_doors.return_value = {"result": "unlocked"}
     result = dimo_client.unlock_doors(token_id)
     assert result == {"result": "unlocked"}
@@ -420,7 +419,7 @@ def test_fetch_privileged_token_success():
     priv_token = create_mock_token(1200)
     auth_mock.get_privileged_token.return_value = priv_token
     dimo_client = DimoClient(auth=auth_mock)
-    token_id = "mytoken"
+    token_id = "10234"
     # Patch auth.get_access_token to do nothing
     auth_mock.get_access_token.return_value = None
     result = dimo_client._fetch_privileged_token(token_id)
@@ -432,7 +431,7 @@ def test_fetch_privileged_token_exception():
     auth_mock = Mock()
     auth_mock.get_privileged_token.side_effect = Exception("fail")
     dimo_client = DimoClient(auth=auth_mock)
-    token_id = "errortoken"
+    token_id = "20345"
     auth_mock.get_access_token.return_value = None
     try:
         dimo_client._fetch_privileged_token(token_id)
@@ -446,22 +445,23 @@ def test_get_all_vehicles_for_license_default():
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
     dimo_client = DimoClient(auth=auth_mock)
-    auth_mock.client_id = "ABC123"
+    auth_mock.client_id = "0xd9E311344F1eFA490C82615d3989687A5628afb4"
     dimo_mock.identity.query.return_value = {"vehicles": [1, 2, 3]}
     result = dimo_client.get_all_vehicles_for_license()
     assert result == {"vehicles": [1, 2, 3]}
     dimo_mock.identity.query.assert_called_once()
-    assert 'privileged: "ABC123"' in dimo_mock.identity.query.call_args[0][0]
+    assert 'privileged: "0xd9E311344F1eFA490C82615d3989687A5628afb4"' in dimo_mock.identity.query.call_args[0][0]
 
 def test_get_all_vehicles_for_license_with_arg():
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
     dimo_client = DimoClient(auth=auth_mock)
     dimo_mock.identity.query.return_value = {"vehicles": [42]}
-    result = dimo_client.get_all_vehicles_for_license("licenseZ")
+    license_addr = "0xAbCdEf789012345678901234567890abcdef1234"
+    result = dimo_client.get_all_vehicles_for_license(license_addr)
     assert result == {"vehicles": [42]}
     dimo_mock.identity.query.assert_called_once()
-    assert 'privileged: "licenseZ"' in dimo_mock.identity.query.call_args[0][0]
+    assert f'privileged: "{license_addr}"' in dimo_mock.identity.query.call_args[0][0]
 
 def test_merge_graphql_data_merges_responses():
     responses = [
@@ -488,7 +488,7 @@ def test_dimo_client_get_vin_keyerror():
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
     dimo_client = DimoClient(auth=auth_mock)
-    token_id = "vehicle-fake"
+    token_id = "82111"
     priv_token = create_mock_token(10)
     auth_mock.get_privileged_token.return_value = priv_token
     dimo_mock.telemetry.get_vin.side_effect = KeyError("failkey")
@@ -502,7 +502,7 @@ def test_dimo_client_get_vin_connection_error():
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
     dimo_client = DimoClient(auth=auth_mock)
-    token_id = "vehicle-timeout"
+    token_id = "73103"
     priv_token = create_mock_token(23)
     auth_mock.get_privileged_token.return_value = priv_token
     dimo_mock.telemetry.get_vin.side_effect = requests.exceptions.ConnectionError("test")
@@ -515,7 +515,7 @@ def test_dimo_client_get_vin_general_exception():
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
     dimo_client = DimoClient(auth=auth_mock)
-    token_id = "vehicle-ex"
+    token_id = "82102"
     priv_token = create_mock_token(23)
     auth_mock.get_privileged_token.return_value = priv_token
     dimo_mock.telemetry.get_vin.side_effect = Exception("ohno")
@@ -531,7 +531,7 @@ def test_get_latest_signals_batched_unknown_exception():
     auth_mock.get_privileged_token.return_value = priv_token
     dimo_client = DimoClient(auth=auth_mock)
     dimo_client.dimo = dimo_mock
-    token_id = "tok"
+    token_id = "56777"
     signal_names = ["sig1", "sig2"]
     # Simulate unknown exception in telemetry.query
     def raise_exc(*a, **kw):
@@ -550,7 +550,7 @@ def test_get_latest_signals_batched_unknown_exception():
     auth_mock = Mock()
     auth_mock.get_privileged_token.side_effect = Exception("fail")
     dimo_client = DimoClient(auth=auth_mock)
-    token_id = "errortoken"
+    token_id = "55555"
     auth_mock.get_access_token.return_value = None
     try:
         dimo_client._fetch_privileged_token(token_id)
@@ -565,7 +565,7 @@ def test_get_latest_signals_batched_unknown_exception():
     priv_token = create_mock_token(600)
     auth_mock.get_privileged_token.return_value = priv_token
     dimo_client = DimoClient(auth=auth_mock)
-    token_id = "vehicle-unlock"
+    token_id = "58585"
     dimo_mock.devices.unlock_doors.return_value = {"result": "unlocked"}
     result = dimo_client.unlock_doors(token_id)
     assert result == {"result": "unlocked"}
