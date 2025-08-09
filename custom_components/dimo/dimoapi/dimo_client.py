@@ -1,7 +1,8 @@
 import requests
 import logging
+from itertools import islice
 from functools import wraps
-from typing import Optional
+from typing import Optional, Iterable, Dict, Any, List
 from .auth import Auth
 from .queries import (
     GET_VEHICLE_REWARDS_QUERY,
@@ -11,13 +12,17 @@ from .queries import (
 
 _LOGGER = logging.getLogger(__name__)
 
+
 def requires_vehicle_jwt(method):
     """Decorator that fetches vehicle jwt and unpacks token into call"""
+
     @wraps(method)
     def wrapper(self, token_id: str, *args, **kwargs):
         vehicle_jwt = self._fetch_privileged_token(token_id)
         return method(self, vehicle_jwt, token_id, *args, **kwargs)
+
     return wrapper
+
 
 class DimoClient:
     def __init__(self, auth: Auth):
@@ -35,7 +40,7 @@ class DimoClient:
     def _fetch_privileged_token(self, token_id: str) -> str:
         """Retrieve privileged token for specified token id"""
         try:
-            self.auth.get_access_token() 
+            self.auth.get_access_token()
             return self.auth.get_privileged_token(token_id).token
         except Exception as e:
             _LOGGER.error(f"Failed to obtain privileged token for {token_id}: {e}")
@@ -65,23 +70,151 @@ class DimoClient:
         """Get list of available signals for a specified vehicle"""
         return self.dimo.telemetry.available_signals(vehicle_jwt, token_id)
 
-    @requires_vehicle_jwt
-    def get_latest_signals(self, vehicle_jwt: str, token_id: str, signal_names: Optional[list[str]]):
-        """Get the latest signal values for the specified vehicle"""
+    @staticmethod
+    def _merge_graphql_data(responses: list[dict]) -> dict:
+        """
+        Merge multiple GraphQL responses for signalsLatest:
+          {"data": {"signalsLatest": {...}}, "errors":[...]}
+        into one combined response.
+        """
+        merged: dict = {"data": {"signalsLatest": {}}}
+        errors: list = []
+
+        for r in responses or []:
+            if not isinstance(r, dict):
+                continue
+
+            # Merge data.signalsLatest
+            data = r.get("data", {})
+            if isinstance(data, dict):
+                sl = data.get("signalsLatest", {})
+                if isinstance(sl, dict):
+                    # add/override per-signal fields; different chunks add different keys
+                    merged["data"]["signalsLatest"].update(sl)
+
+            # Carry over GraphQL errors
+            if isinstance(r.get("errors"), list):
+                errors.extend(r["errors"])
+
+        if errors:
+            merged["errors"] = errors
+        return merged
+
+    @staticmethod
+    def _is_complexity_error(resp: Dict[str, Any]) -> bool:
+        """
+        Return True if the GraphQL response includes a complexity/validation error.
+        This checks common shapes like:
+          {"errors":[{"message":"query is too complex", "extensions":{"code":"COMPLEXITY_LIMIT_EXCEEDED"}}]}
+        """
+        errs = resp.get("errors")
+        if not isinstance(errs, list):
+            return False
+        for e in errs:
+            code = (e.get("extensions", {}).get("code") or "").upper()
+            if code == "COMPLEXITY_LIMIT_EXCEEDED":
+                return True
+        return False
+
+    def _build_latest_signals_query(
+        self, token_id: str, signal_names: list[str]
+    ) -> str:
+        """Build the GraphQL query body for the provided signal names."""
         signals_query = "\n".join(
-            [
-                f"{signal_name} {{\n  timestamp\n  value\n}}"
-                for signal_name in (signal_names or [])
-            ]
+            f"{name} {{\n  timestamp\n  value\n}}" for name in signal_names
         )
-        query = GET_LATEST_SIGNALS_QUERY.format(
-            token_id=token_id, signals=signals_query
-        )
-        return self.dimo.telemetry.query(query, vehicle_jwt)
+        return GET_LATEST_SIGNALS_QUERY.format(token_id=token_id, signals=signals_query)
+
+    @requires_vehicle_jwt
+    def get_latest_signals_batched(
+        self,
+        vehicle_jwt: str,
+        token_id: str,
+        signal_names: list[str],
+        *,
+        initial_chunk_size: int = 25,
+        min_chunk_size: int = 5,
+    ) -> Dict[str, Any]:
+        """
+        Fetch latest signals in multiple sub-queries to avoid GraphQL complexity limits.
+
+        Returns a combined GraphQL-style response dict.
+        """
+        if not signal_names:
+            return {"data": {"signalsLatest": {}}}
+
+        chunk_size = max(initial_chunk_size, min_chunk_size)
+        merged_responses: List[Dict[str, Any]] = []
+
+        i = 0
+        total = len(signal_names)
+        while i < total:
+            # dynamically size the chunk window
+            end = min(i + chunk_size, total)
+            chunk = signal_names[i:end]
+            query = self._build_latest_signals_query(token_id, chunk)
+
+            while True:
+                try:
+                    _LOGGER.debug(
+                        "Querying signals %d..%d (size=%d): %s",
+                        i,
+                        end - 1,
+                        len(chunk),
+                        ", ".join(chunk),
+                    )
+                    resp = self.dimo.telemetry.query(query, vehicle_jwt)
+
+                    if self._is_complexity_error(resp):
+                        # reduce chunk size and retry this window
+                        if chunk_size <= min_chunk_size:
+                            _LOGGER.error(
+                                "Complexity limit even at min_chunk_size=%d (signals %d..%d).",
+                                min_chunk_size,
+                                i,
+                                end - 1,
+                            )
+                            # surface the server error rather than hiding it
+                            raise RuntimeError(
+                                "GraphQL complexity limit exceeded at minimum chunk size"
+                            )
+
+                        chunk_size = max(min_chunk_size, chunk_size // 2)
+                        _LOGGER.warning(
+                            "Complexity hit. Reducing chunk_size to %d and retrying signals %d..%d.",
+                            chunk_size,
+                            i,
+                            end - 1,
+                        )
+                        # recompute chunk boundaries with smaller chunk size
+                        end = min(i + chunk_size, total)
+                        chunk = signal_names[i:end]
+                        query = self._build_latest_signals_query(token_id, chunk)
+                        continue
+
+                    # success path
+                    merged_responses.append(resp)
+                    break
+
+                except Exception as e:
+                    # Unknown error: propagate so caller can decide
+                    _LOGGER.error(
+                        "Unexpected error querying signals %d..%d: %s", i, end - 1, e
+                    )
+                    raise
+
+            # advance window
+            i = end
+
+        # merge all chunk results into one GraphQL-like response
+        combined = self._merge_graphql_data(merged_responses)
+        return combined
 
     def get_all_vehicles_for_license(self, license_id=None):
         """List all vehicles for the specified license."""
-        query = GET_ALL_VEHICLES_QUERY.format(license_id=license_id or self.auth.client_id)
+        query = GET_ALL_VEHICLES_QUERY.format(
+            license_id=license_id or self.auth.client_id
+        )
         return self.dimo.identity.query(query)
 
     def get_total_dimo_vehicles(self) -> Optional[int]:
@@ -90,7 +223,9 @@ class DimoClient:
             result = self.dimo.identity.count_dimo_vehicles()
             return result.get("data", {}).get("vehicles", {}).get("totalCount")
         except requests.exceptions.ConnectionError as ex:
-            _LOGGER.warning("DIMO API request error when retrieving DIMO vehicle count: %s", ex)
+            _LOGGER.warning(
+                "DIMO API request error when retrieving DIMO vehicle count: %s", ex
+            )
             return None
         except Exception as e:
             _LOGGER.error(f"Failed to get total DIMO vehicles: {e}")
@@ -103,15 +238,25 @@ class DimoClient:
             vin_response = self.dimo.telemetry.get_vin(vehicle_jwt, token_id)
             vin = vin_response.get("data", {}).get("vinVCLatest", {}).get("vin")
             if vin:
-                _LOGGER.debug(f"Successfully retrieved VIN for token_id {token_id}: {vin}")
+                _LOGGER.debug(
+                    f"Successfully retrieved VIN for token_id {token_id}: {vin}"
+                )
                 return vin
-            _LOGGER.warning(f"VIN not found in response for token_id {token_id}: {vin_response}")
+            _LOGGER.warning(
+                f"VIN not found in response for token_id {token_id}: {vin_response}"
+            )
             return None
         except KeyError as e:
-            _LOGGER.error(f"Malformed response when retrieving VIN for token_id {token_id}: {e}")
+            _LOGGER.error(
+                f"Malformed response when retrieving VIN for token_id {token_id}: {e}"
+            )
             return None
         except requests.exceptions.ConnectionError as ex:
-            _LOGGER.warning("Connection error occurred while retrieving VIN for token id %s: %s", token_id, ex)
+            _LOGGER.warning(
+                "Connection error occurred while retrieving VIN for token id %s: %s",
+                token_id,
+                ex,
+            )
             return None
         except Exception as e:
             _LOGGER.error(f"Failed to retrieve VIN for token_id {token_id}: {e}")
