@@ -71,16 +71,6 @@ class DimoClient:
         return self.dimo.telemetry.available_signals(vehicle_jwt, token_id)
 
     @staticmethod
-    def _chunked(iterable: Iterable[str], n: int) -> Iterable[list[str]]:
-        """Yield successive chunks (lists) of size n from iterable."""
-        it = iter(iterable)
-        while True:
-            chunk = list(islice(it, n))
-            if not chunk:
-                return
-            yield chunk
-
-    @staticmethod
     def _merge_graphql_data(responses: list[dict]) -> dict:
         """
         Merge multiple GraphQL responses for signalsLatest:
