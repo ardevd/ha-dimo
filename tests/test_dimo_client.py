@@ -244,7 +244,81 @@ def test_dimo_client_get_latest_signals():
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
 
 
-def test_dimo_client_get_vin_success():
+def test_dimo_client_get_latest_signals_batched_empty():
+    auth_mock = Mock()
+    dimo_mock = Mock()
+    priv_token = create_mock_token(3600)
+    auth_mock.get_privileged_token.return_value = priv_token
+
+    dimo_client = DimoClient(auth=auth_mock)
+    dimo_client.dimo = dimo_mock  # Inject the dimo mock
+
+    token_id = "123"
+    signal_names = []  # Empty signal names
+
+    # Call the method under test
+    result = dimo_client.get_latest_signals_batched(token_id, signal_names)
+
+    # Assert the result is an empty dictionary within 'data.signalsLatest'
+    assert result == {"data": {"signalsLatest": {}}}
+
+
+def test_dimo_client_get_latest_signals_batched_normal():
+    auth_mock = Mock()
+    dimo_mock = Mock()
+    priv_token = create_mock_token(3600)
+    auth_mock.get_privileged_token.return_value = priv_token
+
+    dimo_client = DimoClient(auth=auth_mock)
+    dimo_client.dimo = dimo_mock  # Inject the dimo mock
+
+    token_id = "123"
+    signal_names = ["signal1", "signal2", "signal3"]
+    query_result = {
+        "data": {
+            "signalsLatest": {
+                "signal1": {"timestamp": "2025-08-08T12:00:00Z", "value": 10},
+                "signal2": {"timestamp": "2025-08-08T12:01:00Z", "value": 20},
+                "signal3": {"timestamp": "2025-08-08T12:02:00Z", "value": 30},
+            }
+        }
+    }
+    dimo_mock.telemetry.query.return_value = query_result
+
+    # Call the method
+    result = dimo_client.get_latest_signals_batched(token_id, signal_names)
+
+    # Assert that the returned result matches the query result
+    assert result == query_result
+    dimo_mock.telemetry.query.assert_called_once()
+
+
+def test_dimo_client_get_latest_signals_batched_complexity_error():
+    auth_mock = Mock()
+    dimo_mock = Mock()
+    priv_token = create_mock_token(3600)
+    auth_mock.get_privileged_token.return_value = priv_token
+
+    dimo_client = DimoClient(auth=auth_mock)
+    dimo_client.dimo = dimo_mock  # Inject the dimo mock
+
+    token_id = "123"
+    signal_names = [f"signal{i}" for i in range(50)]  # Large number of signals to test chunking
+
+    def complexity_error_simulation(query, vehicle_jwt):
+        if len(query) > 250:
+            raise RuntimeError("GraphQL complexity limit exceeded at minimum chunk size")
+        return {"data": {"signalsLatest": {}}}
+
+    dimo_mock.telemetry.query.side_effect = complexity_error_simulation
+    # Capture the RuntimeError
+    try:
+        dimo_client.get_latest_signals_batched(token_id, signal_names)
+    except RuntimeError as e:
+        assert str(e) == "GraphQL complexity limit exceeded at minimum chunk size"
+
+
+
     # Arrange: Set up mocks
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
