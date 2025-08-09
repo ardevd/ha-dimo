@@ -388,3 +388,197 @@ def test_dimo_client_get_total_dimo_vehicles_exception():
 
     assert total_vehicles is None
     dimo_mock.identity.count_dimo_vehicles.assert_called_once()
+
+def test_dimo_client_lock_doors():
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    priv_token = create_mock_token(600)
+    auth_mock.get_privileged_token.return_value = priv_token
+    dimo_client = DimoClient(auth=auth_mock)
+    token_id = "vehicle-lock"
+    dimo_mock.devices.lock_doors.return_value = {"result": "locked"}
+    result = dimo_client.lock_doors(token_id)
+    assert result == {"result": "locked"}
+    dimo_mock.devices.lock_doors.assert_called_once_with(priv_token.token, token_id)
+    auth_mock.get_privileged_token.assert_called_once_with(token_id)
+
+def test_dimo_client_unlock_doors():
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    priv_token = create_mock_token(600)
+    auth_mock.get_privileged_token.return_value = priv_token
+    dimo_client = DimoClient(auth=auth_mock)
+    token_id = "vehicle-unlock"
+    dimo_mock.devices.unlock_doors.return_value = {"result": "unlocked"}
+    result = dimo_client.unlock_doors(token_id)
+    assert result == {"result": "unlocked"}
+    dimo_mock.devices.unlock_doors.assert_called_once_with(priv_token.token, token_id)
+    auth_mock.get_privileged_token.assert_called_once_with(token_id)
+
+def test_fetch_privileged_token_success():
+    auth_mock = Mock()
+    priv_token = create_mock_token(1200)
+    auth_mock.get_privileged_token.return_value = priv_token
+    dimo_client = DimoClient(auth=auth_mock)
+    token_id = "mytoken"
+    # Patch auth.get_access_token to do nothing
+    auth_mock.get_access_token.return_value = None
+    result = dimo_client._fetch_privileged_token(token_id)
+    assert result == priv_token.token
+    auth_mock.get_access_token.assert_called_once()
+    auth_mock.get_privileged_token.assert_called_once_with(token_id)
+
+def test_fetch_privileged_token_exception():
+    auth_mock = Mock()
+    auth_mock.get_privileged_token.side_effect = Exception("fail")
+    dimo_client = DimoClient(auth=auth_mock)
+    token_id = "errortoken"
+    auth_mock.get_access_token.return_value = None
+    try:
+        dimo_client._fetch_privileged_token(token_id)
+        assert False, "Exception was not raised!"
+    except Exception as e:
+        assert str(e) == "fail"
+    auth_mock.get_access_token.assert_called_once()
+    auth_mock.get_privileged_token.assert_called_once_with(token_id)
+
+def test_get_all_vehicles_for_license_default():
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    dimo_client = DimoClient(auth=auth_mock)
+    auth_mock.client_id = "ABC123"
+    dimo_mock.identity.query.return_value = {"vehicles": [1, 2, 3]}
+    result = dimo_client.get_all_vehicles_for_license()
+    assert result == {"vehicles": [1, 2, 3]}
+    dimo_mock.identity.query.assert_called_once()
+    assert 'privileged: "ABC123"' in dimo_mock.identity.query.call_args[0][0]
+
+def test_get_all_vehicles_for_license_with_arg():
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    dimo_client = DimoClient(auth=auth_mock)
+    dimo_mock.identity.query.return_value = {"vehicles": [42]}
+    result = dimo_client.get_all_vehicles_for_license("licenseZ")
+    assert result == {"vehicles": [42]}
+    dimo_mock.identity.query.assert_called_once()
+    assert 'privileged: "licenseZ"' in dimo_mock.identity.query.call_args[0][0]
+
+def test_merge_graphql_data_merges_responses():
+    responses = [
+        {"data": {"signalsLatest": {"a": 1, "b": 2}}, "errors": [1]},
+        {"data": {"signalsLatest": {"b": 22, "c": 3}}},
+        {"data": {"signalsLatest": {"z": 100}}, "errors": [2, 3]},
+    ]
+    merged = DimoClient._merge_graphql_data(responses)
+    assert merged["data"]["signalsLatest"] == {"a": 1, "b": 22, "c": 3, "z": 100}
+    assert merged["errors"] == [1, 2, 3]
+
+def test_is_complexity_error_true():
+    resp = {"errors": [
+        {"message": "q is too complex", "extensions": {"code": "COMPLEXITY_LIMIT_EXCEEDED"}}
+    ]}
+    assert DimoClient._is_complexity_error(resp) is True
+
+def test_is_complexity_error_false():
+    assert not DimoClient._is_complexity_error({"errors": None})
+    assert not DimoClient._is_complexity_error({"errors": [{"extensions": {"code": "OTHER_CODE"}}]})
+    assert not DimoClient._is_complexity_error({})
+
+def test_dimo_client_get_vin_keyerror():
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    dimo_client = DimoClient(auth=auth_mock)
+    token_id = "vehicle-fake"
+    priv_token = create_mock_token(10)
+    auth_mock.get_privileged_token.return_value = priv_token
+    dimo_mock.telemetry.get_vin.side_effect = KeyError("failkey")
+    vin = dimo_client.get_vin(token_id)
+    assert vin is None
+    auth_mock.get_privileged_token.assert_called_once_with(token_id)
+    dimo_mock.telemetry.get_vin.assert_called_once_with(priv_token.token, token_id)
+
+def test_dimo_client_get_vin_connection_error():
+    import requests
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    dimo_client = DimoClient(auth=auth_mock)
+    token_id = "vehicle-timeout"
+    priv_token = create_mock_token(23)
+    auth_mock.get_privileged_token.return_value = priv_token
+    dimo_mock.telemetry.get_vin.side_effect = requests.exceptions.ConnectionError("test")
+    vin = dimo_client.get_vin(token_id)
+    assert vin is None
+    auth_mock.get_privileged_token.assert_called_once_with(token_id)
+    dimo_mock.telemetry.get_vin.assert_called_once_with(priv_token.token, token_id)
+
+def test_dimo_client_get_vin_general_exception():
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    dimo_client = DimoClient(auth=auth_mock)
+    token_id = "vehicle-ex"
+    priv_token = create_mock_token(23)
+    auth_mock.get_privileged_token.return_value = priv_token
+    dimo_mock.telemetry.get_vin.side_effect = Exception("ohno")
+    vin = dimo_client.get_vin(token_id)
+    assert vin is None
+    auth_mock.get_privileged_token.assert_called_once_with(token_id)
+    dimo_mock.telemetry.get_vin.assert_called_once_with(priv_token.token, token_id)
+
+def test_get_latest_signals_batched_unknown_exception():
+    auth_mock = Mock()
+    dimo_mock = Mock()
+    priv_token = create_mock_token(20)
+    auth_mock.get_privileged_token.return_value = priv_token
+    dimo_client = DimoClient(auth=auth_mock)
+    dimo_client.dimo = dimo_mock
+    token_id = "tok"
+    signal_names = ["sig1", "sig2"]
+    # Simulate unknown exception in telemetry.query
+    def raise_exc(*a, **kw):
+        raise Exception("telemetry fail")
+    dimo_mock.telemetry.query.side_effect = raise_exc
+    try:
+        dimo_client.get_latest_signals_batched(token_id, signal_names)
+        assert False, "Exception should be reraised!"
+    except Exception as ex:
+        assert str(ex) == "telemetry fail"
+
+    assert not DimoClient._is_complexity_error({"errors": None})
+    assert not DimoClient._is_complexity_error({"errors": [{"extensions": {"code": "OTHER_CODE"}}]})
+    assert not DimoClient._is_complexity_error({})
+
+    auth_mock = Mock()
+    auth_mock.get_privileged_token.side_effect = Exception("fail")
+    dimo_client = DimoClient(auth=auth_mock)
+    token_id = "errortoken"
+    auth_mock.get_access_token.return_value = None
+    try:
+        dimo_client._fetch_privileged_token(token_id)
+        assert False, "Exception was not raised!"
+    except Exception as e:
+        assert str(e) == "fail"
+    auth_mock.get_access_token.assert_called_once()
+    auth_mock.get_privileged_token.assert_called_once_with(token_id)
+
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    priv_token = create_mock_token(600)
+    auth_mock.get_privileged_token.return_value = priv_token
+    dimo_client = DimoClient(auth=auth_mock)
+    token_id = "vehicle-unlock"
+    dimo_mock.devices.unlock_doors.return_value = {"result": "unlocked"}
+    result = dimo_client.unlock_doors(token_id)
+    assert result == {"result": "unlocked"}
+    dimo_mock.devices.unlock_doors.assert_called_once_with(priv_token.token, token_id)
+    auth_mock.get_privileged_token.assert_called_once_with(token_id)
+
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    dimo_client = DimoClient(auth=auth_mock)
+
+    dimo_mock.identity.count_dimo_vehicles.side_effect = Exception("API error")
+
+    total_vehicles = dimo_client.get_total_dimo_vehicles()
+
+    assert total_vehicles is None
+    dimo_mock.identity.count_dimo_vehicles.assert_called_once()
