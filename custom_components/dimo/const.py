@@ -279,7 +279,8 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         "$DIMO",
-        icon="mdi:currency-usd",
+        "mdi:currency-usd",
+        SensorStateClass.TOTAL_INCREASING,
     ),
     "powertrainType": SignalDef(
         "Powertrain",
