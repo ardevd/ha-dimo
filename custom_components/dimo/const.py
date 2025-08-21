@@ -245,6 +245,8 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         DEGREE,
+        "mdi:compass-rose",
+        SensorStateClass.MEASUREMENT,
     ),
     "powertrainTractionBatteryGrossCapacity": SignalDef(
         "EV Battery Gross Capacity",
