@@ -59,7 +59,7 @@ DIMO_SENSORS: dict[str, DimoSensorDef] = {
         Platform.SENSOR,
         icon="mdi:counter",
         value_fn="get_total_dimo_vehicles",
-        state_class=SensorStateClass.TOTAL,
+        state_class=SensorStateClass.MEASUREMENT,
     )
 }
 
@@ -279,7 +279,8 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         "$DIMO",
-        icon="mdi:currency-usd",
+        "mdi:currency-usd",
+        SensorStateClass.TOTAL_INCREASING,
     ),
     "powertrainType": SignalDef(
         "Powertrain",
