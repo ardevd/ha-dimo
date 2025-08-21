@@ -96,6 +96,7 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.DISTANCE,
         UnitOfLength.KILOMETERS,
+        state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     "powertrainTransmissionTemperature": SignalDef(
         "Transmission Temperature",
