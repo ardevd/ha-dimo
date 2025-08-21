@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.const import (
+    DEGREE,
     PERCENTAGE,
     Platform,
     UnitOfElectricPotential,
@@ -238,6 +239,14 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.DISTANCE,
         UnitOfLength.METERS,
+    ),
+    "currentLocationHeading": SignalDef(
+        "Heading",
+        Platform.SENSOR,
+        None,
+        DEGREE,
+        "mdi:compass-rose",
+        SensorStateClass.MEASUREMENT,
     ),
     "powertrainTractionBatteryGrossCapacity": SignalDef(
         "EV Battery Gross Capacity",
