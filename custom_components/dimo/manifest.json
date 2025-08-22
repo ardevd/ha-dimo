@@ -13,5 +13,5 @@
     "dimo-python-sdk==1.4.0"
   ],
   "single_config_entry": true,
-  "version": "0.9.0"
+  "version": "0.10.0"
 }
