@@ -5,15 +5,17 @@
       },
       "error": {
           "cannot_connect": "Failed to connect",
+          "invalid_api_key": "Invalid api key",
           "invalid_auth": "Invalid authentication",
+          "invalid_client_id": "Invalid client id",
           "no_vehicles": "No vehicles exist on this account",
           "unknown": "Unexpected error"
       },
       "step": {
           "user": {
               "data": {
+                  "auth_provider": "Auth Provider",
                   "client_id": "Client ID",
-                  "domain": "Redirect URI",
                   "private_key": "API Key"
               }
           }

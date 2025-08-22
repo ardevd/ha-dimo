@@ -5,17 +5,17 @@
         },
         "error": {
             "cannot_connect": "Erro ao conectar-se ao Dimo. Por favor, consulte os registos",
+            "invalid_api_key": "A sua chave de API é inválida",
             "invalid_auth": "As suas credenciais são inválidas",
             "invalid_client_id": "O seu ID de cliente é inválido",
-            "invalid_api_key": "A sua chave de API é inválida",
             "no_vehicles": "Não existem veículos nesta conta. Por favor, partilhe veículos com a conta primeiro",
             "unknown": "Erro desconhecido. Por favor, consulte os registos"
         },
         "step": {
             "user": {
                 "data": {
-                    "client_id": "ID de Cliente",
                     "auth_provider": "URI de Redirecionamento",
+                    "client_id": "ID de Cliente",
                     "private_key": "Chave de API"
                 }
             }

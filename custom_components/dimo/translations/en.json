@@ -4,18 +4,18 @@
             "already_configured": "Device is already configured"
         },
         "error": {
-            "cannot_connect": "Error conecting to Dimo. Please see logs",
+            "cannot_connect": "Error connecting to Dimo. Please see logs",
+            "invalid_api_key": "Your api key is invalid",
             "invalid_auth": "Your credentials are invalid",
             "invalid_client_id": "Your client id is invalid",
-            "invalid_api_key": "Your api key is invalid",
             "no_vehicles": "No vehicles exist on this account. Please share vehicles with the account first",
             "unknown": "Unknown error. Please see logs"
         },
         "step": {
             "user": {
                 "data": {
-                    "client_id": "Client ID",
                     "auth_provider": "Redirect URI",
+                    "client_id": "Client ID",
                     "private_key": "API Key"
                 }
             }
