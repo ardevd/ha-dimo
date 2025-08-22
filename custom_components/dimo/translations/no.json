@@ -1,0 +1,24 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Integrasjonen er allerede konfigurert"
+        },
+        "error": {
+            "cannot_connect": "Kunne ikke koble til DIMO. Vennligst sjekk loggene",
+            "invalid_api_key": "Ugyldig API-nøkkel",
+            "invalid_auth": "Ugyldige innloggingsdetaljer",
+            "invalid_client_id": "Feil format på Client ID",
+            "no_vehicles": "Ingen kjøretøy er registrert på denne kontoen. Vennligst del kjøretøy først",
+            "unknown": "Ukjent feil. Vennligst sjekk loggene"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "auth_provider": "Redirect URI",
+                    "client_id": "Client ID",
+                    "private_key": "API Key"
+                }
+            }
+        }
+    }
+}
