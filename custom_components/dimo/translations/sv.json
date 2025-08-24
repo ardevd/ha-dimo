@@ -1,0 +1,24 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Enheten är redan konfigurerad"
+        },
+        "error": {
+            "cannot_connect": "Fel vid anslutning till DIMO. Vänligen se loggar",
+            "invalid_api_key": "Din API-nyckel är ogiltig",
+            "invalid_auth": "Dina autentiseringsuppgifter är ogiltiga",
+            "invalid_client_id": "Ditt klient-ID är ogiltigt",
+            "no_vehicles": "Inga fordon finns på detta konto. Vänligen dela fordon med kontot först",
+            "unknown": "Okänt fel. Vänligen se loggar"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "auth_provider": "Omdirigerings-URI",
+                    "client_id": "Klient-ID",
+                    "private_key": "API-nyckel"
+                }
+            }
+        }
+    }
+}
