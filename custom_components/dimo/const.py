@@ -100,7 +100,8 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.DISTANCE,
         UnitOfLength.KILOMETERS,
-        state_class=SensorStateClass.TOTAL_INCREASING,
+        "mdi:counter",
+        SensorStateClass.TOTAL_INCREASING,
     ),
     "powertrainTransmissionTemperature": SignalDef(
         "Transmission Temperature",
@@ -203,6 +204,7 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.TEMPERATURE,
         UnitOfTemperature.CELSIUS,
+        "mdi:thermometer-lines",
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "obdEngineLoad": SignalDef(
@@ -264,7 +266,8 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.DISTANCE,
         UnitOfLength.METERS,
-        state_class=SensorStateClass.MEASUREMENT,
+        "mdi:altimeter",
+        SensorStateClass.MEASUREMENT,
     ),
     "currentLocationHeading": SignalDef(
         "Heading",
