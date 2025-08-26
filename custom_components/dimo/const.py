@@ -86,7 +86,8 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.DISTANCE,
         UnitOfLength.KILOMETERS,
-        state_class=SensorStateClass.MEASUREMENT,
+        "mdi:map-marker-distance",
+        SensorStateClass.MEASUREMENT,
     ),
     "powertrainTractionBatteryRange": SignalDef(
         "EV Range",
