@@ -195,6 +195,17 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
                 "AVAILABLE SIGNALS: %s - %s", vehicle_token_id, available_signals_data
             )
 
+            # Temporary workaround for DIMO bug: https://github.com/ardevd/ha-dimo/issues/216
+            # TODO: Remove this workaround once the issue is fixed upstream.
+            try:
+                self.vehicle_data[vehicle_token_id].available_signals.remove(
+                    "currentLocationCoordinates"
+                )
+            except ValueError:
+                _LOGGER.info(
+                    "No currentLocationCoordinates signal found in signals list"
+                )
+
         else:
             _LOGGER.error(
                 "Unable to fetch available signals data for %s.  Not a known vehicle on this account",
