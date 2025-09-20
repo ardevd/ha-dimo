@@ -191,7 +191,7 @@ SIGNALS: dict[str, SignalDef] = {
     "powertrainFuelSystemAbsoluteLevel": SignalDef(
         "Absolute Fuel Level",
         Platform.SENSOR,
-        SensorDeviceClass.VOLUME,
+        SensorDeviceClass.VOLUME_STORAGE,
         UnitOfVolume.LITERS,
         "mdi:gas-station",
         SensorStateClass.MEASUREMENT,
