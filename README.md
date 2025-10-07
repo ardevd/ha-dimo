@@ -16,7 +16,7 @@ Welcome to the **DIMO Integration for Home Assistant**! Bring your vehicle's tel
 
 - **Sensor Data Galore**: Access a plethora of sensor data for a wide range of supported vehicles via the DIMO telemetry API.
 
-- **Device Tracker**: Keep tabs on your vehicles with device tracker entities. Perfect for ensuring your car isn't sneaking out past curfew.
+- **Device Tracker**: Keep tabs on your vehicles with device tracker entities.
 
 - **Secure & Trustless Connection**: Enjoy peace of mind with a blockchain-backed, trustless connection to the DIMO API. Your data stays yours without a need to trust a third party server as all data sharing can be validated through smart contract code and transactions all openly available on the blockchain.
 
