@@ -41,7 +41,7 @@ jobs:
         run: |
           PYTHONPATH=$(pwd) coverage run -m pytest -v && coverage xml -o coverage.xml
       - name: Official SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v5.3.1
+        uses: SonarSource/sonarqube-scan-action@v6.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} 
