@@ -57,8 +57,8 @@ class DimoBaseEntity(CoordinatorEntity):
         _LOGGER.debug("%s device update requested", self.name)
         try:
             self.async_write_ha_state()
-        except Exception as err:
-            _LOGGER.debug("Failed to update %s: %s", self.name, err)
+        except KeyError as err:
+            _LOGGER.warning("Failed to update %s: %s", self.name, err)
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
