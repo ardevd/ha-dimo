@@ -65,6 +65,12 @@ class DimoBaseEntity(CoordinatorEntity):
         """Return extra state attributes."""
         return {}
 
+    @property
+    def available(self) -> bool:
+        """Return whether data is available for this entity."""
+        vehicle = self.coordinator.vehicle_data.get(self.vehicle_token_id)
+        return bool(vehicle and vehicle.signal_data.get(self.key))
+
 
 class DimoBaseVehicleEntity(DimoBaseEntity):
     """Base representation of a vehicle entity."""
@@ -95,6 +101,24 @@ class DimoBaseVehicleEntity(DimoBaseEntity):
     def state_class(self) -> SensorStateClass | str | None:
         """Return the state class of this entity, if any."""
         return self._signal.state_class if self._signal else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return extra state attributes safely."""
+        try:
+            vehicle_data = self.coordinator.vehicle_data.get(self.vehicle_token_id)
+            if not vehicle_data or not hasattr(vehicle_data, "signal_data"):
+                return {}
+
+            signal_data = vehicle_data.signal_data.get(self.key, {})
+            return {"timestamp": signal_data.get("timestamp")}
+        except Exception as err:
+            _LOGGER.debug(
+                "Failed to get extra_state_attributes for %s: %s",
+                self.vehicle_token_id,
+                err,
+            )
+            return {}
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
