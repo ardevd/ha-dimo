@@ -66,17 +66,11 @@ class DimoTrackerEntity(DimoBaseVehicleEntity, TrackerEntity):
     @property
     def latitude(self) -> float | None:
         """Return latitude value of the device."""
-        return (
-            self.coordinator.vehicle_data[self.vehicle_token_id]
-            .signal_data[self._latitude_key]
-            .get("value")
-        )
+        data = self.coordinator.vehicle_data[self.vehicle_token_id].signal_data
+        return data.get(self._latitude_key, {}).get("value")
 
     @property
     def longitude(self) -> float | None:
         """Return longitude value of the device."""
-        return (
-            self.coordinator.vehicle_data[self.vehicle_token_id]
-            .signal_data[self._longitude_key]
-            .get("value")
-        )
+        data = self.coordinator.vehicle_data[self.vehicle_token_id].signal_data
+        return data.get(self._longitude_key, {}).get("value")
