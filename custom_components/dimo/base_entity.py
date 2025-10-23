@@ -104,24 +104,6 @@ class DimoBaseVehicleEntity(DimoBaseEntity):
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
-        """Return extra state attributes safely."""
-        try:
-            vehicle_data = self.coordinator.vehicle_data.get(self.vehicle_token_id)
-            if not vehicle_data or not hasattr(vehicle_data, "signal_data"):
-                return {}
-
-            signal_data = vehicle_data.signal_data.get(self.key, {})
-            return {"timestamp": signal_data.get("timestamp")}
-        except Exception as err:
-            _LOGGER.debug(
-                "Failed to get extra_state_attributes for %s: %s",
-                self.vehicle_token_id,
-                err,
-            )
-            return {}
-
-    @property
-    def extra_state_attributes(self) -> dict[str, Any]:
         """Return extra state attributes."""
         vehicle_data = self.coordinator.vehicle_data[self.vehicle_token_id]
         signal_data = vehicle_data.signal_data.get(self.key, {})
