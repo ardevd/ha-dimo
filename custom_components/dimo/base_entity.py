@@ -65,6 +65,12 @@ class DimoBaseEntity(CoordinatorEntity):
         """Return extra state attributes."""
         return {}
 
+    @property
+    def available(self) -> bool:
+        """Return whether data is available for this entity."""
+        vehicle = self.coordinator.vehicle_data.get(self.vehicle_token_id)
+        return bool(vehicle and vehicle.signal_data.get(self.key))
+
 
 class DimoBaseVehicleEntity(DimoBaseEntity):
     """Base representation of a vehicle entity."""
