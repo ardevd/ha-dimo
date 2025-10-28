@@ -77,6 +77,7 @@ SIGNALS: dict[str, SignalDef] = {
     "isIgnitionOn": SignalDef(
         "Ignition",
         Platform.BINARY_SENSOR,
+        BinarySensorDeviceClass.POWER,
         icon="mdi:car-key",
     ),
     "speed": SignalDef(
