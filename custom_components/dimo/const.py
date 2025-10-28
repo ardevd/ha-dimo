@@ -74,6 +74,12 @@ SIGNALS: dict[str, SignalDef] = {
         UnitOfElectricPotential.VOLT,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    "isIgnitionOn": SignalDef(
+        "Ignition",
+        Platform.BINARY_SENSOR,
+        BinarySensorDeviceClass.POWER,
+        icon="mdi:car-key",
+    ),
     "speed": SignalDef(
         "Speed",
         Platform.SENSOR,
