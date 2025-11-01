@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 from custom_components.dimo.dimoapi import DimoClient
 
-from .helper import create_mock_token
+from helper import create_mock_token
 
 
 def test_dimo_client_init():
@@ -305,11 +305,15 @@ def test_dimo_client_get_latest_signals_batched_complexity_error():
     dimo_client.dimo = dimo_mock  # Inject the dimo mock
 
     token_id = "88001"
-    signal_names = [f"signal{i}" for i in range(50)]  # Large number of signals to test chunking
+    signal_names = [
+        f"signal{i}" for i in range(50)
+    ]  # Large number of signals to test chunking
 
     def complexity_error_simulation(query, vehicle_jwt):
         if len(query) > 250:
-            raise RuntimeError("GraphQL complexity limit exceeded at minimum chunk size")
+            raise RuntimeError(
+                "GraphQL complexity limit exceeded at minimum chunk size"
+            )
         return {"data": {"signalsLatest": {}}}
 
     dimo_mock.telemetry.query.side_effect = complexity_error_simulation
@@ -318,7 +322,6 @@ def test_dimo_client_get_latest_signals_batched_complexity_error():
         dimo_client.get_latest_signals_batched(token_id, signal_names)
     except RuntimeError as e:
         assert str(e) == "GraphQL complexity limit exceeded at minimum chunk size"
-
 
     # Arrange: Set up mocks
     auth_mock = Mock()
@@ -390,6 +393,7 @@ def test_dimo_client_get_total_dimo_vehicles_exception():
     assert total_vehicles is None
     dimo_mock.identity.count_dimo_vehicles.assert_called_once()
 
+
 def test_dimo_client_lock_doors():
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
@@ -402,6 +406,7 @@ def test_dimo_client_lock_doors():
     assert result == {"result": "locked"}
     dimo_mock.devices.lock_doors.assert_called_once_with(priv_token.token, token_id)
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
+
 
 def test_dimo_client_unlock_doors():
     auth_mock = Mock()
@@ -416,6 +421,7 @@ def test_dimo_client_unlock_doors():
     dimo_mock.devices.unlock_doors.assert_called_once_with(priv_token.token, token_id)
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
 
+
 def test_fetch_privileged_token_success():
     auth_mock = Mock()
     priv_token = create_mock_token(1200)
@@ -428,6 +434,7 @@ def test_fetch_privileged_token_success():
     assert result == priv_token.token
     auth_mock.get_access_token.assert_called_once()
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
+
 
 def test_fetch_privileged_token_exception():
     auth_mock = Mock()
@@ -443,6 +450,7 @@ def test_fetch_privileged_token_exception():
     auth_mock.get_access_token.assert_called_once()
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
 
+
 def test_get_all_vehicles_for_license_default():
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
@@ -452,7 +460,11 @@ def test_get_all_vehicles_for_license_default():
     result = dimo_client.get_all_vehicles_for_license()
     assert result == {"vehicles": [1, 2, 3]}
     dimo_mock.identity.query.assert_called_once()
-    assert 'privileged: "0xd9E311344F1eFA490C82615d3989687A5628afb4"' in dimo_mock.identity.query.call_args[0][0]
+    assert (
+        'privileged: "0xd9E311344F1eFA490C82615d3989687A5628afb4"'
+        in dimo_mock.identity.query.call_args[0][0]
+    )
+
 
 def test_get_all_vehicles_for_license_with_arg():
     auth_mock = Mock()
@@ -465,6 +477,7 @@ def test_get_all_vehicles_for_license_with_arg():
     dimo_mock.identity.query.assert_called_once()
     assert f'privileged: "{license_addr}"' in dimo_mock.identity.query.call_args[0][0]
 
+
 def test_merge_graphql_data_merges_responses():
     responses = [
         {"data": {"signalsLatest": {"a": 1, "b": 2}}, "errors": [1]},
@@ -475,16 +488,26 @@ def test_merge_graphql_data_merges_responses():
     assert merged["data"]["signalsLatest"] == {"a": 1, "b": 22, "c": 3, "z": 100}
     assert merged["errors"] == [1, 2, 3]
 
+
 def test_is_complexity_error_true():
-    resp = {"errors": [
-        {"message": "q is too complex", "extensions": {"code": "COMPLEXITY_LIMIT_EXCEEDED"}}
-    ]}
+    resp = {
+        "errors": [
+            {
+                "message": "q is too complex",
+                "extensions": {"code": "COMPLEXITY_LIMIT_EXCEEDED"},
+            }
+        ]
+    }
     assert DimoClient._is_complexity_error(resp) is True
+
 
 def test_is_complexity_error_false():
     assert not DimoClient._is_complexity_error({"errors": None})
-    assert not DimoClient._is_complexity_error({"errors": [{"extensions": {"code": "OTHER_CODE"}}]})
+    assert not DimoClient._is_complexity_error(
+        {"errors": [{"extensions": {"code": "OTHER_CODE"}}]}
+    )
     assert not DimoClient._is_complexity_error({})
+
 
 def test_dimo_client_get_vin_keyerror():
     auth_mock = Mock()
@@ -499,19 +522,24 @@ def test_dimo_client_get_vin_keyerror():
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
     dimo_mock.telemetry.get_vin.assert_called_once_with(priv_token.token, token_id)
 
+
 def test_dimo_client_get_vin_connection_error():
     import requests
+
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value
     dimo_client = DimoClient(auth=auth_mock)
     token_id = "73103"
     priv_token = create_mock_token(23)
     auth_mock.get_privileged_token.return_value = priv_token
-    dimo_mock.telemetry.get_vin.side_effect = requests.exceptions.ConnectionError("test")
+    dimo_mock.telemetry.get_vin.side_effect = requests.exceptions.ConnectionError(
+        "test"
+    )
     vin = dimo_client.get_vin(token_id)
     assert vin is None
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
     dimo_mock.telemetry.get_vin.assert_called_once_with(priv_token.token, token_id)
+
 
 def test_dimo_client_get_vin_general_exception():
     auth_mock = Mock()
@@ -526,6 +554,7 @@ def test_dimo_client_get_vin_general_exception():
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
     dimo_mock.telemetry.get_vin.assert_called_once_with(priv_token.token, token_id)
 
+
 def test_get_latest_signals_batched_unknown_exception():
     auth_mock = Mock()
     dimo_mock = Mock()
@@ -535,9 +564,11 @@ def test_get_latest_signals_batched_unknown_exception():
     dimo_client.dimo = dimo_mock
     token_id = "56777"
     signal_names = ["sig1", "sig2"]
+
     # Simulate unknown exception in telemetry.query
     def raise_exc(*a, **kw):
         raise Exception("telemetry fail")
+
     dimo_mock.telemetry.query.side_effect = raise_exc
     try:
         dimo_client.get_latest_signals_batched(token_id, signal_names)
@@ -546,7 +577,9 @@ def test_get_latest_signals_batched_unknown_exception():
         assert str(ex) == "telemetry fail"
 
     assert not DimoClient._is_complexity_error({"errors": None})
-    assert not DimoClient._is_complexity_error({"errors": [{"extensions": {"code": "OTHER_CODE"}}]})
+    assert not DimoClient._is_complexity_error(
+        {"errors": [{"extensions": {"code": "OTHER_CODE"}}]}
+    )
     assert not DimoClient._is_complexity_error({})
 
     auth_mock = Mock()
