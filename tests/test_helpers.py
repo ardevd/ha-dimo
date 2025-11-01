@@ -1,7 +1,6 @@
 import pytest
 
-from custom_components.dimo.helpers import \
-    get_key  # Replace 'helpers' with your actual module name
+from custom_components.dimo.helpers import get_key  # Replace 'helpers' with your actual module name
 
 
 def test_simple_key():
