@@ -4,11 +4,13 @@ import dimo as dimo_sdk
 import pytest
 
 from custom_components.dimo.dimoapi import Auth, DimoClient
-from custom_components.dimo.dimoapi.auth import (InvalidApiKeyFormat,
-                                                 InvalidClientIdError,
-                                                 InvalidCredentialsError)
+from custom_components.dimo.dimoapi.auth import (
+    InvalidApiKeyFormat,
+    InvalidClientIdError,
+    InvalidCredentialsError,
+)
 
-from .helper import create_mock_token
+from helper import create_mock_token
 
 
 def test_auth_get_token(mocker):
