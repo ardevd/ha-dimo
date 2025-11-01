@@ -16,10 +16,14 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from typing_extensions import Mapping
 
 from .config_flow import InvalidAuth, NoVehiclesException
-from .const import (CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DIMO_SENSORS, DOMAIN,
-                    PLATFORMS)
-from .dimoapi import (Auth, DimoClient, InvalidApiKeyFormat,
-                      InvalidClientIdError, InvalidCredentialsError)
+from .const import CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DIMO_SENSORS, DOMAIN, PLATFORMS
+from .dimoapi import (
+    Auth,
+    DimoClient,
+    InvalidApiKeyFormat,
+    InvalidClientIdError,
+    InvalidCredentialsError,
+)
 from .helpers import get_key
 
 _LOGGER = logging.getLogger(__name__)
@@ -113,6 +117,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             name=f"{DOMAIN} ({entry.unique_id})",
             update_method=self.async_update_data,
             update_interval=timedelta(seconds=30),
+            config_entry=entry,
         )
 
         self.client = client
