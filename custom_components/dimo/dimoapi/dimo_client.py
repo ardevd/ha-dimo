@@ -199,7 +199,11 @@ class DimoClient:
                 except Exception as e:
                     # Unknown error: propagate so caller can decide
                     _LOGGER.error(
-                        "Unexpected error querying signals for %s: %s", token_id, e
+                        "Unexpected error querying signals %d..%d for token %s: %s",
+                        i,
+                        end - 1,
+                        token_id,
+                        e,
                     )
                     raise
 
