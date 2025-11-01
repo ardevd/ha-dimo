@@ -1,7 +1,7 @@
+"""Constants for the DIMO integration."""
+
 from homeassistant.const import UnitOfPower
 
-
-"""Constants for the DIMO integration."""
 
 from collections.abc import Callable
 from dataclasses import dataclass

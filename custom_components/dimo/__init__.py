@@ -1,31 +1,26 @@
 from __future__ import annotations
 
-import dimo as dimo_sdk
-from dataclasses import dataclass
-from datetime import timedelta, datetime, timezone
-import logging
 import asyncio
-from typing import Any
+import logging
+from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
+from typing import Any, Optional
 
+import dimo as dimo_sdk
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_CLIENT_ID
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from typing_extensions import Mapping
 
 from .config_flow import InvalidAuth, NoVehiclesException
-from .const import CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DIMO_SENSORS, DOMAIN, PLATFORMS
-from .dimoapi import (
-    Auth,
-    DimoClient,
-    InvalidApiKeyFormat,
-    InvalidClientIdError,
-    InvalidCredentialsError,
-)
+from .const import (CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DIMO_SENSORS, DOMAIN,
+                    PLATFORMS)
+from .dimoapi import (Auth, DimoClient, InvalidApiKeyFormat,
+                      InvalidClientIdError, InvalidCredentialsError)
 from .helpers import get_key
-from typing import Optional
-from typing_extensions import Mapping
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -1,5 +1,7 @@
-import jwt
 from datetime import datetime, timedelta, timezone
+
+import jwt
+
 from custom_components.dimo.dimoapi.auth import AuthToken
 
 

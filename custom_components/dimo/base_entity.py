@@ -9,9 +9,10 @@ from homeassistant.core import callback
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from . import DimoUpdateCoordinator
-from .const import DIMO_SENSORS, SIGNALS, DOMAIN
 from custom_components.dimo.const import SignalDef
+
+from . import DimoUpdateCoordinator
+from .const import DIMO_SENSORS, DOMAIN, SIGNALS
 
 _LOGGER = logging.getLogger(__name__)
 

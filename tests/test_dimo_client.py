@@ -1,6 +1,8 @@
-from .helper import create_mock_token
 from unittest.mock import Mock
+
 from custom_components.dimo.dimoapi import DimoClient
+
+from .helper import create_mock_token
 
 
 def test_dimo_client_init():
@@ -40,7 +42,7 @@ def test_dimo_client_get_rewards_for_vehicle():
     dimo_mock.identity.query.return_value = query_result
 
     # Act: Call the method under test
-    result = dimo_client.get_rewards_for_vehicle(token_id)
+    dimo_client.get_rewards_for_vehicle(token_id)
 
     dimo_mock.identity.query.assert_called_once_with(
         f"""
