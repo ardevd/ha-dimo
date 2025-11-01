@@ -168,7 +168,7 @@ class DimoClient:
                     if self._is_complexity_error(resp):
                         # reduce chunk size and retry this window
                         if chunk_size <= min_chunk_size:
-                            _LOGGER.debug(
+                            _LOGGER.warning(
                                 "Complexity limit even at min_chunk_size=%d (signals %d..%d).",
                                 min_chunk_size,
                                 i,
