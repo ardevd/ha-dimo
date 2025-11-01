@@ -168,7 +168,7 @@ class DimoClient:
                     if self._is_complexity_error(resp):
                         # reduce chunk size and retry this window
                         if chunk_size <= min_chunk_size:
-                            _LOGGER.error(
+                            _LOGGER.debug(
                                 "Complexity limit even at min_chunk_size=%d (signals %d..%d).",
                                 min_chunk_size,
                                 i,
@@ -180,7 +180,7 @@ class DimoClient:
                             )
 
                         chunk_size = max(min_chunk_size, chunk_size // 2)
-                        _LOGGER.warning(
+                        _LOGGER.debug(
                             "Complexity hit. Reducing chunk_size to %d and retrying signals %d..%d.",
                             chunk_size,
                             i,
@@ -199,7 +199,7 @@ class DimoClient:
                 except Exception as e:
                     # Unknown error: propagate so caller can decide
                     _LOGGER.error(
-                        "Unexpected error querying signals %d..%d: %s", i, end - 1, e
+                        "Unexpected error querying signals for %s: %s", token_id, e
                     )
                     raise
 
