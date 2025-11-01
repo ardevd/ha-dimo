@@ -1,6 +1,5 @@
 from types import SimpleNamespace
 
-import pytest
 
 from custom_components.dimo.binary_sensor import DimoVehicleBinarySensorEntity
 

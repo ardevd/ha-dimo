@@ -1,8 +1,6 @@
-from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock
 
 import dimo as dimo_sdk
-import jwt
 import pytest
 
 from custom_components.dimo.dimoapi import Auth, DimoClient

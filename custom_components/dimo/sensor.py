@@ -6,7 +6,6 @@ from homeassistant.components.sensor import SensorEntity
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from requests import get
 
 from . import DIMOConfigEntry
 from .base_entity import DimoBaseEntity, DimoBaseVehicleEntity

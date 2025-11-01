@@ -1,7 +1,6 @@
 import logging
 from functools import wraps
-from itertools import islice
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, List, Optional
 
 import requests
 
