@@ -7,20 +7,14 @@ from typing import Any
 
 import dimo as dimo_sdk
 import voluptuous as vol
-
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_CLIENT_ID
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 
 from .const import CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DOMAIN
-from .dimoapi import (
-    Auth,
-    DimoClient,
-    InvalidApiKeyFormat,
-    InvalidClientIdError,
-    InvalidCredentialsError,
-)
+from .dimoapi import (Auth, DimoClient, InvalidApiKeyFormat,
+                      InvalidClientIdError, InvalidCredentialsError)
 from .helpers import get_key
 
 _LOGGER = logging.getLogger(__name__)

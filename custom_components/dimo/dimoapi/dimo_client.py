@@ -1,14 +1,13 @@
-import requests
 import logging
-from itertools import islice
 from functools import wraps
-from typing import Optional, Iterable, Dict, Any, List
+from itertools import islice
+from typing import Any, Dict, Iterable, List, Optional
+
+import requests
+
 from .auth import Auth
-from .queries import (
-    GET_VEHICLE_REWARDS_QUERY,
-    GET_LATEST_SIGNALS_QUERY,
-    GET_ALL_VEHICLES_QUERY,
-)
+from .queries import (GET_ALL_VEHICLES_QUERY, GET_LATEST_SIGNALS_QUERY,
+                      GET_VEHICLE_REWARDS_QUERY)
 
 _LOGGER = logging.getLogger(__name__)
 

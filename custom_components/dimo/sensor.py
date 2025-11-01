@@ -6,11 +6,11 @@ from homeassistant.components.sensor import SensorEntity
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from requests import get
 
 from . import DIMOConfigEntry
 from .base_entity import DimoBaseEntity, DimoBaseVehicleEntity
 from .const import DIMO_SENSORS, DOMAIN, SIGNALS
-from requests import get
 
 _LOGGER = logging.getLogger(__name__)
 

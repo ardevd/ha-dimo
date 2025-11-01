@@ -1,11 +1,12 @@
-import pytest
+import logging
 from unittest.mock import MagicMock, patch
+
 import dimo as dimo_sdk
+import pytest
 from homeassistant.core import HomeAssistant
 
-from custom_components.dimo.__init__ import DimoUpdateCoordinator, VehicleData
 from custom_components.dimo import DOMAIN
-import logging
+from custom_components.dimo.__init__ import DimoUpdateCoordinator, VehicleData
 
 
 @pytest.fixture

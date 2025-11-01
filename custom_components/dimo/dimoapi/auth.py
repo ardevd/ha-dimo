@@ -1,11 +1,12 @@
-from dataclasses import dataclass, field
-import requests
-import dimo as dimo_sdk
-from datetime import datetime, timezone, timedelta
-from typing import Optional
-from requests.adapters import HTTPAdapter, Retry
-import jwt
 import logging
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
+from typing import Optional
+
+import dimo as dimo_sdk
+import jwt
+import requests
+from requests.adapters import HTTPAdapter, Retry
 
 _LOGGER = logging.getLogger(__name__)
 

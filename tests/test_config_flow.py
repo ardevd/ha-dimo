@@ -1,12 +1,8 @@
-from custom_components.dimo.const import (
-    DOMAIN,
-    CONF_LICENSE_ID,
-    CONF_AUTH_PROVIDER,
-    CONF_PRIVATE_KEY,
-)
+import pytest
 
 from custom_components.dimo.config_flow import InvalidAuth
-import pytest
+from custom_components.dimo.const import (CONF_AUTH_PROVIDER, CONF_LICENSE_ID,
+                                          CONF_PRIVATE_KEY, DOMAIN)
 
 
 @pytest.fixture(autouse=True)

@@ -1,8 +1,8 @@
 """Helper functions."""
 
+import logging
 from collections.abc import Mapping
 from typing import Any
-import logging
 
 _LOGGER = logging.getLogger(__name__)
 

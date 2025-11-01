@@ -1,6 +1,5 @@
 from homeassistant.const import UnitOfPower
 
-
 """Constants for the DIMO integration."""
 
 from collections.abc import Callable
@@ -8,19 +7,10 @@ from dataclasses import dataclass
 
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
-from homeassistant.const import (
-    DEGREE,
-    PERCENTAGE,
-    Platform,
-    UnitOfElectricPotential,
-    UnitOfEnergy,
-    UnitOfLength,
-    UnitOfPressure,
-    UnitOfSpeed,
-    UnitOfTemperature,
-    UnitOfTime,
-    UnitOfVolume,
-)
+from homeassistant.const import (DEGREE, PERCENTAGE, Platform,
+                                 UnitOfElectricPotential, UnitOfEnergy,
+                                 UnitOfLength, UnitOfPressure, UnitOfSpeed,
+                                 UnitOfTemperature, UnitOfTime, UnitOfVolume)
 
 DOMAIN = "dimo"
 CONF_PRIVATE_KEY = "private_key"
