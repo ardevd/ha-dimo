@@ -11,6 +11,7 @@ from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.const import (
     DEGREE,
     PERCENTAGE,
+    REVOLUTIONS_PER_MINUTE,
     Platform,
     UnitOfElectricPotential,
     UnitOfEnergy,
@@ -26,6 +27,10 @@ DOMAIN = "dimo"
 CONF_PRIVATE_KEY = "private_key"
 CONF_AUTH_PROVIDER = "auth_provider"
 CONF_LICENSE_ID = "license_id"
+
+ICON_TIRE = "mdi:tire"
+ICON_ENGINE = "mdi:engine"
+
 
 PLATFORMS: list[Platform] = [
     Platform.BINARY_SENSOR,
@@ -136,7 +141,7 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.PRESSURE,
         UnitOfPressure.KPA,
-        "mdi:tire",
+        ICON_TIRE,
         SensorStateClass.MEASUREMENT,
     ),
     "chassisAxleRow1WheelRightTirePressure": SignalDef(
@@ -144,7 +149,7 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.PRESSURE,
         UnitOfPressure.KPA,
-        "mdi:tire",
+        ICON_TIRE,
         SensorStateClass.MEASUREMENT,
     ),
     "chassisAxleRow2WheelLeftTirePressure": SignalDef(
@@ -152,7 +157,7 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.PRESSURE,
         UnitOfPressure.KPA,
-        "mdi:tire",
+        ICON_TIRE,
         SensorStateClass.MEASUREMENT,
     ),
     "chassisAxleRow2WheelRightTirePressure": SignalDef(
@@ -160,7 +165,7 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.PRESSURE,
         UnitOfPressure.KPA,
-        "mdi:tire",
+        ICON_TIRE,
         SensorStateClass.MEASUREMENT,
     ),
     "obdBarometricPressure": SignalDef(
@@ -174,8 +179,8 @@ SIGNALS: dict[str, SignalDef] = {
         "Engine Speed",
         Platform.SENSOR,
         None,
-        "RPM",
-        "mdi:engine",
+        REVOLUTIONS_PER_MINUTE,
+        ICON_ENGINE,
         SensorStateClass.MEASUREMENT,
     ),
     "powertrainCombustionEngineTPS": SignalDef(
@@ -223,7 +228,7 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         PERCENTAGE,
-        "mdi:engine",
+        ICON_ENGINE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "obdStatusDTCCount": SignalDef(
@@ -255,7 +260,7 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         "g/s",
-        "mdi:engine",
+        ICON_ENGINE,
         SensorStateClass.MEASUREMENT,
     ),
     "powertrainTractionBatteryTemperatureAverage": SignalDef(
@@ -299,7 +304,7 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         UnitOfTime.SECONDS,
-        "mdi:engine",
+        ICON_ENGINE,
         SensorStateClass.MEASUREMENT,
     ),
     "obdDistanceWithMIL": SignalDef(
