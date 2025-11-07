@@ -5,8 +5,11 @@ from typing import Any, Dict, List, Optional
 import requests
 
 from .auth import Auth
-from .queries import (GET_ALL_VEHICLES_QUERY, GET_LATEST_SIGNALS_QUERY,
-                      GET_VEHICLE_REWARDS_QUERY)
+from .queries import (
+    GET_ALL_VEHICLES_QUERY,
+    GET_LATEST_SIGNALS_QUERY,
+    GET_VEHICLE_REWARDS_QUERY,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -230,7 +233,7 @@ class DimoClient:
             )
             return None
         except Exception as e:
-            _LOGGER.error(f"Failed to get total DIMO vehicles: {e}")
+            _LOGGER.error(f"Failed to get total DIMO vehicles count: {e}")
             return None
 
     @requires_vehicle_jwt
