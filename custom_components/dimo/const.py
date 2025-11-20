@@ -223,6 +223,12 @@ SIGNALS: dict[str, SignalDef] = {
         "mdi:thermometer-lines",
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    "obdIsPluggedIn": SignalDef(
+        "OBD Plugged in",
+        Platform.BINARY_SENSOR,
+        BinarySensorDeviceClass.PLUG,
+        icon="mdi:mini-sd",
+    ),
     "obdEngineLoad": SignalDef(
         "Engine Load",
         Platform.SENSOR,
