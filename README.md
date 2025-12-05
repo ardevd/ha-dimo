@@ -37,8 +37,8 @@ The integration can be easily added through HACS. Ensure you have [HACS](https:/
 Got the integration installed and ready to connect your car? Follow these steps:
 
 ### 0. Sign up to DIMO and connect your vehicle(s)
-Download the DIMO mobile app to get going. You can use the Smartcar connection and/or DIMO hardware 
-to onboard your vehicle(s). Note that the Smartcar connection provides limited data and only updated data around once every 1-2 hours. Tesla have DIMO integration built in to the infotainment so no hardware device is needed or supported.
+Download the DIMO mobile app to get going. You will need a DIMO hardware device in order to to onboard your vehicle(s).
+Tesla have DIMO integration built in to the infotainment so no hardware device is needed or supported.
 
 ### 1. Sign Up on the DIMO Developer Console
 
