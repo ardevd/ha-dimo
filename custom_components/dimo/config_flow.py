@@ -7,7 +7,7 @@ from typing import Any
 
 import dimo as dimo_sdk
 import voluptuous as vol
-from homeassistant.config_entries import OptionsFlow, ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import OptionsFlow, ConfigFlow, ConfigFlowResult, ConfigEntry
 from homeassistant.const import CONF_CLIENT_ID
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
