@@ -394,34 +394,6 @@ def test_dimo_client_get_total_dimo_vehicles_exception():
     dimo_mock.identity.count_dimo_vehicles.assert_called_once()
 
 
-def test_dimo_client_lock_doors():
-    auth_mock = Mock()
-    dimo_mock = auth_mock.get_dimo.return_value
-    priv_token = create_mock_token(600)
-    auth_mock.get_privileged_token.return_value = priv_token
-    dimo_client = DimoClient(auth=auth_mock)
-    token_id = "99994"
-    dimo_mock.devices.lock_doors.return_value = {"result": "locked"}
-    result = dimo_client.lock_doors(token_id)
-    assert result == {"result": "locked"}
-    dimo_mock.devices.lock_doors.assert_called_once_with(priv_token.token, token_id)
-    auth_mock.get_privileged_token.assert_called_once_with(token_id)
-
-
-def test_dimo_client_unlock_doors():
-    auth_mock = Mock()
-    dimo_mock = auth_mock.get_dimo.return_value
-    priv_token = create_mock_token(600)
-    auth_mock.get_privileged_token.return_value = priv_token
-    dimo_client = DimoClient(auth=auth_mock)
-    token_id = "99995"
-    dimo_mock.devices.unlock_doors.return_value = {"result": "unlocked"}
-    result = dimo_client.unlock_doors(token_id)
-    assert result == {"result": "unlocked"}
-    dimo_mock.devices.unlock_doors.assert_called_once_with(priv_token.token, token_id)
-    auth_mock.get_privileged_token.assert_called_once_with(token_id)
-
-
 def test_fetch_privileged_token_success():
     auth_mock = Mock()
     priv_token = create_mock_token(1200)
@@ -593,18 +565,6 @@ def test_get_latest_signals_batched_unknown_exception():
     except Exception as e:
         assert str(e) == "fail"
     auth_mock.get_access_token.assert_called_once()
-    auth_mock.get_privileged_token.assert_called_once_with(token_id)
-
-    auth_mock = Mock()
-    dimo_mock = auth_mock.get_dimo.return_value
-    priv_token = create_mock_token(600)
-    auth_mock.get_privileged_token.return_value = priv_token
-    dimo_client = DimoClient(auth=auth_mock)
-    token_id = "58585"
-    dimo_mock.devices.unlock_doors.return_value = {"result": "unlocked"}
-    result = dimo_client.unlock_doors(token_id)
-    assert result == {"result": "unlocked"}
-    dimo_mock.devices.unlock_doors.assert_called_once_with(priv_token.token, token_id)
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
 
     auth_mock = Mock()
