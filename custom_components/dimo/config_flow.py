@@ -129,7 +129,7 @@ class DimoOptionsFlow(OptionsFlow):
                         default=self.config_entry.options.get(
                             CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL
                         ),
-                    ): int,
+                    ): vol.All(vol.Coerce(int), vol.Range(min=5, max=3600)),
                 }
             ),
         )
