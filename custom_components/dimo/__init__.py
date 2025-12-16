@@ -16,7 +16,15 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from typing_extensions import Mapping
 
 from .config_flow import InvalidAuth, NoVehiclesException
-from .const import CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DIMO_SENSORS, DOMAIN, PLATFORMS
+from .const import (
+    CONF_AUTH_PROVIDER,
+    CONF_PRIVATE_KEY,
+    DIMO_SENSORS,
+    DOMAIN,
+    PLATFORMS,
+    CONF_POLL_INTERVAL,
+    DEFAULT_POLL_INTERVAL,
+)
 from .dimoapi import (
     Auth,
     DimoClient,
@@ -75,7 +83,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: DIMOConfigEntry) -> bool
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
+    entry.async_on_unload(entry.add_update_listener(async_update_options))
+
     return True
+
+
+async def async_update_options(hass: HomeAssistant, entry: DIMOConfigEntry) -> None:
+    """Update options."""
+    await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def async_remove_config_entry_device(
@@ -111,12 +126,17 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         client: DimoClient,
     ) -> None:
         """Initialise update coordinator."""
+
+        scan_interval_seconds = entry.options.get(
+            CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL
+        )
+
         super().__init__(
             hass,
             _LOGGER,
             name=f"{DOMAIN} ({entry.unique_id})",
             update_method=self.async_update_data,
-            update_interval=timedelta(seconds=30),
+            update_interval=timedelta(seconds=scan_interval_seconds),
             config_entry=entry,
         )
 
