@@ -180,8 +180,6 @@ async def test_update_listener_registered_on_setup():
         
         # Mock async_add_executor_job to simulate successful client init
         async def mock_executor_job(func, *args):
-            if func == mock_client.init:
-                return None
             return None
         
         hass.async_add_executor_job = mock_executor_job
