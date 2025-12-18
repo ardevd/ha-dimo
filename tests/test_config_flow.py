@@ -174,7 +174,6 @@ async def test_options_flow_triggers_reload(hass, monkeypatch):
     
     # Mock the async_reload to track if it's called
     with patch("custom_components.dimo.async_update_options") as mock_update_options:
-        mock_update_options.return_value = AsyncMock()
         
         # Add the update listener to simulate the integration setup
         config_entry.add_update_listener(mock_update_options)
