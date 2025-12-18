@@ -26,6 +26,7 @@ def entry():
         "auth_provider": "dummy_provider",
         "private_key": "dummy_key",
     }
+    entry.options = {}
     return entry
 
 
