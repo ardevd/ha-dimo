@@ -111,7 +111,7 @@ class DimoOptionsFlow(OptionsFlow):
 
     def __init__(self, config_entry: ConfigEntry) -> None:
         """Initialize options flow."""
-        self.config_entry = config_entry
+        self.entry = config_entry
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -126,7 +126,7 @@ class DimoOptionsFlow(OptionsFlow):
                 {
                     vol.Optional(
                         CONF_POLL_INTERVAL,
-                        default=self.config_entry.options.get(
+                        default=self.entry.options.get(
                             CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL
                         ),
                     ): vol.All(vol.Coerce(int), vol.Range(min=5, max=3600)),
