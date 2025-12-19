@@ -7,14 +7,25 @@ from typing import Any
 
 import dimo as dimo_sdk
 import voluptuous as vol
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import OptionsFlow, ConfigFlow, ConfigFlowResult, ConfigEntry
 from homeassistant.const import CONF_CLIENT_ID
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 
-from .const import CONF_AUTH_PROVIDER, CONF_PRIVATE_KEY, DOMAIN
-from .dimoapi import (Auth, DimoClient, InvalidApiKeyFormat,
-                      InvalidClientIdError, InvalidCredentialsError)
+from .const import (
+    CONF_AUTH_PROVIDER,
+    CONF_PRIVATE_KEY,
+    DOMAIN,
+    CONF_POLL_INTERVAL,
+    DEFAULT_POLL_INTERVAL,
+)
+from .dimoapi import (
+    Auth,
+    DimoClient,
+    InvalidApiKeyFormat,
+    InvalidClientIdError,
+    InvalidCredentialsError,
+)
 from .helpers import get_key
 
 _LOGGER = logging.getLogger(__name__)
@@ -86,6 +97,41 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors
+        )
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
+        """Create the options flow."""
+        return DimoOptionsFlow(config_entry)
+
+
+class DimoOptionsFlow(OptionsFlow):
+    """Handle an options flow for DIMO."""
+
+    def __init__(self, config_entry: ConfigEntry) -> None:
+        """Initialize options flow."""
+        self.entry = config_entry
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(
+                        CONF_POLL_INTERVAL,
+                        default=self.entry.options.get(
+                            CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL
+                        ),
+                    ): vol.All(vol.Coerce(int), vol.Range(min=5, max=3600)),
+                }
+            ),
         )
 
 

@@ -24,9 +24,12 @@ from homeassistant.const import (
 )
 
 DOMAIN = "dimo"
+
 CONF_PRIVATE_KEY = "private_key"
 CONF_AUTH_PROVIDER = "auth_provider"
 CONF_LICENSE_ID = "license_id"
+CONF_POLL_INTERVAL = "poll_interval"
+DEFAULT_POLL_INTERVAL = 30
 
 ICON_TIRE = "mdi:tire"
 ICON_ENGINE = "mdi:engine"
