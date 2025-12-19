@@ -33,7 +33,7 @@ def get_key(path: str, data: Any, default: Any = None) -> Any:
                     current = current[index]
                     continue
             except ValueError:
-                pass  # Segment was not an integer, or list index out of bounds
+                pass  # Segment was not an integer
 
         # If we reach here, traversal failed
         return default
