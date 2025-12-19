@@ -1,25 +1,41 @@
 """Helper functions."""
 
-import logging
-from collections.abc import Mapping
 from typing import Any
 
-_LOGGER = logging.getLogger(__name__)
 
+def get_key(path: str, data: Any, default: Any = None) -> Any:
+    """
+    Get a value from a nested structure (dict/list) using dot-notation.
 
-def get_key(
-    path: str, data: Mapping[str, Any]
-) -> dict[str, dict | str | int] | str | int:
-    """Try to get a deep value from a dict based on a dot-notation."""
+    Args:
+        path: The dotted path to traverse (e.g. "data.vehicles.0.id").
+        data: The root object to search (dict or list).
+        default: The value to return if the path is invalid or not found.
+
+    Returns:
+        The found value or the default.
+    """
     if not path:
-        return None
+        return default
 
-    current: Any = data
-    for key in path.split("."):
-        if isinstance(current, Mapping) and key in current:
-            current = current[key]
-        else:
-            _LOGGER.debug("get_key: path %r failed at segment %r", path, key)
-            return None
+    current = data
+    for segment in path.split("."):
+        # Handle Dictionaries
+        if isinstance(current, dict) and segment in current:
+            current = current[segment]
+            continue
+
+        # Handle Lists (via integer index)
+        if isinstance(current, list):
+            try:
+                index = int(segment)
+                if 0 <= index < len(current):
+                    current = current[index]
+                    continue
+            except ValueError:
+                pass  # Segment was not an integer, or list index out of bounds
+
+        # If we reach here, traversal failed
+        return default
 
     return current
