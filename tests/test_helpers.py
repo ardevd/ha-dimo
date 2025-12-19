@@ -35,7 +35,7 @@ def test_list_index_out_of_bounds():
     assert get_key("items.5", data) is None
     assert (
         get_key("items.-1", data) is None
-    )  # We generally don't support negative indexing in string paths for safety
+    )  # Negative indices are not supported by this implementation when using string paths
 
 
 def test_invalid_list_index_type():
