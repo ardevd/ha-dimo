@@ -30,17 +30,16 @@ class DimoBaseEntity(CoordinatorEntity):
         self.coordinator = coordinator
         self.vehicle_token_id = vehicle_token_id
         self.key = key
+        self._attr_translation_key = key
 
         sensor_def = DIMO_SENSORS.get(key)
         if sensor_def:
             self._attr_name = sensor_def.name
-            self._attr_icon = sensor_def.icon
             self._attr_device_class = sensor_def.device_class
             self._attr_state_class = sensor_def.state_class
         else:
             # Fallbacks if the key isn't found in DIMO_SENSORS
             self._attr_name = key
-            self._attr_icon = None
             self._attr_device_class = None
             self._attr_state_class = None
 
@@ -81,11 +80,6 @@ class DimoBaseVehicleEntity(DimoBaseEntity):
         if self._signal and self._signal.name:
             return self._signal.name
         return self.key
-
-    @property
-    def icon(self) -> str | None:
-        """Return the icon to use in the frontend, if any."""
-        return self._signal.icon if self._signal else None
 
     @property
     def device_class(self) -> BinarySensorDeviceClass | SensorDeviceClass | None:

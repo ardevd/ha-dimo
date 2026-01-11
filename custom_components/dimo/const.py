@@ -31,10 +31,6 @@ CONF_LICENSE_ID = "license_id"
 CONF_POLL_INTERVAL = "poll_interval"
 DEFAULT_POLL_INTERVAL = 30
 
-ICON_TIRE = "mdi:tire"
-ICON_ENGINE = "mdi:engine"
-
-
 PLATFORMS: list[Platform] = [
     Platform.BINARY_SENSOR,
     Platform.DEVICE_TRACKER,
@@ -50,7 +46,6 @@ class SignalDef:
     platform: Platform
     device_class: SensorDeviceClass | BinarySensorDeviceClass | None = None
     unit_of_measure: str | None = None
-    icon: str | None = None
     state_class: SensorStateClass | None = None
 
 
@@ -65,16 +60,13 @@ DIMO_SENSORS: dict[str, DimoSensorDef] = {
     "total_vehicles": DimoSensorDef(
         "Total Dimo Vehicles",
         Platform.SENSOR,
-        icon="mdi:counter",
         value_fn="get_total_dimo_vehicles",
         state_class=SensorStateClass.MEASUREMENT,
     )
 }
 
 SIGNALS: dict[str, SignalDef] = {
-    "dimoAftermarketNSAT": SignalDef(
-        "No of GPS Satellites", Platform.SENSOR, icon="mdi:satellite-variant"
-    ),
+    "dimoAftermarketNSAT": SignalDef("No of GPS Satellites", Platform.SENSOR),
     "lowVoltageBatteryCurrentVoltage": SignalDef(
         "LV Battery Current Voltage",
         Platform.SENSOR,
@@ -86,7 +78,6 @@ SIGNALS: dict[str, SignalDef] = {
         "Ignition",
         Platform.BINARY_SENSOR,
         BinarySensorDeviceClass.POWER,
-        icon="mdi:car-key",
     ),
     "speed": SignalDef(
         "Speed",
@@ -100,8 +91,7 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.DISTANCE,
         UnitOfLength.KILOMETERS,
-        "mdi:map-marker-distance",
-        SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "powertrainTractionBatteryRange": SignalDef(
         "EV Range",
@@ -115,7 +105,6 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.DISTANCE,
         UnitOfLength.KILOMETERS,
-        "mdi:counter",
         SensorStateClass.TOTAL_INCREASING,
     ),
     "powertrainTransmissionTemperature": SignalDef(
@@ -144,32 +133,28 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.PRESSURE,
         UnitOfPressure.KPA,
-        ICON_TIRE,
-        SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "chassisAxleRow1WheelRightTirePressure": SignalDef(
         "Axle Row 1 Wheel Right Tire Pressure",
         Platform.SENSOR,
         SensorDeviceClass.PRESSURE,
         UnitOfPressure.KPA,
-        ICON_TIRE,
-        SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "chassisAxleRow2WheelLeftTirePressure": SignalDef(
         "Axle Row 2 Wheel Left Tire Pressure",
         Platform.SENSOR,
         SensorDeviceClass.PRESSURE,
         UnitOfPressure.KPA,
-        ICON_TIRE,
-        SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "chassisAxleRow2WheelRightTirePressure": SignalDef(
         "Axle Row 2 Wheel Right Tire Pressure",
         Platform.SENSOR,
         SensorDeviceClass.PRESSURE,
         UnitOfPressure.KPA,
-        ICON_TIRE,
-        SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "obdBarometricPressure": SignalDef(
         "Barometric Pressure",
@@ -183,7 +168,6 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         REVOLUTIONS_PER_MINUTE,
-        ICON_ENGINE,
         SensorStateClass.MEASUREMENT,
     ),
     "powertrainCombustionEngineTPS": SignalDef(
@@ -191,7 +175,6 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         PERCENTAGE,
-        "mdi:speedometer",
         SensorStateClass.MEASUREMENT,
     ),
     "powertrainFuelSystemRelativeLevel": SignalDef(
@@ -199,7 +182,6 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         PERCENTAGE,
-        "mdi:gas-station",
         SensorStateClass.MEASUREMENT,
     ),
     "powertrainFuelSystemAbsoluteLevel": SignalDef(
@@ -207,7 +189,6 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.VOLUME_STORAGE,
         UnitOfVolume.LITERS,
-        "mdi:gas-station",
         SensorStateClass.MEASUREMENT,
     ),
     "powertrainCombustionEngineDieselExhaustFluidLevel": SignalDef(
@@ -215,7 +196,6 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         PERCENTAGE,
-        "mdi:fuel",
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "obdIntakeTemp": SignalDef(
@@ -223,39 +203,33 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.TEMPERATURE,
         UnitOfTemperature.CELSIUS,
-        "mdi:thermometer-lines",
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "obdIsPluggedIn": SignalDef(
         "OBD Plugged in",
         Platform.BINARY_SENSOR,
         BinarySensorDeviceClass.PLUG,
-        icon="mdi:mini-sd",
     ),
     "obdEngineLoad": SignalDef(
         "Engine Load",
         Platform.SENSOR,
         None,
         PERCENTAGE,
-        ICON_ENGINE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "obdStatusDTCCount": SignalDef(
         "Diagnostics Trouble Codes Count",
         Platform.SENSOR,
-        icon="mdi:alert-circle",
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "obdDTCList": SignalDef(
         "Diagnostics Trouble Codes",
         Platform.SENSOR,
-        icon="mdi:alert-circle-outline",
     ),
     "powertrainTractionBatteryChargingIsCharging": SignalDef(
         "EV Battery Charging",
         Platform.BINARY_SENSOR,
         BinarySensorDeviceClass.BATTERY_CHARGING,
-        None,
     ),
     "obdMAP": SignalDef(
         "Intake Manifold Pressure",
@@ -269,7 +243,6 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         "g/s",
-        ICON_ENGINE,
         SensorStateClass.MEASUREMENT,
     ),
     "powertrainTractionBatteryTemperatureAverage": SignalDef(
@@ -291,7 +264,6 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         SensorDeviceClass.DISTANCE,
         UnitOfLength.METERS,
-        "mdi:altimeter",
         SensorStateClass.MEASUREMENT,
     ),
     "currentLocationHeading": SignalDef(
@@ -299,7 +271,6 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         DEGREE,
-        "mdi:compass-rose",
     ),
     "powertrainTractionBatteryGrossCapacity": SignalDef(
         "EV Battery Gross Capacity",
@@ -313,7 +284,6 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         UnitOfTime.SECONDS,
-        ICON_ENGINE,
         SensorStateClass.MEASUREMENT,
     ),
     "obdDistanceWithMIL": SignalDef(
@@ -335,49 +305,40 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         "$DIMO",
-        "mdi:currency-usd",
         SensorStateClass.TOTAL_INCREASING,
     ),
     "powertrainType": SignalDef(
         "Powertrain",
         Platform.SENSOR,
-        icon="mdi:car-cog",
     ),
     "cabinDoorRow1DriverSideWindowIsOpen": SignalDef(
         "Front Driver Side Window Open",
         Platform.BINARY_SENSOR,
-        icon="mdi:window-open",
     ),
     "cabinDoorRow1PassengerSideWindowIsOpen": SignalDef(
         "Front Passenger Side Window Open",
         Platform.BINARY_SENSOR,
-        icon="mdi:window-open",
     ),
     "cabinDoorRow2DriverSideWindowIsOpen": SignalDef(
         "Back Driver Side Window Open",
         Platform.BINARY_SENSOR,
-        icon="mdi:window-open",
     ),
     "cabinDoorRow2PassengerSideWindowIsOpen": SignalDef(
         "Back Passenger Side Window Open",
         Platform.BINARY_SENSOR,
-        icon="mdi:window-open",
     ),
     "currentLocationIsRedacted": SignalDef(
         "Approximate Location",
         Platform.BINARY_SENSOR,
-        icon="mdi:map-marker",
     ),
     "dimoAftermarketHDOP": SignalDef(
         "Horizontal dilution of GPS precision",
         Platform.SENSOR,
-        icon="mdi:satellite-variant",
     ),
     "powertrainTractionBatteryStateOfHealth": SignalDef(
         "EV Battery State of Health",
         Platform.SENSOR,
         unit_of_measure=PERCENTAGE,
-        icon="mdi:hospital",
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "powertrainTractionBatteryCurrentVoltage": SignalDef(
@@ -391,14 +352,12 @@ SIGNALS: dict[str, SignalDef] = {
         "Charging Added Energy",
         Platform.SENSOR,
         unit_of_measure=UnitOfEnergy.KILO_WATT_HOUR,
-        icon="mdi:lightning-bolt-circle",
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "powertrainTractionBatteryChargingChargeLimit": SignalDef(
         "Charging Limit",
         Platform.SENSOR,
         unit_of_measure=PERCENTAGE,
-        icon="mdi:ev-station",
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "powertrainTractionBatteryCurrentPower": SignalDef(
@@ -408,7 +367,6 @@ SIGNALS: dict[str, SignalDef] = {
         UnitOfPower.WATT,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    # These are not processed but are here to stop being added as a sensor entity
     "currentLocationLatitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
     "currentLocationLongitude": SignalDef("Current Location", Platform.DEVICE_TRACKER),
 }

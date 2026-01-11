@@ -1,0 +1,110 @@
+{
+  "entity": {
+    "sensor": {
+      "total_vehicles": {
+        "default": "mdi:counter"
+      },
+      "dimoAftermarketNSAT": {
+        "default": "mdi:satellite-variant"
+      },
+      "powertrainRange": {
+        "default": "mdi:map-marker-distance"
+      },
+      "powertrainTransmissionTravelledDistance": {
+        "default": "mdi:counter"
+      },
+      "chassisAxleRow1WheelLeftTirePressure": {
+        "default": "mdi:tire"
+      },
+      "chassisAxleRow1WheelRightTirePressure": {
+        "default": "mdi:tire"
+      },
+      "chassisAxleRow2WheelLeftTirePressure": {
+        "default": "mdi:tire"
+      },
+      "chassisAxleRow2WheelRightTirePressure": {
+        "default": "mdi:tire"
+      },
+      "powertrainCombustionEngineSpeed": {
+        "default": "mdi:engine"
+      },
+      "powertrainCombustionEngineTPS": {
+        "default": "mdi:speedometer"
+      },
+      "powertrainFuelSystemRelativeLevel": {
+        "default": "mdi:gas-station"
+      },
+      "powertrainFuelSystemAbsoluteLevel": {
+        "default": "mdi:gas-station"
+      },
+      "powertrainCombustionEngineDieselExhaustFluidLevel": {
+        "default": "mdi:fuel"
+      },
+      "obdIntakeTemp": {
+        "default": "mdi:thermometer-lines"
+      },
+      "obdEngineLoad": {
+        "default": "mdi:engine"
+      },
+      "obdStatusDTCCount": {
+        "default": "mdi:alert-circle"
+      },
+      "obdDTCList": {
+        "default": "mdi:alert-circle-outline"
+      },
+      "powertrainCombustionEngineMAF": {
+        "default": "mdi:engine"
+      },
+      "currentLocationAltitude": {
+        "default": "mdi:altimeter"
+      },
+      "currentLocationHeading": {
+        "default": "mdi:compass-rose"
+      },
+      "obdRunTime": {
+        "default": "mdi:engine"
+      },
+      "tokenRewards": {
+        "default": "mdi:currency-usd"
+      },
+      "powertrainType": {
+        "default": "mdi:car-cog"
+      },
+      "dimoAftermarketHDOP": {
+        "default": "mdi:satellite-variant"
+      },
+      "powertrainTractionBatteryStateOfHealth": {
+        "default": "mdi:hospital"
+      },
+      "powertrainTractionBatteryChargingAddedEnergy": {
+        "default": "mdi:lightning-bolt-circle"
+      },
+      "powertrainTractionBatteryChargingChargeLimit": {
+        "default": "mdi:ev-station"
+      }
+    },
+    "binary_sensor": {
+      "isIgnitionOn": {
+        "default": "mdi:car-key"
+      },
+      "obdIsPluggedIn": {
+        "default": "mdi:mini-sd"
+      },
+      "cabinDoorRow1DriverSideWindowIsOpen": {
+        "default": "mdi:window-open"
+      },
+      "cabinDoorRow1PassengerSideWindowIsOpen": {
+        "default": "mdi:window-open"
+      },
+      "cabinDoorRow2DriverSideWindowIsOpen": {
+        "default": "mdi:window-open"
+      },
+      "cabinDoorRow2PassengerSideWindowIsOpen": {
+        "default": "mdi:window-open"
+      },
+      "currentLocationIsRedacted": {
+        "default": "mdi:map-marker"
+      }
+    }
+  }
+}
