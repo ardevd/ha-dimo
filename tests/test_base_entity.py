@@ -4,8 +4,7 @@ import pytest
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from custom_components.dimo.base_entity import (DimoBaseEntity,
-                                                DimoBaseVehicleEntity)
+from custom_components.dimo.base_entity import DimoBaseEntity, DimoBaseVehicleEntity
 from custom_components.dimo.const import DIMO_SENSORS, DOMAIN
 
 
@@ -26,7 +25,6 @@ def mock_coordinator() -> DataUpdateCoordinator:
             "mock_key_with_def",
             MagicMock(
                 name="Total Dimo Vehicles",
-                icon="mdi:counter",
                 device_class="battery",
                 state_class="total",
             ),
@@ -63,11 +61,9 @@ def test_dimo_base_entity_init_sets_attributes(
         # If we had a definition
         if sensor_def:
             assert entity.name == sensor_def.name
-            assert entity.icon == sensor_def.icon
         else:
             # Fallbacks
             assert entity.name == sensor_key
-            assert entity.icon is None
             assert entity.device_class is None
 
         # Unique ID
