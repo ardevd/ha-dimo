@@ -4,105 +4,105 @@
       "total_vehicles": {
         "default": "mdi:counter"
       },
-      "dimoAftermarketNSAT": {
+      "dimoaftermarketnsat": {
         "default": "mdi:satellite-variant"
       },
-      "powertrainRange": {
+      "powertrainrange": {
         "default": "mdi:map-marker-distance"
       },
-      "powertrainTransmissionTravelledDistance": {
+      "powertraintransmissiontravelleddistance": {
         "default": "mdi:counter"
       },
-      "chassisAxleRow1WheelLeftTirePressure": {
+      "chassisaxlerow1wheellefttirepressure": {
         "default": "mdi:tire"
       },
-      "chassisAxleRow1WheelRightTirePressure": {
+      "chassisaxlerow1wheelrighttirepressure": {
         "default": "mdi:tire"
       },
-      "chassisAxleRow2WheelLeftTirePressure": {
+      "chassisaxlerow2wheellefttirepressure": {
         "default": "mdi:tire"
       },
-      "chassisAxleRow2WheelRightTirePressure": {
+      "chassisaxlerow2wheelrighttirepressure": {
         "default": "mdi:tire"
       },
-      "powertrainCombustionEngineSpeed": {
+      "powertraincombustionenginespeed": {
         "default": "mdi:engine"
       },
-      "powertrainCombustionEngineTPS": {
+      "powertraincombustionenginetps": {
         "default": "mdi:speedometer"
       },
-      "powertrainFuelSystemRelativeLevel": {
+      "powertrainfuelsystemrelativelevel": {
         "default": "mdi:gas-station"
       },
-      "powertrainFuelSystemAbsoluteLevel": {
+      "powertrainfuelsystemabsolutelevel": {
         "default": "mdi:gas-station"
       },
-      "powertrainCombustionEngineDieselExhaustFluidLevel": {
+      "powertraincombustionenginedieselexhaustfluidlevel": {
         "default": "mdi:fuel"
       },
-      "obdIntakeTemp": {
+      "obdintaketemp": {
         "default": "mdi:thermometer-lines"
       },
-      "obdEngineLoad": {
+      "obdengineload": {
         "default": "mdi:engine"
       },
-      "obdStatusDTCCount": {
+      "obdstatusdtccount": {
         "default": "mdi:alert-circle"
       },
-      "obdDTCList": {
+      "obddtclist": {
         "default": "mdi:alert-circle-outline"
       },
-      "powertrainCombustionEngineMAF": {
+      "powertraincombustionenginemaf": {
         "default": "mdi:engine"
       },
-      "currentLocationAltitude": {
+      "currentlocationaltitude": {
         "default": "mdi:altimeter"
       },
-      "currentLocationHeading": {
+      "currentlocationheading": {
         "default": "mdi:compass-rose"
       },
-      "obdRunTime": {
+      "obdruntime": {
         "default": "mdi:engine"
       },
-      "tokenRewards": {
+      "tokenrewards": {
         "default": "mdi:currency-usd"
       },
-      "powertrainType": {
+      "powertraintype": {
         "default": "mdi:car-cog"
       },
-      "dimoAftermarketHDOP": {
+      "dimoaftermarkethdop": {
         "default": "mdi:satellite-variant"
       },
-      "powertrainTractionBatteryStateOfHealth": {
+      "powertraintractionbatterystateofhealth": {
         "default": "mdi:hospital"
       },
-      "powertrainTractionBatteryChargingAddedEnergy": {
+      "powertraintractionbatterychargingaddedenergy": {
         "default": "mdi:lightning-bolt-circle"
       },
-      "powertrainTractionBatteryChargingChargeLimit": {
+      "powertraintractionbatterychargingchargelimit": {
         "default": "mdi:ev-station"
       }
     },
     "binary_sensor": {
-      "isIgnitionOn": {
+      "isignitionon": {
         "default": "mdi:car-key"
       },
-      "obdIsPluggedIn": {
+      "obdispluggedin": {
         "default": "mdi:mini-sd"
       },
-      "cabinDoorRow1DriverSideWindowIsOpen": {
+      "cabindoorrow1driversidewindowisopen": {
         "default": "mdi:window-open"
       },
-      "cabinDoorRow1PassengerSideWindowIsOpen": {
+      "cabindoorrow1passengersidewindowisopen": {
         "default": "mdi:window-open"
       },
-      "cabinDoorRow2DriverSideWindowIsOpen": {
+      "cabindoorrow2driversidewindowisopen": {
         "default": "mdi:window-open"
       },
-      "cabinDoorRow2PassengerSideWindowIsOpen": {
+      "cabindoorrow2passengersidewindowisopen": {
         "default": "mdi:window-open"
       },
-      "currentLocationIsRedacted": {
+      "currentlocationisredacted": {
         "default": "mdi:map-marker"
       }
     }

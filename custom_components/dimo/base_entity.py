@@ -30,7 +30,7 @@ class DimoBaseEntity(CoordinatorEntity):
         self.coordinator = coordinator
         self.vehicle_token_id = vehicle_token_id
         self.key = key
-        self._attr_translation_key = key
+        self._attr_translation_key = key.lower()
 
         sensor_def = DIMO_SENSORS.get(key)
         if sensor_def:
