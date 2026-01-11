@@ -25,11 +25,14 @@
       "chassisaxlerow2wheelrighttirepressure": {
         "default": "mdi:tire"
       },
+      "lowvoltagebatterycurrentvoltage": {
+        "default": "mdi:car-battery"
+      },
       "powertraincombustionenginespeed": {
-        "default": "mdi:engine"
+        "default": "mdi:gauge"
       },
       "powertraincombustionenginetps": {
-        "default": "mdi:speedometer"
+        "default": "mdi:gauge-low"
       },
       "powertrainfuelsystemrelativelevel": {
         "default": "mdi:gas-station"
@@ -47,7 +50,7 @@
         "default": "mdi:engine"
       },
       "obdstatusdtccount": {
-        "default": "mdi:alert-circle"
+        "default": "mdi:car-wrench"
       },
       "obddtclist": {
         "default": "mdi:alert-circle-outline"
@@ -56,7 +59,7 @@
         "default": "mdi:engine"
       },
       "currentlocationaltitude": {
-        "default": "mdi:altimeter"
+        "default": "mdi:elevation-rise"
       },
       "currentlocationheading": {
         "default": "mdi:compass-rose"
