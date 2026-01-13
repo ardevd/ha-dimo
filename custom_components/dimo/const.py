@@ -47,6 +47,7 @@ class SignalDef:
     device_class: SensorDeviceClass | BinarySensorDeviceClass | None = None
     unit_of_measure: str | None = None
     state_class: SensorStateClass | None = None
+    suggested_display_precision: int | None = None
 
 
 @dataclass
@@ -73,6 +74,7 @@ SIGNALS: dict[str, SignalDef] = {
         SensorDeviceClass.VOLTAGE,
         UnitOfElectricPotential.VOLT,
         state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=2,
     ),
     "isIgnitionOn": SignalDef(
         "Ignition",
