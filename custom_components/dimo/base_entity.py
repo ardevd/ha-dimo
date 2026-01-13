@@ -98,6 +98,11 @@ class DimoBaseVehicleEntity(DimoBaseEntity):
         return bool(vehicle and vehicle.signal_data.get(self.key))
 
     @property
+    def suggested_display_precision(self) -> int | None:
+        """Return the suggested precision of this entity."""
+        return self._signal.suggested_display_precision if self._signal else None
+
+    @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return extra state attributes."""
         vehicle_data = self.coordinator.vehicle_data[self.vehicle_token_id]
