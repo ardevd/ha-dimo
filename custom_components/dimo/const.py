@@ -87,6 +87,7 @@ SIGNALS: dict[str, SignalDef] = {
         SensorDeviceClass.SPEED,
         UnitOfSpeed.KILOMETERS_PER_HOUR,
         state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=0,
     ),
     "powertrainRange": SignalDef(
         "Powertrain Range",
@@ -94,6 +95,7 @@ SIGNALS: dict[str, SignalDef] = {
         SensorDeviceClass.DISTANCE,
         UnitOfLength.KILOMETERS,
         state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=0,
     ),
     "powertrainTractionBatteryRange": SignalDef(
         "EV Range",
@@ -108,6 +110,7 @@ SIGNALS: dict[str, SignalDef] = {
         SensorDeviceClass.DISTANCE,
         UnitOfLength.KILOMETERS,
         SensorStateClass.TOTAL_INCREASING,
+        suggested_display_precision=0,
     ),
     "powertrainTransmissionTemperature": SignalDef(
         "Transmission Temperature",
