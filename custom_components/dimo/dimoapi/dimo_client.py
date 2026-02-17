@@ -9,6 +9,7 @@ from .queries import (
     GET_ALL_VEHICLES_QUERY,
     GET_LATEST_SIGNALS_QUERY,
     GET_VEHICLE_REWARDS_QUERY,
+    CUSTOM_SIGNAL_FRAGMENTS,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -89,6 +90,32 @@ class DimoClient:
 
         if errors:
             merged["errors"] = errors
+
+        signals = merged["data"]["signalsLatest"]
+        if "currentLocationCoordinates" in signals:
+
+            # Extract and remove the nested object from the dictionary
+            loc_data = signals.pop("currentLocationCoordinates")
+
+            timestamp = loc_data.get("timestamp")
+            coords = loc_data.get("value", {})
+
+            # Re-inject the coordinates as standard, flat signals
+            if "latitude" in coords:
+                signals["currentLocationLatitude"] = {
+                    "timestamp": timestamp,
+                    "value": coords["latitude"],
+                }
+            if "longitude" in coords:
+                signals["currentLocationLongitude"] = {
+                    "timestamp": timestamp,
+                    "value": coords["longitude"],
+                }
+            if "hdop" in coords:
+                signals["dimoAftermarketHDOP"] = {
+                    "timestamp": timestamp,
+                    "value": coords["hdop"],
+                }
         return merged
 
     @staticmethod
@@ -108,12 +135,20 @@ class DimoClient:
         return False
 
     def _build_latest_signals_query(
-        self, token_id: str, signal_names: list[str]
+        self, token_id: str, signal_names: list[str], chunk_index: int
     ) -> str:
         """Build the GraphQL query body for the provided signal names."""
-        signals_query = "\n".join(
-            f"{name} {{\n  timestamp\n  value\n}}" for name in signal_names
-        )
+        signal_blocks = []
+
+        for name in signal_names:
+            signal_blocks.append(f"{name} {{\n  timestamp\n  value\n}}")
+
+        if chunk_index == 0:
+            signal_blocks.append(
+                CUSTOM_SIGNAL_FRAGMENTS["currentLocationCoordinates"].strip()
+            )
+
+        signals_query = "\n".join(signal_blocks)
         return GET_LATEST_SIGNALS_QUERY.format(token_id=token_id, signals=signals_query)
 
     @requires_vehicle_jwt
@@ -143,7 +178,11 @@ class DimoClient:
             # dynamically size the chunk window
             end = min(i + chunk_size, total)
             chunk = signal_names[i:end]
-            query = self._build_latest_signals_query(token_id, chunk)
+            query = self._build_latest_signals_query(
+                token_id,
+                chunk,
+                i,
+            )
 
             while True:
                 try:
