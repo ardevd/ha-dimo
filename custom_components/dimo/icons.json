@@ -43,6 +43,9 @@
       "powertraincombustionenginedieselexhaustfluidlevel": {
         "default": "mdi:fuel"
       },
+      "obdfueltypename": {
+        "default": "mdi:gas-station"
+      },
       "obdintaketemp": {
         "default": "mdi:thermometer-lines"
       },
