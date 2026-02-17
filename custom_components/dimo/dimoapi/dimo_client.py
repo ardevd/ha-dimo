@@ -141,12 +141,10 @@ class DimoClient:
         signal_blocks = []
 
         for name in signal_names:
-            signal_blocks.append(f"{name} {{\n  timestamp\n  value\n}}")
-
-        if chunk_index == 0:
-            signal_blocks.append(
-                CUSTOM_SIGNAL_FRAGMENTS["currentLocationCoordinates"].strip()
-            )
+            if name in CUSTOM_SIGNAL_FRAGMENTS:
+                signal_blocks.append(CUSTOM_SIGNAL_FRAGMENTS[name].strip())
+            else:
+                signal_blocks.append(f"{name} {{\n  timestamp\n  value\n}}")
 
         signals_query = "\n".join(signal_blocks)
         return GET_LATEST_SIGNALS_QUERY.format(token_id=token_id, signals=signals_query)
