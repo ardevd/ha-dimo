@@ -43,9 +43,6 @@
       "powertraincombustionenginedieselexhaustfluidlevel": {
         "default": "mdi:fuel"
       },
-      "chassisparkingbrakeisengaged": {
-        "default": "mdi:car-brake-parking"
-      },
       "obdfueltypename": {
         "default": "mdi:gas-station"
       },
@@ -95,6 +92,9 @@
     "binary_sensor": {
       "isignitionon": {
         "default": "mdi:car-key"
+      },
+      "chassisparkingbrakeisengaged": {
+        "default": "mdi:car-brake-parking"
       },
       "obdispluggedin": {
         "default": "mdi:mini-sd"
