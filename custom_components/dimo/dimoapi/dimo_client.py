@@ -135,7 +135,7 @@ class DimoClient:
         return False
 
     def _build_latest_signals_query(
-        self, token_id: str, signal_names: list[str], chunk_index: int
+        self, token_id: str, signal_names: list[str]
     ) -> str:
         """Build the GraphQL query body for the provided signal names."""
         signal_blocks = []
@@ -179,7 +179,6 @@ class DimoClient:
             query = self._build_latest_signals_query(
                 token_id,
                 chunk,
-                i,
             )
 
             while True:
@@ -217,7 +216,7 @@ class DimoClient:
                         # recompute chunk boundaries with smaller chunk size
                         end = min(i + chunk_size, total)
                         chunk = signal_names[i:end]
-                        query = self._build_latest_signals_query(token_id, chunk, i)
+                        query = self._build_latest_signals_query(token_id, chunk)
                         continue
 
                     # success path
