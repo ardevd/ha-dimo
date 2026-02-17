@@ -187,7 +187,7 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.SENSOR,
         None,
         PERCENTAGE,
-        SensorStateClass.MEASUREMENT,        
+        SensorStateClass.MEASUREMENT,
         suggested_display_precision=0,
     ),
     "powertrainFuelSystemAbsoluteLevel": SignalDef(
@@ -339,6 +339,10 @@ SIGNALS: dict[str, SignalDef] = {
     ),
     "dimoAftermarketHDOP": SignalDef(
         "Horizontal dilution of GPS precision",
+        Platform.SENSOR,
+    ),
+    "obdFuelTypeName": SignalDef(
+        "Fuel Type",
         Platform.SENSOR,
     ),
     "powertrainTractionBatteryStateOfHealth": SignalDef(
