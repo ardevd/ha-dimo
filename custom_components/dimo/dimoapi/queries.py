@@ -29,7 +29,6 @@ query VehiclesForLicense {{
 }}
 """
 
-
 CUSTOM_SIGNAL_FRAGMENTS = {
     "currentLocationCoordinates": """
     currentLocationCoordinates {
