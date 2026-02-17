@@ -81,6 +81,10 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.BINARY_SENSOR,
         BinarySensorDeviceClass.POWER,
     ),
+    "chassisParkingBrakeIsEngaged": SignalDef(
+        "Parking Brake",
+        Platform.BINARY_SENSOR,
+    ),
     "speed": SignalDef(
         "Speed",
         Platform.SENSOR,
