@@ -219,7 +219,7 @@ class DimoClient:
                         # recompute chunk boundaries with smaller chunk size
                         end = min(i + chunk_size, total)
                         chunk = signal_names[i:end]
-                        query = self._build_latest_signals_query(token_id, chunk)
+                        query = self._build_latest_signals_query(token_id, chunk, i)
                         continue
 
                     # success path
