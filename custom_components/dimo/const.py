@@ -81,6 +81,16 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.BINARY_SENSOR,
         BinarySensorDeviceClass.POWER,
     ),
+    "bodyTrunkFrontIsOpen": SignalDef(
+        "Front Trunk",
+        Platform.BINARY_SENSOR,
+        BinarySensorDeviceClass.DOOR,
+    ),
+    "bodyTrunkRearIsOpen": SignalDef(
+        "Rear Trunk",
+        Platform.BINARY_SENSOR,
+        BinarySensorDeviceClass.DOOR,
+    ),
     "chassisParkingBrakeIsEngaged": SignalDef(
         "Parking Brake",
         Platform.BINARY_SENSOR,

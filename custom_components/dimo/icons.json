@@ -93,6 +93,12 @@
       "isignitionon": {
         "default": "mdi:car-key"
       },
+      "bodytrunkfrontisopen": {
+        "default": "mdi:car-back"
+      },
+      "bodytrunkrearisopen": {
+        "default": "mdi:car-back"
+      },
       "chassisparkingbrakeisengaged": {
         "default": "mdi:car-brake-parking"
       },
