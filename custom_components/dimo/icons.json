@@ -102,6 +102,9 @@
       "chassisparkingbrakeisengaged": {
         "default": "mdi:car-brake-parking"
       },
+      "chassisbrakeispedalpressed": {
+        "default": "mdi:speedometer-slow"
+      },
       "obdispluggedin": {
         "default": "mdi:mini-sd"
       },
