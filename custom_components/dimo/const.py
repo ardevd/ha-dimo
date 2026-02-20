@@ -123,7 +123,7 @@ SIGNALS: dict[str, SignalDef] = {
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "powertrainCombustionEngineTorquePercent": SignalDef(
-        "Engine Torque",
+        "Engine Torque Percentage",
         Platform.SENSOR,
         unit_of_measure=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
