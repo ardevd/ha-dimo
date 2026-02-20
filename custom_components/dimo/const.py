@@ -122,6 +122,12 @@ SIGNALS: dict[str, SignalDef] = {
         UnitOfLength.KILOMETERS,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    "powertrainCombustionEngineTorquePercent": SignalDef(
+        "Engine Torque Percentage",
+        Platform.SENSOR,
+        unit_of_measure=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
     "powertrainTransmissionTravelledDistance": SignalDef(
         "Odometer",
         Platform.SENSOR,
