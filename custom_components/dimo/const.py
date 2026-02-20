@@ -22,6 +22,7 @@ from homeassistant.const import (
     UnitOfTime,
     UnitOfVolume,
 )
+from homeassistant.const import UnitOfVolumeFlowRate
 
 DOMAIN = "dimo"
 
@@ -126,6 +127,12 @@ SIGNALS: dict[str, SignalDef] = {
         "Engine Torque Percentage",
         Platform.SENSOR,
         unit_of_measure=PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "obdFuelRate": SignalDef(
+        "Engine Fuel Rate",
+        Platform.SENSOR,
+        unit_of_measure=UnitOfVolumeFlowRate.LITERS_PER_HOUR,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "powertrainTransmissionTravelledDistance": SignalDef(

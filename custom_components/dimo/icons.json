@@ -28,6 +28,9 @@
       "lowvoltagebatterycurrentvoltage": {
         "default": "mdi:car-battery"
       },
+      "obdfuelrate": {
+        "default": "mdi:fuel"
+      },
       "powertraincombustionenginespeed": {
         "default": "mdi:gauge"
       },
