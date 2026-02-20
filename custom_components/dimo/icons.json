@@ -87,6 +87,9 @@
       },
       "powertraintractionbatterychargingchargelimit": {
         "default": "mdi:ev-station"
+      },
+      "powertraincombustionenginetorquepercent": {
+        "default": "mdi:gauge"
       }
     },
     "binary_sensor": {
