@@ -21,8 +21,8 @@ from homeassistant.const import (
     UnitOfTemperature,
     UnitOfTime,
     UnitOfVolume,
+    UnitOfVolumeFlowRate,
 )
-from homeassistant.const import UnitOfVolumeFlowRate
 
 DOMAIN = "dimo"
 
