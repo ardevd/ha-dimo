@@ -111,6 +111,18 @@
       "chassisbrakeispedalpressed": {
         "default": "mdi:speedometer-slow"
       },
+      "cabindoorrow1driversideisopen": {
+        "default": "mdi:car-door"
+      },
+      "cabindoorrow2driversideisopen": {
+        "default": "mdi:car-door"
+      },
+      "cabindoorrow1passengersideisopen": {
+        "default": "mdi:car-door"
+      },
+      "cabindoorrow2passengersideisopen": {
+        "default": "mdi:car-door"
+      },
       "obdispluggedin": {
         "default": "mdi:mini-sd"
       },

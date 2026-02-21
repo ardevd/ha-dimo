@@ -92,6 +92,26 @@ SIGNALS: dict[str, SignalDef] = {
         Platform.BINARY_SENSOR,
         BinarySensorDeviceClass.DOOR,
     ),
+    "cabinDoorRow1DriverSideIsOpen": SignalDef(
+        "Row 1 Driver Side Door",
+        Platform.BINARY_SENSOR,
+        BinarySensorDeviceClass.DOOR,
+    ),
+    "cabinDoorRow1PassengerSideIsOpen": SignalDef(
+        "Row 1 Passenger Side Door",
+        Platform.BINARY_SENSOR,
+        BinarySensorDeviceClass.DOOR,
+    ),
+    "cabinDoorRow2DriverSideIsOpen": SignalDef(
+        "Row 2 Driver Side Door",
+        Platform.BINARY_SENSOR,
+        BinarySensorDeviceClass.DOOR,
+    ),
+    "cabinDoorRow2PassengerSideIsOpen": SignalDef(
+        "Row 2 Passenger Side Door",
+        Platform.BINARY_SENSOR,
+        BinarySensorDeviceClass.DOOR,
+    ),
     "chassisParkingBrakeIsEngaged": SignalDef(
         "Parking Brake",
         Platform.BINARY_SENSOR,
