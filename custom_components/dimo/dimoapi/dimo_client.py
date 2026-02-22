@@ -184,9 +184,10 @@ class DimoClient:
             while True:
                 try:
                     _LOGGER.debug(
-                        "Querying signals %d..%d (size=%d): %s",
+                        "Querying signals %d..%d for token id %s (size=%d): %s",
                         i,
                         end - 1,
+                        token_id,
                         len(chunk),
                         ", ".join(chunk),
                     )
