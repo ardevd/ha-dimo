@@ -156,7 +156,7 @@ class DimoClient:
         token_id: str,
         signal_names: list[str],
         *,
-        initial_chunk_size: int = 25,
+        initial_chunk_size: int = 30,
         min_chunk_size: int = 5,
     ) -> Dict[str, Any]:
         """
