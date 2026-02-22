@@ -146,7 +146,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         self.dimo_data: dict[str, Any] = {}
         self.vehicle_data: dict[str, VehicleData] = {}
 
-    async def _async_setup_single_vehicle(self, vehicle_token_id):
+    async def _async_setup_single_vehicle(self, vehicle_token_id: str):
         """Fetch all required I/O data for a vehicle, then create the device."""
 
         await asyncio.gather(
