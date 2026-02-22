@@ -146,28 +146,33 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         self.dimo_data: dict[str, Any] = {}
         self.vehicle_data: dict[str, VehicleData] = {}
 
+    async def _async_setup_single_vehicle(self, vehicle_token_id: str):
+        """Fetch all required I/O data for a vehicle, then create the device."""
+
+        await asyncio.gather(
+            self.get_available_signals_for_vehicle(vehicle_token_id),
+            self._get_vehicle_vin(vehicle_token_id),
+        )
+
+        self.create_vehicle_device(vehicle_token_id)
+
     async def async_initialise(self):
         """Get initial static data."""
         await self.get_vehicles_data()
 
-        # Add Dimo device for non vehicle specificic sensors
+        # Add Dimo device for non vehicle specific sensors
         if DIMO_SENSORS:
             self.create_dimo_device()
             await self.get_dimo_sensor_data()
 
         if self.vehicle_data:
-            # Fetch available signals for all available vehicles concurrently
+            # Run the setup process concurrently for all vehicles
             await asyncio.gather(
                 *[
-                    self.get_available_signals_for_vehicle(vehicle_token_id)
+                    self._async_setup_single_vehicle(vehicle_token_id)
                     for vehicle_token_id in self.vehicle_data
                 ]
             )
-            # Create devices for each vehicle
-            for vehicle_token_id in self.vehicle_data:
-                # Grab VIN before creating
-                await self._get_vehicle_vin(vehicle_token_id)
-                self.create_vehicle_device(vehicle_token_id)
 
     async def get_dimo_sensor_data(self):
         """Get Dimo sensor data from DIMO_SENSORS defs."""
