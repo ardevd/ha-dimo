@@ -179,7 +179,15 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         async def fetch_sensor(key, sensor_def):
             if hasattr(self.client, sensor_def.value_fn):
                 fn = getattr(self.client, sensor_def.value_fn)
-                result = await self.hass.async_add_executor_job(fn)
+                try:
+                    result = await self.hass.async_add_executor_job(fn)
+                except Exception:  # noqa: BLE001
+                    _LOGGER.exception(
+                        "Error fetching DIMO sensor '%s' for key '%s'",
+                        sensor_def.value_fn,
+                        key,
+                    )
+                    return key, None
                 return key, result
             return key, None
 
