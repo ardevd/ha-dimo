@@ -1,18 +1,29 @@
+
 import logging
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import dimo as dimo_sdk
 import pytest
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryNotReady
 
-from custom_components.dimo import DOMAIN
+from custom_components.dimo import (DOMAIN, PLATFORMS,
+                                    async_remove_config_entry_device,
+                                    async_setup_entry, async_unload_entry)
 from custom_components.dimo.__init__ import DimoUpdateCoordinator, VehicleData
+from custom_components.dimo.config_flow import InvalidAuth, NoVehiclesException
+from custom_components.dimo.dimoapi import (InvalidApiKeyFormat,
+                                            InvalidClientIdError,
+                                            InvalidCredentialsError)
 
 
 @pytest.fixture
 def hass() -> HomeAssistant:
     """Return a dummy HomeAssistant instance."""
-    return MagicMock(spec=HomeAssistant)
+    hass_mock = MagicMock(spec=HomeAssistant)
+    hass_mock.config_entries = MagicMock()
+    hass_mock.async_add_executor_job = AsyncMock()
+    return hass_mock
 
 
 @pytest.fixture
@@ -273,3 +284,137 @@ async def test_poll_interval_default_when_not_in_options():
     
     # Verify that the update_interval is set to the default
     assert coordinator.update_interval.total_seconds() == DEFAULT_POLL_INTERVAL
+
+@pytest.mark.asyncio
+async def test_async_setup_entry_invalid_auth(hass, entry):
+    with patch("custom_components.dimo.DimoClient") as mock_client_class:
+        mock_client = mock_client_class.return_value
+        # async_add_executor_job throws InvalidAuth
+        hass.async_add_executor_job.side_effect = InvalidAuth()
+        result = await async_setup_entry(hass, entry)
+        assert result is False
+
+
+@pytest.mark.asyncio
+async def test_async_setup_entry_no_vehicles(hass, entry):
+    with patch("custom_components.dimo.DimoClient") as mock_client_class:
+        hass.async_add_executor_job.side_effect = NoVehiclesException()
+        with pytest.raises(ConfigEntryNotReady):
+            await async_setup_entry(hass, entry)
+
+
+@pytest.mark.asyncio
+async def test_async_setup_entry_general_exception(hass, entry):
+    with patch("custom_components.dimo.DimoClient") as mock_client_class:
+        hass.async_add_executor_job.side_effect = Exception("General error")
+        with pytest.raises(ConfigEntryNotReady):
+            await async_setup_entry(hass, entry)
+
+
+@pytest.mark.asyncio
+async def test_async_remove_config_entry_device(hass, entry):
+    result = await async_remove_config_entry_device(hass, entry, None)
+    assert result is True
+
+
+@pytest.mark.asyncio
+async def test_async_unload_entry(hass, entry):
+    hass.config_entries.async_unload_platforms = AsyncMock(return_value=True)
+    result = await async_unload_entry(hass, entry)
+    assert result is True
+    hass.config_entries.async_unload_platforms.assert_called_once_with(entry, PLATFORMS)
+
+
+@pytest.mark.asyncio
+async def test_get_api_data_exceptions(hass, entry):
+    coordinator = DimoUpdateCoordinator(hass, entry, MagicMock())
+    
+    with pytest.raises(InvalidClientIdError):
+        hass.async_add_executor_job.side_effect = InvalidClientIdError()
+        await coordinator.get_api_data(MagicMock())
+        
+    with pytest.raises(InvalidApiKeyFormat):
+        hass.async_add_executor_job.side_effect = InvalidApiKeyFormat()
+        await coordinator.get_api_data(MagicMock())
+        
+    with pytest.raises(NoVehiclesException):
+        hass.async_add_executor_job.side_effect = NoVehiclesException()
+        await coordinator.get_api_data(MagicMock())
+
+    with pytest.raises(Exception):
+        hass.async_add_executor_job.side_effect = Exception("Some other error")
+        await coordinator.get_api_data(MagicMock())
+
+@pytest.mark.asyncio
+async def test_get_vehicles_data(hass, entry):
+    coordinator = DimoUpdateCoordinator(hass, entry, MagicMock())
+    # Return valid vehicle data
+    with patch.object(coordinator, "get_api_data", return_value={"data": {"vehicles": {"nodes": [{"tokenId": "v1", "definition": {"make": "Ford"}}]}}}):
+        await coordinator.get_vehicles_data()
+        assert "v1" in coordinator.vehicle_data
+        assert coordinator.vehicle_data["v1"].definition["make"] == "Ford"
+
+    # Return None
+    with patch.object(coordinator, "get_api_data", return_value=None):
+        coordinator.vehicle_data = {}
+        await coordinator.get_vehicles_data()
+        assert not coordinator.vehicle_data
+
+@pytest.mark.asyncio
+async def test_async_initialise(hass, entry):
+    coordinator = DimoUpdateCoordinator(hass, entry, MagicMock())
+    coordinator.vehicle_data = {"v1": VehicleData(definition={"make": "Test"})}
+    
+    with patch.object(coordinator, "get_vehicles_data", new_callable=AsyncMock) as mock_get_veh:
+        with patch.object(coordinator, "create_dimo_device") as mock_create_dimo:
+            with patch.object(coordinator, "get_dimo_sensor_data", new_callable=AsyncMock) as mock_dimo_sens:
+                with patch.object(coordinator, "_async_setup_single_vehicle", new_callable=AsyncMock) as mock_setup_veh:
+                    await coordinator.async_initialise()
+                    mock_get_veh.assert_called_once()
+                    mock_create_dimo.assert_called_once()
+                    mock_dimo_sens.assert_called_once()
+                    mock_setup_veh.assert_called_once_with("v1")
+
+@pytest.mark.asyncio
+async def test_get_available_signals_for_vehicle(hass, entry):
+    coordinator = DimoUpdateCoordinator(hass, entry, MagicMock())
+    coordinator.vehicle_data = {"v1": VehicleData(definition={})}
+    
+    with patch.object(coordinator, "get_api_data", return_value={"data": {"availableSignals": ["speed"]}}):
+        await coordinator.get_available_signals_for_vehicle("v1")
+        assert coordinator.vehicle_data["v1"].available_signals == ["speed"]
+
+    # Test unknown vehicle
+    await coordinator.get_available_signals_for_vehicle("v2")
+
+@pytest.mark.asyncio
+async def test_get_signals_data_for_vehicle(hass, entry):
+    coordinator = DimoUpdateCoordinator(hass, entry, MagicMock())
+    coordinator.vehicle_data = {"v1": VehicleData(definition={}, available_signals=["speed"])}
+    
+    with patch.object(coordinator, "get_api_data", return_value={"data": {"signalsLatest": {"speed": 100}}, "errors": None}):
+        with patch.object(coordinator, "_update_token_rewards", new_callable=AsyncMock):
+            await coordinator.get_signals_data_for_vehicle("v1")
+            assert coordinator.vehicle_data["v1"].signal_data == {"speed": 100}
+
+    # Unknown vehicle
+    await coordinator.get_signals_data_for_vehicle("v2")
+
+@pytest.mark.asyncio
+async def test_update_token_rewards(hass, entry):
+    coordinator = DimoUpdateCoordinator(hass, entry, MagicMock())
+    coordinator.vehicle_data = {"v1": VehicleData(definition={}, signal_data={"speed": 100})}
+    
+    with patch.object(coordinator, "get_api_data", return_value={"data": {"vehicle": {"earnings": {"totalTokens": 50}}}}):
+        await coordinator._update_token_rewards("v1")
+        assert "tokenRewards" in coordinator.vehicle_data["v1"].signal_data
+        assert coordinator.vehicle_data["v1"].signal_data["tokenRewards"]["value"] == 50
+
+@pytest.mark.asyncio
+async def test_async_update_data(hass, entry):
+    coordinator = DimoUpdateCoordinator(hass, entry, MagicMock())
+    coordinator.vehicle_data = {"v1": VehicleData(definition={})}
+    with patch.object(coordinator, "get_dimo_sensor_data", new_callable=AsyncMock):
+        with patch.object(coordinator, "get_signals_data_for_vehicle", new_callable=AsyncMock):
+            res = await coordinator.async_update_data()
+            assert res is True
