@@ -393,22 +393,21 @@ async def test_get_signals_data_for_vehicle(hass, entry):
     coordinator.vehicle_data = {"v1": VehicleData(definition={}, available_signals=["speed"])}
     
     with patch.object(coordinator, "get_api_data", return_value={"data": {"signalsLatest": {"speed": 100}}, "errors": None}):
-        with patch.object(coordinator, "_update_token_rewards", new_callable=AsyncMock):
+        with patch.object(coordinator, "_process_token_rewards"):
             await coordinator.get_signals_data_for_vehicle("v1")
             assert coordinator.vehicle_data["v1"].signal_data == {"speed": 100}
 
     # Unknown vehicle
     await coordinator.get_signals_data_for_vehicle("v2")
 
-@pytest.mark.asyncio
-async def test_update_token_rewards(hass, entry):
+def test_update_token_rewards(hass, entry):
     coordinator = DimoUpdateCoordinator(hass, entry, MagicMock())
     coordinator.vehicle_data = {"v1": VehicleData(definition={}, signal_data={"speed": 100})}
     
-    with patch.object(coordinator, "get_api_data", return_value={"data": {"vehicle": {"earnings": {"totalTokens": 50}}}}):
-        await coordinator._update_token_rewards("v1")
-        assert "tokenRewards" in coordinator.vehicle_data["v1"].signal_data
-        assert coordinator.vehicle_data["v1"].signal_data["tokenRewards"]["value"] == 50
+    rewards_data = {"data": {"vehicle": {"earnings": {"totalTokens": 50}}}}
+    coordinator._process_token_rewards("v1", rewards_data)
+    assert "tokenRewards" in coordinator.vehicle_data["v1"].signal_data
+    assert coordinator.vehicle_data["v1"].signal_data["tokenRewards"]["value"] == 50
 
 @pytest.mark.asyncio
 async def test_async_update_data(hass, entry):
