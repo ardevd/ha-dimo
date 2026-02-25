@@ -4,7 +4,8 @@ import pytest
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from custom_components.dimo.base_entity import DimoBaseEntity, DimoBaseVehicleEntity
+from custom_components.dimo.base_entity import (DimoBaseEntity,
+                                                DimoBaseVehicleEntity)
 from custom_components.dimo.const import DIMO_SENSORS, DOMAIN
 
 

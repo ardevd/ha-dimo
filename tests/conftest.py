@@ -1,6 +1,6 @@
-import pytest
-
 from types import SimpleNamespace
+
+import pytest
 
 
 class DummyCoordinator:

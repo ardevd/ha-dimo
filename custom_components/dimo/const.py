@@ -1,28 +1,16 @@
 """Constants for the DIMO integration."""
 
-from homeassistant.const import UnitOfPower
-
-
 from collections.abc import Callable
 from dataclasses import dataclass
 
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
-from homeassistant.const import (
-    DEGREE,
-    PERCENTAGE,
-    REVOLUTIONS_PER_MINUTE,
-    Platform,
-    UnitOfElectricPotential,
-    UnitOfEnergy,
-    UnitOfLength,
-    UnitOfPressure,
-    UnitOfSpeed,
-    UnitOfTemperature,
-    UnitOfTime,
-    UnitOfVolume,
-    UnitOfVolumeFlowRate,
-)
+from homeassistant.const import (DEGREE, PERCENTAGE, REVOLUTIONS_PER_MINUTE,
+                                 Platform, UnitOfElectricPotential,
+                                 UnitOfEnergy, UnitOfLength, UnitOfPower,
+                                 UnitOfPressure, UnitOfSpeed,
+                                 UnitOfTemperature, UnitOfTime, UnitOfVolume,
+                                 UnitOfVolumeFlowRate)
 
 DOMAIN = "dimo"
 

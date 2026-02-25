@@ -1,10 +1,11 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from custom_components.dimo.config_flow import InvalidAuth
 from custom_components.dimo.const import (CONF_AUTH_PROVIDER, CONF_LICENSE_ID,
-                                          CONF_PRIVATE_KEY, DOMAIN, CONF_POLL_INTERVAL,
-                                          DEFAULT_POLL_INTERVAL)
+                                          CONF_POLL_INTERVAL, CONF_PRIVATE_KEY,
+                                          DEFAULT_POLL_INTERVAL, DOMAIN)
 
 
 @pytest.fixture(autouse=True)

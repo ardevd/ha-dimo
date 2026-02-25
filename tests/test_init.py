@@ -137,9 +137,10 @@ async def test_async_update_options_reloads_entry():
 @pytest.mark.asyncio
 async def test_update_listener_registered_on_setup():
     """Test that update listener is registered during async_setup_entry."""
-    from custom_components.dimo import async_setup_entry, DOMAIN
-    from custom_components.dimo.const import CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL
-    
+    from custom_components.dimo import DOMAIN, async_setup_entry
+    from custom_components.dimo.const import (CONF_POLL_INTERVAL,
+                                              DEFAULT_POLL_INTERVAL)
+
     # Create a mock HomeAssistant instance
     hass = MagicMock(spec=HomeAssistant)
     hass.config_entries = MagicMock()
@@ -216,8 +217,9 @@ async def test_update_listener_registered_on_setup():
 async def test_poll_interval_from_options():
     """Test that poll interval is correctly read from options."""
     from custom_components.dimo import DimoUpdateCoordinator
-    from custom_components.dimo.const import CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL
-    
+    from custom_components.dimo.const import (CONF_POLL_INTERVAL,
+                                              DEFAULT_POLL_INTERVAL)
+
     # Create a mock HomeAssistant instance
     hass = MagicMock(spec=HomeAssistant)
     
@@ -246,8 +248,9 @@ async def test_poll_interval_from_options():
 async def test_poll_interval_default_when_not_in_options():
     """Test that default poll interval is used when not specified in options."""
     from custom_components.dimo import DimoUpdateCoordinator
-    from custom_components.dimo.const import CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL
-    
+    from custom_components.dimo.const import (CONF_POLL_INTERVAL,
+                                              DEFAULT_POLL_INTERVAL)
+
     # Create a mock HomeAssistant instance
     hass = MagicMock(spec=HomeAssistant)
     

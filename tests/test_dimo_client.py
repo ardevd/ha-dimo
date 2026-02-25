@@ -1,8 +1,8 @@
 from unittest.mock import Mock
 
-from custom_components.dimo.dimoapi import DimoClient
-
 from helper import create_mock_token
+
+from custom_components.dimo.dimoapi import DimoClient
 
 
 def test_dimo_client_init():

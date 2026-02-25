@@ -5,12 +5,8 @@ from typing import Any, Dict, List, Optional
 import requests
 
 from .auth import Auth
-from .queries import (
-    GET_ALL_VEHICLES_QUERY,
-    GET_LATEST_SIGNALS_QUERY,
-    GET_VEHICLE_REWARDS_QUERY,
-    CUSTOM_SIGNAL_FRAGMENTS,
-)
+from .queries import (CUSTOM_SIGNAL_FRAGMENTS, GET_ALL_VEHICLES_QUERY,
+                      GET_LATEST_SIGNALS_QUERY, GET_VEHICLE_REWARDS_QUERY)
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -1,5 +1,7 @@
 from types import SimpleNamespace
-from custom_components.dimo.device_tracker import DimoTrackerEntity, LAT_KEY, LONG_KEY
+
+from custom_components.dimo.device_tracker import (LAT_KEY, LONG_KEY,
+                                                   DimoTrackerEntity)
 
 
 def test_latitude_longitude_properties(dummy_coordinator):
