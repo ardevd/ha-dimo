@@ -175,11 +175,27 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             )
 
     async def get_dimo_sensor_data(self):
-        """Get Dimo sensor data from DIMO_SENSORS defs."""
-        for key, sensor_def in DIMO_SENSORS.items():
+        """Get Dimo sensor data from DIMO_SENSORS defs in parallel."""
+        async def fetch_sensor(key, sensor_def):
             if hasattr(self.client, sensor_def.value_fn):
                 fn = getattr(self.client, sensor_def.value_fn)
-                self.dimo_data[key] = await self.hass.async_add_executor_job(fn)
+                try:
+                    result = await self.hass.async_add_executor_job(fn)
+                except Exception:  # noqa: BLE001
+                    _LOGGER.exception(
+                        "Error fetching DIMO sensor '%s' for key '%s'",
+                        sensor_def.value_fn,
+                        key,
+                    )
+                    return key, None
+                return key, result
+            return key, None
+
+        results = await asyncio.gather(
+            *(fetch_sensor(key, sensor_def) for key, sensor_def in DIMO_SENSORS.items())
+        )
+        for key, value in results:
+            self.dimo_data[key] = value
 
     async def get_vehicles_data(self):
         """Get all vehicle data."""
