@@ -233,11 +233,17 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
     async def get_signals_data_for_vehicle(self, vehicle_token_id: str):
         """Get data for list of available signals for vehicle."""
         if self.vehicle_data.get(vehicle_token_id):
-            signals_data = await self.get_api_data(
+            signals_task = self.get_api_data(
                 self.client.get_latest_signals_batched,
                 vehicle_token_id,
                 self.vehicle_data[vehicle_token_id].available_signals,
             )
+            rewards_task = self.get_api_data(
+                self.client.get_rewards_for_vehicle,
+                vehicle_token_id,
+            )
+
+            signals_data, rewards_data = await asyncio.gather(signals_task, rewards_task)
 
             if signals_data is None:
                 _LOGGER.warning("Got no signals data from the API. Skipping update")
@@ -251,8 +257,8 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
                 "errors", signals_data
             )
 
-            # Fetch and store token rewards
-            await self._update_token_rewards(vehicle_token_id)
+            # Process and store token rewards
+            self._process_token_rewards(vehicle_token_id, rewards_data)
         else:
             _LOGGER.error(
                 "Unable to fetch signals data for %s.  Not a known vehicle on this account",
@@ -275,28 +281,25 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
         except Exception as e:
             _LOGGER.error("Error getting VIN for vehicle %s: %s", vehicle_token_id, e)
 
-    async def _update_token_rewards(self, vehicle_token_id: str):
-        """Fetch and update token rewards for a vehicle."""
+    def _process_token_rewards(self, vehicle_token_id: str, rewards_data: dict | None):
+        """Process and update token rewards for a vehicle."""
+        if not rewards_data:
+            return
         try:
-            rewards_data = await self.get_api_data(
-                self.client.get_rewards_for_vehicle,
-                vehicle_token_id,
-            )
-            if rewards_data:
-                timestamp = self._get_current_timestamp()
-                earnings = rewards_data["data"]["vehicle"]["earnings"]["totalTokens"]
-                if self.vehicle_data[vehicle_token_id].signal_data:
-                    self.vehicle_data[vehicle_token_id].signal_data["tokenRewards"] = {
-                        "timestamp": timestamp,
-                        "value": earnings,
-                    }
+            timestamp = self._get_current_timestamp()
+            earnings = rewards_data["data"]["vehicle"]["earnings"]["totalTokens"]
+            if self.vehicle_data[vehicle_token_id].signal_data is not None:
+                self.vehicle_data[vehicle_token_id].signal_data["tokenRewards"] = {
+                    "timestamp": timestamp,
+                    "value": earnings,
+                }
         except KeyError:
             _LOGGER.warning(
                 "Rewards data structure unexpected for vehicle %s.", vehicle_token_id
             )
         except Exception as e:
             _LOGGER.error(
-                "Error fetching token rewards for vehicle %s: %s", vehicle_token_id, e
+                "Error processing token rewards for vehicle %s: %s", vehicle_token_id, e
             )
 
     async def async_update_data(self):

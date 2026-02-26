@@ -73,16 +73,17 @@ class DimoClient:
                 continue
 
             # Merge data.signalsLatest
-            data = r.get("data", {})
+            data = r.get("data")
             if isinstance(data, dict):
-                sl = data.get("signalsLatest", {})
+                sl = data.get("signalsLatest")
                 if isinstance(sl, dict):
                     # add/override per-signal fields; different chunks add different keys
                     merged["data"]["signalsLatest"].update(sl)
 
             # Carry over GraphQL errors
-            if isinstance(r.get("errors"), list):
-                errors.extend(r["errors"])
+            errs = r.get("errors")
+            if isinstance(errs, list):
+                errors.extend(errs)
 
         if errors:
             merged["errors"] = errors
