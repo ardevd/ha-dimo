@@ -392,7 +392,14 @@ async def test_get_signals_data_for_vehicle(hass, entry):
     coordinator = DimoUpdateCoordinator(hass, entry, MagicMock())
     coordinator.vehicle_data = {"v1": VehicleData(definition={}, available_signals=["speed"])}
     
-    with patch.object(coordinator, "get_api_data", return_value={"data": {"signalsLatest": {"speed": 100}}, "errors": None}):
+    with patch.object(
+        coordinator,
+        "get_api_data",
+        side_effect=[
+            {"data": {"signalsLatest": {"speed": 100}}, "errors": None},
+            {"data": {"vehicle": {"earnings": {"totalTokens": 50}}}},
+        ],
+    ):
         with patch.object(coordinator, "_process_token_rewards"):
             await coordinator.get_signals_data_for_vehicle("v1")
             assert coordinator.vehicle_data["v1"].signal_data == {"speed": 100}
