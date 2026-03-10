@@ -77,15 +77,14 @@ def test_dimo_vehicle_sensor_entity_value_none_data(dummy_coordinator):
     entity = DimoVehicleSensorEntity(dummy_coordinator, token, key)
     assert entity.native_value is None
 
-def test_dimo_vehicle_sensor_entity_unit(dummy_coordinator, monkeypatch):
+def test_dimo_vehicle_sensor_entity_unit(dummy_coordinator):
     token = "123456"
     key = "speed"
     vehicle = SimpleNamespace(signal_data={key: {"value": 65}})
     dummy_coordinator.vehicle_data = {token: vehicle}
-    monkeypatch.setitem(SIGNALS, key, MockSensorDef(unit_of_measure="km/h"))
     
     entity = DimoVehicleSensorEntity(dummy_coordinator, token, key)
-    assert entity.native_unit_of_measurement == "km/h"
+    assert entity.native_unit_of_measurement == SIGNALS[key].unit_of_measure
 
 def test_dimo_vehicle_sensor_entity_unit_missing(dummy_coordinator):
     token = "123456"
