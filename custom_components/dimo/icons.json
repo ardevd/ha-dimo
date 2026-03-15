@@ -31,6 +31,9 @@
       "obdfuelrate": {
         "default": "mdi:fuel"
       },
+      "obdoiltemperature": {
+        "default": "mdi:oil-temperature"
+      },
       "powertraincombustionenginespeed": {
         "default": "mdi:gauge"
       },
