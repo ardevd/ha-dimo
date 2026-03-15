@@ -5,12 +5,22 @@ from dataclasses import dataclass
 
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
-from homeassistant.const import (DEGREE, PERCENTAGE, REVOLUTIONS_PER_MINUTE,
-                                 Platform, UnitOfElectricPotential,
-                                 UnitOfEnergy, UnitOfLength, UnitOfPower,
-                                 UnitOfPressure, UnitOfSpeed,
-                                 UnitOfTemperature, UnitOfTime, UnitOfVolume,
-                                 UnitOfVolumeFlowRate)
+from homeassistant.const import (
+    DEGREE,
+    PERCENTAGE,
+    REVOLUTIONS_PER_MINUTE,
+    Platform,
+    UnitOfElectricPotential,
+    UnitOfEnergy,
+    UnitOfLength,
+    UnitOfPower,
+    UnitOfPressure,
+    UnitOfSpeed,
+    UnitOfTemperature,
+    UnitOfTime,
+    UnitOfVolume,
+    UnitOfVolumeFlowRate,
+)
 
 DOMAIN = "dimo"
 
@@ -141,6 +151,13 @@ SIGNALS: dict[str, SignalDef] = {
         "Engine Fuel Rate",
         Platform.SENSOR,
         unit_of_measure=UnitOfVolumeFlowRate.LITERS_PER_HOUR,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    "obdOilTemperature": SignalDef(
+        "Oil Temperature",
+        Platform.SENSOR,
+        SensorDeviceClass.TEMPERATURE,
+        UnitOfTemperature.CELSIUS,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "powertrainTransmissionTravelledDistance": SignalDef(
