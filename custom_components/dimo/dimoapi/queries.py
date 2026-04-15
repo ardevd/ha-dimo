@@ -8,6 +8,20 @@ query GetVehicleRewardsByTokenId {{
 }}
 """
 
+GET_MULTIPLE_VEHICLE_REWARDS_QUERY = """
+query GetMultipleVehicleRewards {{
+  {vehicles}
+}}
+"""
+
+VEHICLE_REWARD_FRAGMENT = """
+  vehicle_{token_id}: vehicle(tokenId: "{token_id}") {{
+    earnings {{
+      totalTokens
+    }}
+  }}
+"""
+
 GET_LATEST_SIGNALS_QUERY = """
 query {{
   signalsLatest(tokenId: {token_id}) {{

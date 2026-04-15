@@ -57,6 +57,38 @@ query GetVehicleRewardsByTokenId {{
     )
 
 
+def test_dimo_client_get_rewards_for_vehicles():
+    # Arrange: Set up mocks
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    dimo_client = DimoClient(auth=auth_mock)
+    token_ids = ["75948", "12345", "67890"]
+
+    # Mock the GraphQL query result
+    query_result = {
+        "data": {
+            "vehicle_75948": {"earnings": {"totalTokens": 100.5}},
+            "vehicle_12345": {"earnings": {"totalTokens": 200.0}},
+            "vehicle_67890": {"earnings": {"totalTokens": 300.5}},
+        }
+    }
+    dimo_mock.identity.query.return_value = query_result
+
+    # Act: Call the method under test
+    result = dimo_client.get_rewards_for_vehicles(token_ids)
+
+    # Assert: Verify the query was built correctly
+    query = dimo_mock.identity.query.call_args[0][0]
+
+    # Check that the query contains all token IDs
+    assert 'vehicle_75948' in query
+    assert 'vehicle_12345' in query
+    assert 'vehicle_67890' in query
+
+    # Assert the result matches the query result
+    assert result == query_result
+
+
 def test_dimo_client_get_available_signals():
     auth_mock = Mock()
     dimo_mock = auth_mock.get_dimo.return_value

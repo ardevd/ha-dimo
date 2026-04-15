@@ -238,12 +238,8 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
                 vehicle_token_id,
                 self.vehicle_data[vehicle_token_id].available_signals,
             )
-            rewards_task = self.get_api_data(
-                self.client.get_rewards_for_vehicle,
-                vehicle_token_id,
-            )
 
-            signals_data, rewards_data = await asyncio.gather(signals_task, rewards_task)
+            signals_data = await signals_task
 
             if signals_data is None:
                 _LOGGER.warning("Got no signals data from the API. Skipping update")
@@ -256,14 +252,34 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
             self.vehicle_data[vehicle_token_id].signal_data_errors = get_key(
                 "errors", signals_data
             )
-
-            # Process and store token rewards
-            self._process_token_rewards(vehicle_token_id, rewards_data)
         else:
             _LOGGER.error(
                 "Unable to fetch signals data for %s.  Not a known vehicle on this account",
                 vehicle_token_id,
             )
+
+    async def get_signals_data_for_vehicles(self):
+        """Get signals data for all vehicles in parallel."""
+        tasks = [
+            self.get_signals_data_for_vehicle(token_id)
+            for token_id in self.vehicle_data
+        ]
+        await asyncio.gather(*tasks)
+
+    async def get_rewards_data_for_vehicles(self):
+        """Fetch token rewards for all vehicles in a single batch query."""
+        if not self.vehicle_data:
+            return
+
+        token_ids = list(self.vehicle_data.keys())
+        try:
+            rewards_data = await self.get_api_data(
+                self.client.get_rewards_for_vehicles, token_ids
+            )
+            if rewards_data:
+                self._process_batch_token_rewards(rewards_data)
+        except Exception as e:
+            _LOGGER.error("Error fetching batch rewards data: %s", e)
 
     @staticmethod
     def _get_current_timestamp():
@@ -302,14 +318,48 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
                 "Error processing token rewards for vehicle %s: %s", vehicle_token_id, e
             )
 
+    def _process_batch_token_rewards(self, rewards_data: dict | None):
+        """Process batch rewards data and update token rewards for all vehicles."""
+        if not rewards_data or "data" not in rewards_data:
+            return
+
+        timestamp = self._get_current_timestamp()
+
+        # Process each vehicle's rewards from the batch response
+        for token_id in self.vehicle_data:
+            reward_key = f"vehicle_{token_id}"
+            vehicle_data = rewards_data["data"].get(reward_key)
+
+            if vehicle_data:
+                try:
+                    earnings = (
+                        vehicle_data.get("earnings", {})
+                        .get("totalTokens", 0)
+                    )
+                    if self.vehicle_data[token_id].signal_data is not None:
+                        self.vehicle_data[token_id].signal_data["tokenRewards"] = {
+                            "timestamp": timestamp,
+                            "value": earnings,
+                        }
+                except (KeyError, TypeError) as e:
+                    _LOGGER.warning(
+                        "Failed to process rewards for vehicle %s: %s", token_id, e
+                    )
+
     async def async_update_data(self):
         """Update data from api."""
         _LOGGER.debug("Updating from the DIMO api")
         tasks = [self.get_dimo_sensor_data()]
+
+        # Fetch signals for all vehicles in parallel
         tasks.extend(
             self.get_signals_data_for_vehicle(token_id)
             for token_id in self.vehicle_data
         )
+
+        # Fetch rewards for all vehicles in a single batch query
+        tasks.append(self.get_rewards_data_for_vehicles())
+
         await asyncio.gather(*tasks)
         return True
 

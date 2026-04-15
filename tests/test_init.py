@@ -416,6 +416,31 @@ def test_update_token_rewards(hass, entry):
     assert "tokenRewards" in coordinator.vehicle_data["v1"].signal_data
     assert coordinator.vehicle_data["v1"].signal_data["tokenRewards"]["value"] == 50
 
+
+def test_update_batch_token_rewards(hass, entry):
+    """Test batch processing of token rewards for multiple vehicles."""
+    coordinator = DimoUpdateCoordinator(hass, entry, MagicMock())
+    coordinator.vehicle_data = {
+        "v1": VehicleData(definition={}, signal_data={"speed": 100}),
+        "v2": VehicleData(definition={}, signal_data={"speed": 80}),
+        "v3": VehicleData(definition={}, signal_data={"speed": 60}),
+    }
+    
+    rewards_data = {
+        "data": {
+            "vehicle_v1": {"earnings": {"totalTokens": 50}},
+            "vehicle_v2": {"earnings": {"totalTokens": 100}},
+            "vehicle_v3": {"earnings": {"totalTokens": 150}},
+        }
+    }
+    
+    coordinator._process_batch_token_rewards(rewards_data)
+    
+    assert "tokenRewards" in coordinator.vehicle_data["v1"].signal_data
+    assert coordinator.vehicle_data["v1"].signal_data["tokenRewards"]["value"] == 50
+    assert coordinator.vehicle_data["v2"].signal_data["tokenRewards"]["value"] == 100
+    assert coordinator.vehicle_data["v3"].signal_data["tokenRewards"]["value"] == 150
+
 @pytest.mark.asyncio
 async def test_async_update_data(hass, entry):
     coordinator = DimoUpdateCoordinator(hass, entry, MagicMock())
