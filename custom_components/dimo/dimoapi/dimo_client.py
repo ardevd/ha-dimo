@@ -22,6 +22,17 @@ def requires_vehicle_jwt(method):
     return wrapper
 
 
+def _is_unauthorized_error(error: Optional[BaseException]) -> bool:
+    """Return True if the error, or an error it wraps, is an HTTP 401/403 response"""
+    seen = set()
+    while error is not None and id(error) not in seen:
+        seen.add(id(error))
+        if getattr(error, "status", None) in (401, 403):
+            return True
+        error = error.__cause__ or error.__context__
+    return False
+
+
 class DimoClient:
     def __init__(self, auth: Auth):
         self.auth = auth
@@ -91,11 +102,12 @@ class DimoClient:
         signals = merged["data"]["signalsLatest"]
         if "currentLocationCoordinates" in signals:
 
-            # Extract and remove the nested object from the dictionary
-            loc_data = signals.pop("currentLocationCoordinates")
+            # Extract and remove the nested object from the dictionary.
+            # It is null when the vehicle is shared without location privileges.
+            loc_data = signals.pop("currentLocationCoordinates") or {}
 
             timestamp = loc_data.get("timestamp")
-            coords = loc_data.get("value", {})
+            coords = loc_data.get("value") or {}
 
             # Re-inject the coordinates as standard, flat signals
             if "latitude" in coords:
@@ -288,5 +300,9 @@ class DimoClient:
             )
             return None
         except Exception as e:
-            _LOGGER.error(f"Failed to retrieve VIN for token_id {token_id}: {e}")
+            if _is_unauthorized_error(e):
+                # The VIN credential is not shared with this license
+                _LOGGER.debug(f"VIN not available for token_id {token_id}: {e}")
+            else:
+                _LOGGER.error(f"Failed to retrieve VIN for token_id {token_id}: {e}")
             return None

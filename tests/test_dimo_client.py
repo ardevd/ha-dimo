@@ -1,5 +1,7 @@
+import logging
 from unittest.mock import Mock
 
+from dimo.errors import HTTPError
 from helper import create_mock_token
 
 from custom_components.dimo.dimoapi import DimoClient
@@ -461,6 +463,23 @@ def test_merge_graphql_data_merges_responses():
     assert merged["errors"] == [1, 2, 3]
 
 
+def test_merge_graphql_data_handles_unshared_location():
+    responses = [
+        {
+            "data": {
+                "signalsLatest": {
+                    "speed": {"timestamp": "2026-10-13T09:00:00Z", "value": 50},
+                    "currentLocationCoordinates": None,
+                }
+            }
+        }
+    ]
+    merged = DimoClient._merge_graphql_data(responses)
+    assert merged["data"]["signalsLatest"] == {
+        "speed": {"timestamp": "2026-10-13T09:00:00Z", "value": 50}
+    }
+
+
 def test_is_complexity_error_true():
     resp = {
         "errors": [
@@ -525,6 +544,44 @@ def test_dimo_client_get_vin_general_exception():
     assert vin is None
     auth_mock.get_privileged_token.assert_called_once_with(token_id)
     dimo_mock.telemetry.get_vin.assert_called_once_with(priv_token.token, token_id)
+
+
+def _raise_wrapped_http_error(status):
+    """Mimic the SDK, which wraps HTTP errors from get_vin in a plain Exception"""
+
+    def raiser(*args, **kwargs):
+        try:
+            raise HTTPError(status=status, message=f"{status} Client Error")
+        except HTTPError as err:
+            raise Exception(f"Error getting VIN: {err}")
+
+    return raiser
+
+
+def test_dimo_client_get_vin_unauthorized_logs_debug(caplog):
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    dimo_client = DimoClient(auth=auth_mock)
+    token_id = "12345"
+    auth_mock.get_privileged_token.return_value = create_mock_token(23)
+    dimo_mock.telemetry.get_vin.side_effect = _raise_wrapped_http_error(401)
+    with caplog.at_level(logging.DEBUG):
+        vin = dimo_client.get_vin(token_id)
+    assert vin is None
+    assert not [r for r in caplog.records if r.levelno >= logging.ERROR]
+    assert any("VIN not available" in r.getMessage() for r in caplog.records)
+
+
+def test_dimo_client_get_vin_other_http_error_logs_error(caplog):
+    auth_mock = Mock()
+    dimo_mock = auth_mock.get_dimo.return_value
+    dimo_client = DimoClient(auth=auth_mock)
+    token_id = "12345"
+    auth_mock.get_privileged_token.return_value = create_mock_token(23)
+    dimo_mock.telemetry.get_vin.side_effect = _raise_wrapped_http_error(500)
+    vin = dimo_client.get_vin(token_id)
+    assert vin is None
+    assert any(r.levelno == logging.ERROR for r in caplog.records)
 
 
 def test_get_latest_signals_batched_unknown_exception():
