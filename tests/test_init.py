@@ -79,6 +79,28 @@ async def test_get_vehicle_vin_success(coordinator):
         assert coordinator.vehicle_data[vehicle_token_id].vin == expected_vin
 
 
+def test_create_dimo_device_stores_device_id(coordinator):
+    """Test create_dimo_device stores the created device ID on the coordinator."""
+    device_registry = MagicMock()
+    mock_device = MagicMock()
+    mock_device.id = "dimo_hub_id_123"
+    device_registry.async_get_or_create.return_value = mock_device
+
+    with patch(
+        "custom_components.dimo.__init__.dr.async_get", return_value=device_registry
+    ):
+        coordinator.create_dimo_device()
+
+    device_registry.async_get_or_create.assert_called_once_with(
+        config_entry_id=coordinator.entry.entry_id,
+        identifiers={(DOMAIN, DOMAIN)},
+        manufacturer="DIMO",
+        name="DIMO",
+        model="DIMO",
+    )
+    assert coordinator.dimo_device_id == "dimo_hub_id_123"
+
+
 def test_create_vehicle_device_with_vin(coordinator):
     """Test create_vehicle_device for a vehicle with a VIN."""
 

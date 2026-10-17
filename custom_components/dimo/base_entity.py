@@ -6,6 +6,7 @@ from typing import Any
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.core import callback
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -118,10 +119,26 @@ class DimoBaseVehicleEntity(DimoBaseEntity):
         vehicle = self.coordinator.vehicle_data[self.vehicle_token_id]
         identifiers = {(DOMAIN, self.vehicle_token_id)}
         vin = ""
-        parent = (DOMAIN, DOMAIN)
         if vehicle.vin:
             identifiers.add((DOMAIN, vehicle.vin))
             vin = vehicle.vin
+
+        via_kwargs: dict[str, Any] = {}
+        if "via_device_id" in DeviceInfo.__annotations__:
+            if via_device_id := getattr(self.coordinator, "dimo_device_id", None):
+                via_kwargs["via_device_id"] = via_device_id
+            elif (
+                get_device_id := getattr(
+                    dr, "async_get_device_id_by_identifier", None
+                )
+            ) and self.hass:
+                via_kwargs["via_device_id"] = get_device_id(
+                    self.hass,
+                    (DOMAIN, DOMAIN),
+                    config_entry_id=self.coordinator.entry.entry_id,
+                )
+        else:
+            via_kwargs["via_device"] = (DOMAIN, DOMAIN)
 
         return DeviceInfo(
             identifiers=identifiers,
@@ -129,5 +146,5 @@ class DimoBaseVehicleEntity(DimoBaseEntity):
             name=f"{vehicle.definition.get('make', 'Unknown')} {vehicle.definition.get('model', 'Unknown')}",
             model=vehicle.definition.get("model", "Unknown Model"),
             serial_number=vin,
-            via_device=parent,
+            **via_kwargs,
         )

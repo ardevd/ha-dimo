@@ -133,6 +133,7 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
 
         self.dimo_data: dict[str, Any] = {}
         self.vehicle_data: dict[str, VehicleData] = {}
+        self.dimo_device_id: str | None = None
 
     async def _async_setup_single_vehicle(self, vehicle_token_id: str):
         """Fetch all required I/O data for a vehicle, then create the device."""
@@ -345,13 +346,14 @@ class DimoUpdateCoordinator(DataUpdateCoordinator):
     def create_dimo_device(self):
         """Create device for Dimo sensors."""
         device_registry = dr.async_get(self.hass)
-        device_registry.async_get_or_create(
+        device = device_registry.async_get_or_create(
             config_entry_id=self.entry.entry_id,
             identifiers={(DOMAIN, DOMAIN)},
             manufacturer="DIMO",
             name="DIMO",
             model="DIMO",
         )
+        self.dimo_device_id = device.id
 
     def create_vehicle_device(self, vehicle_token_id: str):
         """Create device for vehicle."""
