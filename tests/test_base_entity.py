@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -126,3 +127,82 @@ def test_device_info_with_vin(
     assert dev_info["manufacturer"] == "Tesla"
     assert dev_info["name"] == "Tesla Model 3"
     assert dev_info["model"] == "Model 3"
+
+
+def test_device_info_uses_via_device_id_when_supported(
+    hass: HomeAssistant, mock_coordinator: Any
+):
+    """Test device_info uses via_device_id on HA versions that support it."""
+    from homeassistant.helpers.device_registry import DeviceInfo
+
+    vehicle_token_id = "12345"
+    vehicle_data = MagicMock()
+    vehicle_data.vin = None
+    vehicle_data.definition = {"make": "Tesla", "model": "Model 3"}
+    mock_coordinator.vehicle_data[vehicle_token_id] = vehicle_data
+    mock_coordinator.dimo_device_id = "dimo_hub_device_id"
+
+    entity = DimoBaseVehicleEntity(mock_coordinator, vehicle_token_id, "mock_key")
+
+    with patch.dict(DeviceInfo.__annotations__, {"via_device_id": str}):
+        dev_info = entity.device_info
+
+    assert dev_info.get("via_device_id") == "dimo_hub_device_id"
+    assert "via_device" not in dev_info
+
+
+def test_device_info_resolves_via_device_id_by_identifier_fallback(
+    hass: HomeAssistant, mock_coordinator: Any
+):
+    """Test device_info falls back to async_get_device_id_by_identifier when dimo_device_id is not cached."""
+    from homeassistant.helpers import device_registry as dr
+    from homeassistant.helpers.device_registry import DeviceInfo
+
+    vehicle_token_id = "12345"
+    vehicle_data = MagicMock()
+    vehicle_data.vin = None
+    vehicle_data.definition = {"make": "Tesla", "model": "Model 3"}
+    mock_coordinator.vehicle_data[vehicle_token_id] = vehicle_data
+    mock_coordinator.dimo_device_id = None
+    mock_coordinator.entry.entry_id = "entry_123"
+
+    entity = DimoBaseVehicleEntity(mock_coordinator, vehicle_token_id, "mock_key")
+    entity.hass = hass
+
+    mock_lookup = MagicMock(return_value="resolved_hub_id")
+    with (
+        patch.dict(DeviceInfo.__annotations__, {"via_device_id": str}),
+        patch.object(dr, "async_get_device_id_by_identifier", mock_lookup, create=True),
+    ):
+        dev_info = entity.device_info
+
+    mock_lookup.assert_called_once_with(
+        hass, (DOMAIN, DOMAIN), config_entry_id="entry_123"
+    )
+    assert dev_info.get("via_device_id") == "resolved_hub_id"
+    assert "via_device" not in dev_info
+
+
+def test_device_info_falls_back_to_via_device_on_older_ha(
+    hass: HomeAssistant, mock_coordinator: Any
+):
+    """Test device_info falls back to via_device when via_device_id is not in DeviceInfo."""
+    from homeassistant.helpers.device_registry import DeviceInfo
+
+    vehicle_token_id = "12345"
+    vehicle_data = MagicMock()
+    vehicle_data.vin = None
+    vehicle_data.definition = {"make": "Tesla", "model": "Model 3"}
+    mock_coordinator.vehicle_data[vehicle_token_id] = vehicle_data
+    mock_coordinator.dimo_device_id = "dimo_hub_device_id"
+
+    entity = DimoBaseVehicleEntity(mock_coordinator, vehicle_token_id, "mock_key")
+
+    annotations_without_via_id = {
+        k: v for k, v in DeviceInfo.__annotations__.items() if k != "via_device_id"
+    }
+    with patch.object(DeviceInfo, "__annotations__", annotations_without_via_id):
+        dev_info = entity.device_info
+
+    assert dev_info.get("via_device") == (DOMAIN, DOMAIN)
+    assert "via_device_id" not in dev_info
