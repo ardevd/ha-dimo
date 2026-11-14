@@ -2,12 +2,16 @@ from unittest.mock import Mock
 
 import dimo as dimo_sdk
 import pytest
+import requests
 from helper import create_mock_token
+from requests.adapters import HTTPAdapter
 
 from custom_components.dimo.dimoapi import Auth, DimoClient
-from custom_components.dimo.dimoapi.auth import (InvalidApiKeyFormat,
+from custom_components.dimo.dimoapi.auth import (DEFAULT_TIMEOUT,
+                                                 InvalidApiKeyFormat,
                                                  InvalidClientIdError,
-                                                 InvalidCredentialsError)
+                                                 InvalidCredentialsError,
+                                                 TimeoutHTTPAdapter)
 
 
 def test_auth_get_token(mocker):
@@ -190,3 +194,41 @@ def test_access_token_not_refreshed_if_not_expired(mocker):
 
     assert token == valid_token
     dimo_mock.auth.get_dev_jwt.assert_not_called()
+
+
+def _ok_response():
+    response = requests.Response()
+    response.status_code = 200
+    response._content = b"{}"
+    return response
+
+
+def test_build_session_uses_timeout_adapter():
+    """The session handed to the DIMO SDK times out instead of waiting forever."""
+    auth = Auth("client_id", "domain", "private_key", dimo=Mock())
+    session = auth.build_session()
+
+    adapter = session.get_adapter("https://telemetry-api.dimo.zone/query")
+    assert isinstance(adapter, TimeoutHTTPAdapter)
+    assert adapter.timeout == DEFAULT_TIMEOUT
+    assert adapter.max_retries.total == 3
+
+
+def test_session_request_without_timeout_gets_default(mocker):
+    """Requests made without a timeout (as the DIMO SDK makes them) get the default."""
+    send = mocker.patch.object(HTTPAdapter, "send", return_value=_ok_response())
+    session = Auth("client_id", "domain", "private_key", dimo=Mock()).build_session()
+
+    session.post("https://telemetry-api.dimo.zone/query", data="{}")
+
+    assert send.call_args.kwargs["timeout"] == DEFAULT_TIMEOUT
+
+
+def test_session_request_keeps_explicit_timeout(mocker):
+    """An explicit timeout from the caller is left alone."""
+    send = mocker.patch.object(HTTPAdapter, "send", return_value=_ok_response())
+    session = Auth("client_id", "domain", "private_key", dimo=Mock()).build_session()
+
+    session.get("https://telemetry-api.dimo.zone/query", timeout=5)
+
+    assert send.call_args.kwargs["timeout"] == 5
