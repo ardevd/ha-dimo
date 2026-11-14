@@ -10,6 +10,25 @@ from requests.adapters import HTTPAdapter, Retry
 
 _LOGGER = logging.getLogger(__name__)
 
+# (connect, read) timeout in seconds for every request to the DIMO API. Without a
+# timeout, requests waits forever when a reply is lost on the way (e.g. a network
+# blip mid-request): the executor thread blocks and the update coordinator never
+# schedules its next poll, so the integration silently stops updating.
+DEFAULT_TIMEOUT = (10, 30)
+
+
+class TimeoutHTTPAdapter(HTTPAdapter):
+    """HTTPAdapter that applies a default timeout to requests that don't set one."""
+
+    def __init__(self, *args, timeout=DEFAULT_TIMEOUT, **kwargs):
+        self.timeout = timeout
+        super().__init__(*args, **kwargs)
+
+    def send(self, request, **kwargs):
+        if kwargs.get("timeout") is None:
+            kwargs["timeout"] = self.timeout
+        return super().send(request, **kwargs)
+
 
 @dataclass
 class AuthToken:
@@ -66,7 +85,7 @@ class Auth:
             respect_retry_after_header=True,
         )
 
-        adapter = HTTPAdapter(max_retries=retry_strategy)
+        adapter = TimeoutHTTPAdapter(max_retries=retry_strategy)
         session = requests.Session()
 
         session.mount("https://", adapter)
